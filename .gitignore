@@ -44,3 +44,8 @@ Thumbs.db
 # Next.js
 .next
 out
+
+data-persistence
+
+.env
+.env.local
