@@ -30,4 +30,8 @@ export class SignUpDto {
   @IsOptional()
   @IsString()
   image_url?: string;
+
+  @IsOptional()
+  @IsString()
+  instituteName?: string;
 }
