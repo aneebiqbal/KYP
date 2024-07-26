@@ -1,76 +1,79 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, Check } from 'typeorm';
 import { Student } from './student.entity';
 import { Professor } from './professor.entity';
+import { ReactRating } from './react-rating.entity';
 import { Course } from './cources.entity';
 
 @Entity()
+@Check(`"course_difficulty" BETWEEN 1 AND 5`)
+@Check(`"clarity" BETWEEN 1 AND 5`)
+@Check(`"collaboration" BETWEEN 1 AND 5`)
+@Check(`"knowledgeable" BETWEEN 1 AND 5`)
+@Check(`"helpful" BETWEEN 1 AND 5`)
+@Check(`"textbook_use" BETWEEN 1 AND 5`)
+@Check(`"exam_difficulty" BETWEEN 1 AND 5`)
+@Check(`"love_teaching_style" BETWEEN 1 AND 5`)
 export class Rating {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Student, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Student, (student) => student.ratings)
   student!: Student;
 
-  @ManyToOne(() => Professor, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Professor, (professor) => professor.ratings)
   professor!: Professor;
 
-  @ManyToOne(() => Course, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Course, (course) => course.ratings)
   course!: Course;
 
-  @Column({ type: 'int' })
-  courseDifficulty: number = 0;
+  @OneToMany(() => ReactRating, (reactRating) => reactRating.rating)
+  reactRatings!: ReactRating[];
 
-  @Column({ type: 'int' })
-  clarity: number = 0;
+  @Column({ type: 'int', width: 1 })
+  course_difficulty!: number;
 
-  @Column({ type: 'int' })
-  collaboration: number = 0;
+  @Column({ type: 'int', width: 1 })
+  clarity!: number;
 
-  @Column({ type: 'int' })
-  knowledgeable: number = 0;
+  @Column({ type: 'int', width: 1 })
+  collaboration!: number;
 
-  @Column({ type: 'int' })
-  helpful: number = 0;
+  @Column({ type: 'int', width: 1 })
+  knowledgeable!: number;
 
-  @Column({ type: 'int' })
-  textbookUse: number = 0;
+  @Column({ type: 'int', width: 1 })
+  helpful!: number;
 
-  @Column({ type: 'int' })
-  examDifficulty: number = 0;
+  @Column({ type: 'int', width: 1 })
+  textbook_use!: number;
 
-  @Column({ type: 'int' })
-  loveTeachingStyle: number = 0;
+  @Column({ type: 'int', width: 1 })
+  exam_difficulty!: number;
 
-  @Column({ default: false })
-  takeAgain: boolean = false;
+  @Column({ type: 'int', width: 1 })
+  love_teaching_style!: number;
 
-  @Column({ default: false })
-  mandatoryAttendance: boolean = false;
+  @Column({ type: 'boolean', nullable: true })
+  take_again!: boolean;
 
-  @Column({ default: false })
-  forCredit: boolean = false;
+  @Column({ type: 'boolean', nullable: true })
+  mandatory_attendance!: boolean;
 
-  @Column({ length: 255, nullable: true })
-  gradeReceived!: string;
+  @Column({ type: 'boolean', nullable: true })
+  for_credit!: boolean;
 
-  @Column({ length: 512 })
-  comment: string = '';
+  @Column({ nullable: true })
+  grade_received!: string;
 
-  @Column({ type: 'int' })
-  upvotes: number = 0;
+  @Column({ type: 'varchar', length: 512, nullable: true })
+  comment!: string;
 
-  @Column({ type: 'int' })
-  downvotes: number = 0;
-
-  @Column({ type: 'int' })
-  flagged: number = 0;
-
-  @Column('simple-array')
-  tags: string[] = [];
+  @Column('jsonb', { nullable: true })
+  tags!: string[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt!: Date;
+  created_at!: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-  updatedAt!: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  deleted_at!: Date;
 }

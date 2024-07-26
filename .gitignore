@@ -46,6 +46,9 @@ Thumbs.db
 out
 
 data-persistence
+helm/charts
+.nx/cache
+
 
 .env
 .env.local

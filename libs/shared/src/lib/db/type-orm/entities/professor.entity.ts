@@ -1,30 +1,37 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Institute } from './institute.entity';
-import { Course } from './cources.entity';
+import { ProfessorCourses } from './professor-courses.entity';
+import { Rating } from './rating.entity';
 
 @Entity()
 export class Professor {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ length: 255 })
-  firstName!: string;
+  @Column()
+  first_name!: string;
 
-  @Column({ length: 255 })
-  lastName!: string;
+  @Column()
+  last_name!: string;
 
-  @Column({ length: 512 })
+  @Column({ nullable: true })
   image_url!: string;
 
-  @Column({ length: 255 })
+  @Column({ nullable: true })
   department_name!: string;
 
-  @ManyToOne(() => Institute, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Institute, (institute) => institute.professors)
   institute!: Institute;
 
+  @OneToMany(() => ProfessorCourses, (professorCourses) => professorCourses.professor)
+  professorCourses!: ProfessorCourses[];
+
+  @OneToMany(() => Rating, (rating) => rating.professor)
+  ratings!: Rating[];
+
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt!: Date;
+  created_at!: Date;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-  updatedAt!: Date;
+  updated_at!: Date;
 }
