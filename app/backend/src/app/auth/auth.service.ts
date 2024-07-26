@@ -125,31 +125,32 @@ export class AuthService {
 
   async signInWithGoogle(signInDto: SignInDto): Promise<{ student: Partial<Student>; token: string }> {
     const { googleId } = signInDto;
-    const student = await this.studentRepository.findOne({ where: { external_auth: true } });
 
-    if (!student) {
-      throw new UnauthorizedException('Invalid Google ID');
+    // Find all students with external_auth true
+    const students = await this.studentRepository.find({ where: { external_auth: true } });
+
+    // Check if any student's auth_pass matches the hashed Google ID
+    for (const student of students) {
+      const isPasswordValid = await bcrypt.compare(googleId, student.auth_pass);
+
+      if (isPasswordValid) {
+        const token = jwt.sign({ id: student.id, email: student.email }, this.jwtSecret, { expiresIn: '1h' });
+
+        return {
+          student: {
+            id: student.id,
+            first_name: student.first_name,
+            last_name: student.last_name,
+            email: student.email,
+            image_url: student.image_url,
+            isActive: student.isActive,
+          },
+          token
+        };
+      }
     }
 
-    // Compare the hashed Google ID with the stored hash
-    const isPasswordValid = await bcrypt.compare(googleId, student.auth_pass);
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid Google ID');
-    }
-    const token = jwt.sign({ id: student.id, email: student.email }, this.jwtSecret, { expiresIn: '1h' });
-
-    return {
-      student: {
-        id: student.id,
-        first_name: student.first_name,
-        last_name: student.last_name,
-        email: student.email,
-        image_url: student.image_url,
-        isActive: student.isActive,
-      },
-      token
-    };
+    throw new UnauthorizedException('Invalid Google ID');
   }
 }
 
