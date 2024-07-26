@@ -4,10 +4,12 @@ import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Student } from '@kyp/db';
 import { Institute } from '@kyp/db';
+import { UtilsModule } from '../utils/utils.modules';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Student, Institute]),
+    UtilsModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],
