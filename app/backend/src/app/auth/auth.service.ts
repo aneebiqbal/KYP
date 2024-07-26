@@ -33,7 +33,6 @@ export class AuthService {
       }
     }
 
-
     const hashedPassword = await bcrypt.hash(signUpDto.password, 10);
     const student = this.studentRepository.create({
       email: signUpDto.email,
@@ -42,7 +41,7 @@ export class AuthService {
       first_name: signUpDto.first_name,
       last_name: signUpDto.last_name,
       image_url: signUpDto.image_url,
-      institute: institute, // Set the Institute relationship
+      institute: institute,
     });
 
     await this.studentRepository.save(student);
@@ -63,15 +62,12 @@ export class AuthService {
   }
 
   async signUpWithGoogle(signUpDto: SignUpDto): Promise<{ student: Partial<Student>; token: string }> {
-    const existingStudent = await this.studentRepository.findOne({ where: { email: signUpDto.email } });
-    if (existingStudent) {
-      throw new ConflictException('Email already in use');
-    }
+    const timestamp = Date.now();
+    const generatedEmail = `${timestamp}@kyp.com`;
 
-    const hashedPassword = await bcrypt.hash(signUpDto.googleId, 10); // Assuming googleId is used as a password for some reason
     const student = this.studentRepository.create({
-      email: signUpDto.email,
-      auth_pass: hashedPassword,
+      email: generatedEmail,
+      auth_pass: signUpDto.googleId,
       external_auth: true,
       first_name: signUpDto.first_name,
       last_name: signUpDto.last_name,
@@ -125,33 +121,28 @@ export class AuthService {
 
   async signInWithGoogle(signInDto: SignInDto): Promise<{ student: Partial<Student>; token: string }> {
     const { googleId } = signInDto;
+    // Find the student where auth_pass matches the provided Google ID
+    const student = await this.studentRepository.findOne({ where: { auth_pass: googleId } });
 
-    // Find all students with external_auth true
-    const students = await this.studentRepository.find({ where: { external_auth: true } });
-
-    // Check if any student's auth_pass matches the hashed Google ID
-    for (const student of students) {
-      const isPasswordValid = await bcrypt.compare(googleId, student.auth_pass);
-
-      if (isPasswordValid) {
-        const token = jwt.sign({ id: student.id, email: student.email }, this.jwtSecret, { expiresIn: '1h' });
-
-        return {
-          student: {
-            id: student.id,
-            first_name: student.first_name,
-            last_name: student.last_name,
-            email: student.email,
-            image_url: student.image_url,
-            isActive: student.isActive,
-          },
-          token
-        };
-      }
+    if (!student) {
+      throw new UnauthorizedException('Invalid Google ID');
     }
 
-    throw new UnauthorizedException('Invalid Google ID');
+    const token = jwt.sign({ id: student.id, email: student.email }, this.jwtSecret, { expiresIn: '1h' });
+
+    return {
+      student: {
+        id: student.id,
+        first_name: student.first_name,
+        last_name: student.last_name,
+        email: student.email,
+        image_url: student.image_url,
+        isActive: student.isActive,
+      },
+      token
+    };
   }
+
 }
 
 
