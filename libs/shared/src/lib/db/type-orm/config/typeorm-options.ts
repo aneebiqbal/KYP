@@ -6,7 +6,7 @@ export const typeormOptions: TypeOrmModuleOptions = {
   username: process.env['DATABASE_USERNAME'],
   password: process.env['DATABASE_PASSWORD'],
   database: process.env['DATABASE_NAME'],
-  host: process.env['DATABASE_PORT'],
+  host: process.env['DATABASE_HOST'],
   synchronize: true,
   entities: [__dirname + '/../**/*.entity.{js,ts}'],
   ssl: false,
