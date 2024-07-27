@@ -9,12 +9,12 @@ import {
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signin.dto';
-import { ForgetPasswordDto } from './dto/forget-password.dto';
+import { ForgetPasswordDto, ResetPasswordDto } from './dto/forget-password.dto';
 
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('Signup')
   @HttpCode(HttpStatus.CREATED)
@@ -69,6 +69,16 @@ export class AuthController {
       throw new BadRequestException('Email is required');
     }
     const response = await this.authService.forgetPassword(forgetPasswordDto);
+    return response;
+  }
+
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    if (!resetPasswordDto.newPassword) {
+      throw new BadRequestException('Password is required');
+    }
+    const response = await this.authService.resetPassword(resetPasswordDto);
     return response;
   }
 
