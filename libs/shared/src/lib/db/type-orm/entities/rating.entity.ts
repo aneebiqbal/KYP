@@ -13,6 +13,7 @@ import { Course } from './cources.entity';
 @Check(`"textbook_use" BETWEEN 1 AND 5`)
 @Check(`"exam_difficulty" BETWEEN 1 AND 5`)
 @Check(`"love_teaching_style" BETWEEN 1 AND 5`)
+
 export class Rating {
   @PrimaryGeneratedColumn()
   id!: number;
