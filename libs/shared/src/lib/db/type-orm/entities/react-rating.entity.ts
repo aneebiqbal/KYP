@@ -1,5 +1,5 @@
 // src/entities/react-rating.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Student } from './student.entity';
 import { Rating } from './rating.entity';
 
@@ -9,9 +9,11 @@ export class ReactRating {
   id!: number;
 
   @ManyToOne(() => Student, (student) => student.reactRatings)
+  @JoinColumn({ name: 'student_id' })
   student!: Student;
 
   @ManyToOne(() => Rating, (rating) => rating.reactRatings)
+  @JoinColumn({ name: 'rating_id' })
   rating!: Rating;
 
   @Column({ default: false })

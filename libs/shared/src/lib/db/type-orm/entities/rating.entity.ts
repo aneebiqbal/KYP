@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, Check } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, Check, JoinColumn } from 'typeorm';
 import { Student } from './student.entity';
 import { Professor } from './professor.entity';
 import { ReactRating } from './react-rating.entity';
@@ -18,12 +18,15 @@ export class Rating {
   id!: number;
 
   @ManyToOne(() => Student, (student) => student.ratings)
+  @JoinColumn({ name: 'student_id' })
   student!: Student;
 
   @ManyToOne(() => Professor, (professor) => professor.ratings)
+  @JoinColumn({ name: 'professor_id' })
   professor!: Professor;
 
   @ManyToOne(() => Course, (course) => course.ratings)
+  @JoinColumn({ name: 'course_id' })
   course!: Course;
 
   @OneToMany(() => ReactRating, (reactRating) => reactRating.rating)
@@ -76,4 +79,7 @@ export class Rating {
 
   @Column({ type: 'timestamp', nullable: true })
   deleted_at!: Date;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  updated_at!: Date;
 }
