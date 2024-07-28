@@ -10,8 +10,12 @@ export class SearchProfessorDto {
   instituteId?: number;
 
   @IsOptional()
-  @IsString()
-  sortField?: string = 'first_name';
+  @IsNumber()
+  studentId?: number;
+
+  @IsOptional()
+  @IsIn(['first_name', 'overall_rating'])
+  sortField?: 'first_name' | 'overall_rating' = 'first_name';
 
   @IsOptional()
   @IsIn(['ASC', 'DESC'])
