@@ -16,6 +16,7 @@
     "@nx/nest": "^19.5.3",
     "axios": "^1.6.0",
     "bootstrap": "^5.3.3",
+    "formik": "^2.4.6",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
@@ -31,7 +32,8 @@
     "rxjs": "^7.8.0",
     "select2": "^4.1.0-rc.0",
     "tslib": "^2.3.0",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@nestjs/schematics": "^10.0.1",

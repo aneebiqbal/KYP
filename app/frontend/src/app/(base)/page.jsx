@@ -1,9 +1,8 @@
 'use client';
-import styles from './page.module.css';
+import styles from '../page.module.css';
 import Image from 'next/image';
 import { useState } from 'react';
-
-export default function Index() {
+export default function Page() {
 const [type, setType] = useState('name');
   return (<>
       <main className={styles.page}>
@@ -11,7 +10,7 @@ const [type, setType] = useState('name');
           <div className="px-120 py-200 bg-5F32CA">
             <div className="row">
               <div className="col-6">
-                <h1 className="text-70 text-ffffff text-weight-600 mb-32">Find Professors by <br/> Name and Institution</h1>
+                <h1 className="text-70 text-ffffff text-weight-600 mb-32 ">Find Professors by <br/> Name and Institution</h1>
                 <p className="text-24 text-F1ECFE text-weight-400 mb-40">Evaluate Your Professors and Enhance the Academic Experience</p>
                 <div className="flex items-center">
                   <select onChange={(event)=>{setType(event.target.value)}} style={{height:'72px',borderTopLeftRadius:'12px',borderBottomLeftRadius:'12px'}} className="px-20" name="state" value={type}>
@@ -69,3 +68,4 @@ const [type, setType] = useState('name');
 
   );
 }
+
