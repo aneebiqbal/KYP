@@ -10,6 +10,7 @@ interface CustomProfessorResponse {
   department_name: string;
   institute_name: string;
   overall_rating: number;
+  total_ratings: number,
   ratings: {
     student_name: string;
     take_again: boolean;
@@ -38,7 +39,8 @@ export class ProfessorService {
       .createQueryBuilder('professor')
       .leftJoinAndSelect('professor.institute', 'institute')
       .leftJoinAndSelect('professor.ratings', 'ratings')
-      .leftJoinAndSelect('ratings.student', 'student');
+      .leftJoinAndSelect('ratings.student', 'student')
+      .where('ratings.deleted_at IS NULL');
 
     if (name) {
       query.andWhere(
@@ -88,6 +90,7 @@ export class ProfessorService {
       return {
         ...professor,
         overallRating: parseFloat(overallRating.toFixed(2)),
+        totalRatings,
         isFavorite,
       };
     });
@@ -107,6 +110,7 @@ export class ProfessorService {
       department_name: professor.department_name,
       institute_name: professor.institute.name,
       overall_rating: professor.overallRating,
+      total_ratings: professor.totalRatings,
       ratings: professor.ratings.map((rating) => ({
         student_name: `${rating.student.first_name} ${rating.student.last_name}`,
         take_again: rating.take_again,
