@@ -3,15 +3,9 @@ import Image from 'next/image';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useRef, useState } from 'react';
-import {BaseApi} from '../../app/(base)/BaseApi';
-import PopUp from '../PopUp';
 export default function Profile({userInfo}) {
-
-  const [popup, setPopup] = useState({show:false,type:'',message:'',timeout:0});
   const validationUserInfo = Yup.object({
-    firstName: Yup.string()
-      .required('Required'),
-    lastName: Yup.string()
+    name: Yup.string()
       .required('Required'),
     email: Yup.string()
       .email('Invalid email')
@@ -27,44 +21,34 @@ export default function Profile({userInfo}) {
     confirmPassword: Yup.string()
       .required('Required'),
   });
-  const [preview, setPreview] = useState(userInfo?.image);
-  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(userInfo.image);
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
   const handleSubmit = async (values) => {
-    try{
-      const formData = new FormData();
-      formData.append('image', image);
-      formData.append('firstName', values.firstName);
-      formData.append('lastName', values.lastName);
-      formData.append('email', values.email);
-      formData.append('institute', values.university);
-      formData.append('id', userInfo.id);
-      await BaseApi.updateProfile(formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }).then(() => {
-        setPopup({ show: true, type: 'success', message: 'Profile Updated Successfully', timeout: 3000 });
-      });
-    }catch (e){
-      setPopup({show:true,type:'error',message:error.message,timeout:3000});
+    try {
+      const data = {
+        name: values.name,
+        email: values.email,
+        university: values.university,
+      };
+
+      console.log('data---',data)
+    } catch (error) {
+      alert('Something went wrong. Please try again later.');
     }
   };
   const handleChangePassword = async (values) => {
-    if(values.newPassword !== values.confirmPassword){
-      setPopup({show:true,type:'warning',message:'New Password and Confirm Password must be same',timeout:3000});
-    }else{
-      try{
-        await BaseApi.updatePassword({newPassword:values.newPassword, id:userInfo.id})
-          .then(()=>{
-            setPopup({show:true,type:'success',message:'Password Updated Successfully',timeout:3000});
-          })
-      }catch (e){
-        setPopup({show:true,type:'error',message:error.message,timeout:3000});
-      }
-    }
+    try {
+      const data = {
+        currentPassword: values.currentPassword,
+        newPassword: values.newPassword,
+        confirmPassword: values.confirmPassword,
+      };
 
+      console.log('data---',data)
+    } catch (error) {
+      alert('Something went wrong. Please try again later.');
+    }
   };
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
@@ -74,7 +58,6 @@ export default function Profile({userInfo}) {
         setPreview(null);
         return;
       }
-      setImage(file)
       setError('');
       setPreview(URL.createObjectURL(file));
     }
@@ -98,36 +81,23 @@ export default function Profile({userInfo}) {
         </div>
         <div className="flex-1">
           <Formik
-            initialValues={{ firstName:userInfo.first_name, lastName: userInfo.last_name, email: userInfo.email,university:userInfo?.institute }}
+            initialValues={{ name: '', email: '',university:'' }}
             validationSchema={validationUserInfo}
             onSubmit={handleSubmit}
           >
             {({ errors, touched }) => (
               <Form className="flex column justify-between full-height">
-                <div  className="row full-width">
-                  <div className=" mb-20 col-12">
+                <div>
+                  <div className="full-width mb-20">
                     <label className="text-141414 text-weight-400 text-14 mb-2">Full Name</label>
-                    <div className="row">
-                      <div className="col-6">
-                        <Field type="text" name="firstName"
-                               style={{ height: '46px' }}
-                               className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
-                               placeholder="Enter First Name"
-                        />
-                        <ErrorMessage name="firstName" component="div" />
-                      </div>
-                      <div className="col-6">
-                        <Field type="text" name="lastName"
-                               style={{ height: '46px' }}
-                               className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
-                               placeholder="Enter Last Name"
-                        />
-                        <ErrorMessage name="lastName" component="div" />
-                      </div>
-                    </div>
-
+                    <Field type="text" name="name"
+                           style={{ height: '46px' }}
+                           className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
+                           placeholder="Enter Full Name"
+                    />
+                    <ErrorMessage name="name" component="div" />
                   </div>
-                  <div className="col-12 mb-20">
+                  <div className="full-width mb-20">
                     <label className="text-141414 text-weight-400 text-14 mb-2">Email</label>
                     <Field style={{ height: '46px' }} type="text" name="email"
                            className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
@@ -136,7 +106,7 @@ export default function Profile({userInfo}) {
                     </Field>
                     <ErrorMessage name="email" component="div" />
                   </div>
-                  <div className="col-12 mb-20">
+                  <div className="full-width mb-20">
                     <label className="text-141414 text-weight-400 text-14 mb-2">University</label>
                     <Field style={{ height: '46px' }} type="text" name="university"
                            className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
@@ -204,6 +174,5 @@ export default function Profile({userInfo}) {
         )}
       </Formik>
     </div>
-    <PopUp props={popup}/>
   </>
 }

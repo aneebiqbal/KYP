@@ -11,6 +11,23 @@ p{
 .pa-40{
   padding: 40px;
 }
+.pa-20{
+  padding: 20px;
+}
+.pa-16{
+  padding: 16px;
+}
+.pa-10{
+  padding: 10px;
+}
+.px-40{
+  padding-left: 40px;
+  padding-right: 40px;
+}
+.px-16{
+  padding-left: 16px;
+  padding-right: 16px;
+}
 .px-160{
   padding-left: 160px;
   padding-right: 160px;
@@ -23,9 +40,21 @@ p{
   padding-left: 80px;
   padding-right: 80px;
 }
+.px-28{
+  padding-left: 28px;
+  padding-right: 28px;
+}
 .px-20{
   padding-left: 20px;
   padding-right: 20px;
+}
+.px-10{
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.px-12{
+  padding-left: 12px;
+  padding-right: 12px;
 }
 .py-200{
   padding-top: 200px;
@@ -35,13 +64,39 @@ p{
   padding-top: 150px;
   padding-bottom: 150px;
 }
+.py-80{
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+.py-60{
+  padding-top: 60px;
+  padding-bottom: 60px;
+}
 .py-40{
   padding-top: 40px;
   padding-bottom: 40px;
 }
+.py-30{
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+.py-20{
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
 .py-12{
   padding-top: 12px;
   padding-bottom: 12px;
+}
+.py-8{
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.pt-16{
+  padding-top: 16px;
+}
+.pl-72{
+  padding-left: 72px;
 }
 .ml-12{
   margin-left: 12px;
@@ -55,14 +110,63 @@ p{
 .mb-40{
   margin-bottom: 40px;
 }
+.mb-60{
+  margin-bottom: 60px;
+}
 .mb-32{
   margin-bottom: 32px;
 }
 .mb-80{
   margin-bottom: 80px;
 }
-
-
+.mb-36{
+  margin-bottom: 36px;
+}
+.mb-24{
+  margin-bottom: 24px;
+}
+.mb-20{
+  margin-bottom: 20px;
+}
+.mb-16{
+  margin-bottom: 16px;
+}
+.mb-18{
+  margin-bottom: 18px;
+}
+.mb-10{
+  margin-bottom: 10px;
+}
+.mb-6{
+  margin-bottom: 6px;
+}
+.ml-30{
+  margin-left: 30px;
+}
+.ml-8{
+  margin-left: 8px;
+}
+.mr-16{
+  margin-right: 16px;
+}
+.mr-80{
+  margin-right: 80px;
+}
+.mr-100{
+  margin-right: 100px;
+}
+.ml-18{
+  margin-left: 18px;
+}
+.ml-24{
+  margin-left: 24px;
+}
+.ml-60{
+  margin-left: 60px;
+}
+.mr-6{
+  margin-right: 6px;
+}
 
 
 
@@ -85,14 +189,51 @@ p{
 .text-763FF9{
   color: #763FF9;
 }
+.text-141414{
+  color: #141414;
+}
+.text-0378A6{
+  color: #0378A6;
+}
+.text-434343{
+  color: #434343;
+}
+.text-8C8C8C{
+  color: #8C8C8C;
+}
+.text-000000{
+  color: #000000;
+}
+.text-FE9900{
+  color: #FE9900;
+}
+.text-1D2026{
+  color: #1D2026;
+}
+.text-024864{
+  color: #024864;
+}
+
 
 
 /*font size*/
 .text-70{
   font-size: 70px;
 }
+.text-48{
+  font-size: 48px;
+}
+.text-40{
+  font-size: 40px;
+}
 .text-38{
   font-size: 38px;
+}
+.text-36{
+  font-size: 36px;
+}
+.text-26{
+  font-size: 26px;
 }
 .text-24{
   font-size: 24px;
@@ -106,7 +247,12 @@ p{
 .text-16{
   font-size: 16px;
 }
-
+.text-14{
+  font-size: 14px;
+}
+.text-12{
+  font-size: 12px;
+}
 
 
 /*background color*/
@@ -131,23 +277,80 @@ p{
 .bg-ffffff{
   background-color: #ffffff;
 }
+.bg-F1ECFE{
+  background-color: #F1ECFE;
+}
+.bg-E6F1F6{
+  background-color: #E6F1F6;
+}
+.bg-CDE4ED{
+  background-color: #CDE4ED;
+}
+.bg-FFEBCC{
+  background-color: #FFEBCC;
+}
+.bg-FE9900{
+  background-color: #FE9900;
+}
+.bg-D9D9D9{
+  background-color: #D9D9D9;
+}
+.bg-F0F0F0{
+  background-color: #F0F0F0;
+}
+.bg-E4D9FE{
+  background-color: #E4D9FE;
+}
+.bg-FEE9E8{
+  background-color: #FEE9E8;
+}
+.bg-E8F6F1{
+  background-color: #E8F6F0;
+}
+.bg-FFF5E5{
+  background-color: #FFF5E5;
+}
+
+
+
 
 
 /*borders */
 .border-color-763FF9{
   border: 1px solid #763FF9;
 }
-
-
+.border-color-D9D9D9{
+  border: 1px solid #D9D9D9;
+}
+.border-none{
+  border: none !important;
+}
 
 
 /*border radius*/
 .border-radius-4{
   border-radius: 4px;
 }
+.border-radius-6{
+  border-radius: 6px;
+}
+.border-radius-8{
+  border-radius: 8px;
+}
+.border-radius-10{
+  border-radius:10px;
+}
+.border-radius-12{
+  border-radius: 12px;
+}
 .border-radius-20{
   border-radius: 20px;
 }
+.border-radius-100{
+  border-radius: 100px;
+}
+
+
 
 /*font weight*/
 .text-weight-400{
@@ -162,12 +365,18 @@ p{
 .text-weight-700{
   font-weight: 700;
 }
+.text-weight-800{
+  font-weight: 800;
+}
 
 
 
 /*flex box*/
 .flex {
   display: flex;
+}
+.flex-wrap{
+  flex-wrap: wrap;
 }
 .column {
   flex-direction: column;
@@ -222,4 +431,117 @@ p{
   background: #D9D9D9;
   height: 1px;
   width: 100%;
+}
+
+.auth-background-image{
+  background-image: url("/authBackgroundImg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.flex-1{
+  flex: 1;
+}
+.text-right{
+  text-align: right;
+}
+
+
+
+
+
+.star-rating {
+  display: block;
+  font-size: 20px;
+  position: relative;
+}
+
+.stars {
+  display: flex;
+}
+
+.star {
+  color: transparent;
+  position: relative;
+  border-radius: 3px; /* Optional: add some border-radius to make the corners rounded */
+  margin: 0 2px; /* Optional: add some spacing between stars */
+  padding: 2px; /* Optional: add some padding for better appearance */
+}
+
+.star::before {
+  content: "\2605";
+  color: #FE9900;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+.star.filled::before {
+  width: 100%;
+}
+
+.star.half::before {
+  width: var(--half-width);
+}
+.start-content::before{
+  content: "\2606" !important;
+  overflow: visible;
+
+}
+
+
+.active-user-tab{
+  border-bottom: 4px solid #763FF9;
+}
+
+
+.rating-is-online-checkbox {
+  position: relative;
+}
+
+.rating-is-online-checkbox input[type="checkbox"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #D9D9D9;
+  border-radius: 3px;
+  position: relative;
+  cursor: pointer;
+}
+
+.rating-is-online-checkbox input[type="checkbox"]:checked {
+  background-color: #763FF9;
+  border-color: #763FF9;
+}
+.rating-is-online-checkbox input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 2px;
+  width: 5px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+
+.ratings-questions-checkbox{
+  position: relative;
+}
+
+.ratings-questions-checkbox input[type="checkbox"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #D9D9D9;
+  border-radius: 30px;
+  position: relative;
+  cursor: pointer;
+}
+
+.ratings-questions-checkbox input[type="checkbox"]:checked {
+  background-color: #763FF9;
+  border-color: #763FF9;
 }
