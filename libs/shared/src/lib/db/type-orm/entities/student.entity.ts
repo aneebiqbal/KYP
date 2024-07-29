@@ -20,7 +20,7 @@ export class Student {
   @Column({ length: 512, nullable: true })
   image_url!: string;
 
-  @Column('jsonb', { nullable: true })
+  @Column('jsonb', { nullable: true, default: []  })
   saved_professors!: number[];
 
   @Column({ length: 255, nullable: true })

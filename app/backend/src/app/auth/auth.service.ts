@@ -164,7 +164,7 @@ export class AuthService {
     };
   }
 
-  async forgetPassword(forgetPasswordDto: ForgetPasswordDto): Promise<{ message: string; student: Partial<Student>; token: string }> {
+  async forgetPassword(forgetPasswordDto: ForgetPasswordDto): Promise<boolean> {
     const student = await this.studentRepository.findOne({ where: { email: forgetPasswordDto.email } });
 
     if (!student) {
@@ -175,18 +175,19 @@ export class AuthService {
 
     await this.mailService.sendPasswordResetEmail(forgetPasswordDto.email, token);
 
-    return {
-      message: 'Password reset email sent',
-      student: {
-        id: student.id,
-        first_name: student.first_name,
-        last_name: student.last_name,
-        email: student.email,
-        image_url: student.image_url,
-        isActive: student.isActive,
-      },
-      token,
-    };
+    return true;
+    // {
+    //   message: 'Password reset email sent',
+    //   student: {
+    //     id: student.id,
+    //     first_name: student.first_name,
+    //     last_name: student.last_name,
+    //     email: student.email,
+    //     image_url: student.image_url,
+    //     isActive: student.isActive,
+    //   },
+    //   token,
+    // };
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<{ message: string }> {
@@ -194,7 +195,7 @@ export class AuthService {
 
     try {
       const decoded = jwt.verify(token, this.jwtSecret) as { id: number; email: string };
-      const email = decoded.email; // Extract email from decoded token
+      const email = decoded.email;
 
       const student = await this.studentRepository.findOne({ where: { email } });
       if (!student) {

@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsNumber, IsIn } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsIn, isString } from 'class-validator';
 
 export class SearchProfessorDto {
   @IsOptional()
@@ -6,8 +6,8 @@ export class SearchProfessorDto {
   name?: string;
 
   @IsOptional()
-  @IsNumber()
-  instituteId?: number;
+  @IsString()
+  institute_name?: string;
 
   @IsOptional()
   @IsNumber()

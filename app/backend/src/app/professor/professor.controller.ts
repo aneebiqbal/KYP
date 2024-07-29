@@ -1,22 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Query, HttpCode, HttpStatus, UseGuards, Request } from '@nestjs/common';
 import { ProfessorService } from './professor.service';
 import { SearchProfessorDto } from './dto/search-professor.dto';
 import { SaveProfessorDto } from './dto/saved-professor.dto';
+import { JwtAuthGuard } from '../utils/auth.guard';
+import { OptionalJwtAuthGuard } from '../utils/OptionalJwtAuth.guard';
 
 @Controller('professors')
 export class ProfessorController {
   constructor(private readonly professorService: ProfessorService) { }
 
+  @UseGuards(OptionalJwtAuthGuard)
   @Get('search')
-  async searchProfessor(@Query() query: SearchProfessorDto) {
-    const { name, instituteId, studentId, sortField, sortOrder } = query;
-    return this.professorService.searchProfessors(name, instituteId, studentId, sortField, sortOrder);
+  @HttpCode(HttpStatus.OK)
+  async searchProfessor(@Query() query: SearchProfessorDto, @Request() req) {
+    const { name, institute_name, sortField, sortOrder } = query;
+    const studentId = req.user?.id; 
+    return this.professorService.searchProfessors(name, institute_name, studentId, sortField, sortOrder);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('saved')
   @HttpCode(HttpStatus.OK)
-  async saveProfessor(@Query() query: SaveProfessorDto) {
-    const { studentId, professorId, flag } = query;
+  async saveProfessor(@Query() query: SaveProfessorDto, @Request() req) {
+    const { professorId, flag } = query;
+    const studentId = req.user.id;
+    console.log(studentId, 'studentId')
     const studentIdNumber = Number(studentId);
     const professorIdNumber = Number(professorId);
     const flagNumber = Number(flag);

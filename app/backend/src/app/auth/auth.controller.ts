@@ -68,8 +68,7 @@ export class AuthController {
     if (!forgetPasswordDto.email) {
       throw new BadRequestException('Email is required');
     }
-    const response = await this.authService.forgetPassword(forgetPasswordDto);
-    return response;
+    return await this.authService.forgetPassword(forgetPasswordDto);
   }
 
   @Post('reset-password')
@@ -78,8 +77,7 @@ export class AuthController {
     if (!resetPasswordDto.newPassword) {
       throw new BadRequestException('Password is required');
     }
-    const response = await this.authService.resetPassword(resetPasswordDto);
-    return response;
+    return await this.authService.resetPassword(resetPasswordDto);
   }
 
 }
