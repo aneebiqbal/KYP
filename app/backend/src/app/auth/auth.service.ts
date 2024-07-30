@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  ConflictException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
@@ -13,7 +8,7 @@ import { Institute } from '@kyp/db';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signin.dto';
 import { MailService } from '../utils/mail-service';
-import { ForgetPasswordDto } from './dto/forget-password.dto';
+import { ForgetPasswordDto, ResetPasswordDto } from './dto/forget-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +19,7 @@ export class AuthService {
     @InjectRepository(Institute)
     private readonly instituteRepository: Repository<Institute>,
     private readonly mailService: MailService,
-  ) {}
+  ) { }
 
   async signUpWithEmail(
     signUpDto: SignUpDto
@@ -109,7 +104,7 @@ export class AuthService {
     };
   }
 
-  
+
   async signInWithEmail(
     signInDto: SignInDto
   ): Promise<{ student: Partial<Student>; token: string }> {
@@ -169,7 +164,7 @@ export class AuthService {
     };
   }
 
-  async forgetPassword(forgetPasswordDto: ForgetPasswordDto): Promise<{ message: string; student: Partial<Student>; token: string }> {
+  async forgetPassword(forgetPasswordDto: ForgetPasswordDto): Promise<boolean> {
     const student = await this.studentRepository.findOne({ where: { email: forgetPasswordDto.email } });
 
     if (!student) {
@@ -180,18 +175,42 @@ export class AuthService {
 
     await this.mailService.sendPasswordResetEmail(forgetPasswordDto.email, token);
 
-    return {
-      message: 'Password reset email sent',
-      student: {
-        id: student.id,
-        first_name: student.first_name,
-        last_name: student.last_name,
-        email: student.email,
-        image_url: student.image_url,
-        isActive: student.isActive,
-      },
-      token,
-    };
+    return true;
+    // {
+    //   message: 'Password reset email sent',
+    //   student: {
+    //     id: student.id,
+    //     first_name: student.first_name,
+    //     last_name: student.last_name,
+    //     email: student.email,
+    //     image_url: student.image_url,
+    //     isActive: student.isActive,
+    //   },
+    //   token,
+    // };
   }
 
+  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<{ message: string }> {
+    const { token, newPassword } = resetPasswordDto;
+
+    try {
+      const decoded = jwt.verify(token, this.jwtSecret) as { id: number; email: string };
+      const email = decoded.email;
+
+      const student = await this.studentRepository.findOne({ where: { email } });
+      if (!student) {
+        throw new UnauthorizedException('Invalid token');
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      student.password = hashedPassword;
+
+      await this.studentRepository.save(student);
+      return { message: "Password Reset Successfully" }
+
+    } catch (error) {
+      throw new BadRequestException('Invalid or expired token');
+    }
+
+  }
 }

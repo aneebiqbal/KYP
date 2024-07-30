@@ -5,13 +5,29 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Student } from '@kyp/db';
 import { Institute } from '@kyp/db';
 import { UtilsModule } from '../utils/utils.modules';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtStrategy } from '../utils/jwt.strategy';
 
 @Module({
   imports: [
+    PassportModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '60m' },
+      }),
+      inject: [ConfigService],
+    }),
+    ConfigModule,
     TypeOrmModule.forFeature([Student, Institute]),
     UtilsModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
+  exports: [JwtModule],
+
 })
 export class AuthModule { }

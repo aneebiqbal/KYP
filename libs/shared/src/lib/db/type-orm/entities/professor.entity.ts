@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Institute } from './institute.entity';
 import { ProfessorCourses } from './professor-courses.entity';
 import { Rating } from './rating.entity';
@@ -21,6 +21,7 @@ export class Professor {
   department_name!: string;
 
   @ManyToOne(() => Institute, (institute) => institute.professors)
+  @JoinColumn({ name: 'institute_id' })
   institute!: Institute;
 
   @OneToMany(() => ProfessorCourses, (professorCourses) => professorCourses.professor)
