@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 interface CustomProfessorResponse {
-  username: string;
+  name: string;
   image_url: string;
   department_name: string;
   institute_name: string;
@@ -116,7 +116,7 @@ export class ProfessorService {
     
     return sortedProfessors.map((professor) => {
       const response: CustomProfessorResponse= {
-        username: `${professor.first_name} ${professor.last_name}`,
+        name: `${professor.first_name} ${professor.last_name}`,
         image_url: professor.image_url,
         department_name: professor.department_name,
         institute_name: professor.institute.name,
