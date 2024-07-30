@@ -1,11 +1,15 @@
 'use client';
 import Image from 'next/image';
-import { useState } from 'react';
 import SavedProfessor from '../../../../components/user/SavedProfessor';
 import UserRatings from '../../../../components/user/UserRatings';
 import Profile from '../../../../components/user/Profile';
+import {useSearchParams} from "next/navigation";
+import { useState,useEffect } from 'react';
 export default function page(){
-  const [activeTab, setActiveTab] = useState(0);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const searchParams = useSearchParams();
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [activeTab, setActiveTab] = useState(Number(searchParams.get('active')) || 0);
   const professors = [
     {
       image: '/professor.png',
@@ -193,6 +197,11 @@ export default function page(){
     image:'/professor.png',
 
   }
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    setActiveTab(Number(searchParams.get('active'))|| 0)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ searchParams.get('active')]);
   return<>
     <main>
       <section>
