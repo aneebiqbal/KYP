@@ -8,5 +8,5 @@ export function middleware(req) {
   return NextResponse.next();
 }
 export const config = {
-  matcher: ['/professor/rate/:path*','/user/:path*'],
+  matcher: ['/professor/rate/:path*'],
 };

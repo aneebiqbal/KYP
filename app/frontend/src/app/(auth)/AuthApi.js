@@ -1,30 +1,25 @@
 import { AuthApiService } from './AuthApiService';
+import { NextResponse } from 'next/server';
 import {setToken, destroyToken, destroyUserInfo, setUserInfo} from '../../services/JwtService';
 
-
 export const AuthApi = {
-
   login:async (loginData) => {
-    try {
-      await AuthApiService.login(loginData)
+    try {await AuthApiService.login(loginData)
       .then((response)=>{
-        setUserInfo(JSON.stringify(response.data.student));
+        setUserInfo(response.data.userInfo);
         setToken(response.data.token);
+        NextResponse.redirect(new URL('/'));
       })
     } catch (e) {
-      console.log('error', e.response.data.message);
+      console.log('error', e);
       throw e.response.data;
     }
   },
   signup: async(signUpData) => {
     try {
-      return await AuthApiService.signup(signUpData)
-        .then((response)=>{
-          setUserInfo(JSON.stringify(response.data.student));
-          setToken(response.data.token);
-        })
+      return await AuthApiService.signup(signUpData);
     } catch (e) {
-      console.log('error', e.response.data);
+      console.log('error', e);
       throw e.response.data;
     }
   },
@@ -32,7 +27,7 @@ export const AuthApi = {
     try {
       return await AuthApiService.forgetPassword(forgetPasswordData);
     } catch (e) {
-      console.log('error', e.response.data);
+      console.log('error', e);
       throw e.response.data;
     }
   },
@@ -50,6 +45,7 @@ export const AuthApi = {
         .then(()=>{
           destroyToken();
           destroyUserInfo();
+          NextResponse.redirect(new URL('/login'));
         })
     } catch (e) {
       console.log('error', e);
