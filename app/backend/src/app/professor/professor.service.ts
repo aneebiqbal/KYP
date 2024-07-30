@@ -10,7 +10,7 @@ interface CustomProfessorResponse {
   department_name: string;
   institute_name: string;
   overall_rating: number;
-  // total_ratings: number,
+  total_ratings: number,
   is_saved?: boolean;
   ratings: {
     student_name: string;
@@ -100,7 +100,7 @@ export class ProfessorService {
       return {
         ...professor,
         overallRating: parseFloat(overallRating.toFixed(2)),
-        // totalRatings,
+        totalRatings,
         is_saved,
       };
     });
@@ -126,7 +126,7 @@ export class ProfessorService {
           take_again: rating.take_again,
           love_teaching_style: rating.love_teaching_style,
         })),
-        // total_ratings: professor.totalRatings
+        total_ratings: professor.totalRatings
       };
       if (studentId) {
         response.is_saved = professor.is_saved;
