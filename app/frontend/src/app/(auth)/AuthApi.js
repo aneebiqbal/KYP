@@ -11,16 +11,21 @@ export const AuthApi = {
         NextResponse.redirect(new URL('/'));
       })
     } catch (e) {
-      console.log('error', e);
-      throw e.response.data;
+      console.log('error', e.message);
+      throw e.message;
     }
   },
   signup: async(signUpData) => {
     try {
-      return await AuthApiService.signup(signUpData);
+      return await AuthApiService.signup(signUpData)
+        .then((response)=>{
+          setUserInfo(response.data.userInfo);
+          setToken(response.data.token);
+          NextResponse.redirect(new URL('/'));
+        })
     } catch (e) {
-      console.log('error', e);
-      throw e.response.data;
+      console.log('error', e.message);
+      throw e.message;
     }
   },
   forgetPassword: async(forgetPasswordData) => {
