@@ -3,12 +3,8 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Link from 'next/link';
 import {AuthApi} from '../../app/(auth)/AuthApi';
-import PopUp from '../PopUp';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+
 export default function LoginForm() {
-  const router = useRouter();
-  const [popup, setPopup] = useState({show:false,type:'',message:'',timeout:0});
   const validationSchema = Yup.object({
     email: Yup.string()
       .email('Invalid email')
@@ -19,13 +15,8 @@ export default function LoginForm() {
   const handleSubmit = async (values) => {
     try {
       await AuthApi.login({ email: values.email,password: values.password })
-        .then(()=>{
-          setPopup({show:true,type:'success',message:'Logged in Successfully',timeout:3000});
-          router.push('/');
-        })
     } catch (error) {
-      console.log(error);
-      setPopup({show:true,type:'error',message:error.message,timeout:3000});
+      alert('Something went wrong. Please try again later.'+error);
     }
   };
   return<>
@@ -81,7 +72,5 @@ export default function LoginForm() {
         </Link>
       </p>
     </div>
-    <PopUp props={popup}/>
-
   </>
 }

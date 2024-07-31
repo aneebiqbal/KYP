@@ -2,8 +2,20 @@
 import styles from '../page.module.css';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 export default function Page() {
-const [type, setType] = useState('name');
+  const router = useRouter();
+  const [type, setType] = useState('name');
+  const [search, setSearch] = useState('');
+  const [searchCheck, setSearchCheck] = useState('');
+  const searchProfessor= ()=>{
+    if(search === ''){
+      setSearchCheck('Search field can not be empty')
+    }else{
+      setSearchCheck('')
+      router.push('/professors-list?searchBy='+type+'&search='+search);
+    }
+  }
   return (<>
       <main className={styles.page}>
         <section>
@@ -14,14 +26,23 @@ const [type, setType] = useState('name');
                 <p className="text-24 text-F1ECFE text-weight-400 mb-40">Evaluate Your Professors and Enhance the Academic Experience</p>
                 <div className="flex items-center">
                   <select onChange={(event)=>{setType(event.target.value)}} style={{height:'72px',borderTopLeftRadius:'12px',borderBottomLeftRadius:'12px'}} className="px-20" name="state" value={type}>
-                    <option value="name">Name</option>
-                    <option value="university">University</option>
+                    <option value="0">Name</option>
+                    <option value="1">Institute</option>
                   </select>
-                  <input style={{height:'72px',width:'446px'}} className="px-20" placeholder={type === 'name'?'Search professor with name':'Search for professors by university.'}/>
-                  <div style={{height:'70px',width:'72px',borderTopRightRadius:'12px',borderBottomRightRadius:'12px'}} className="bg-FFA337 flex items-center justify-center">
-                    <Image height={24} width={24} src="/searchIcon.svg" alt="searchIcon"/>
-                  </div>
+                  <input value={search} onChange={(event)=>{setSearch(event.target.value);if(searchCheck !== ''){setSearchCheck('')}}} style={{height:'72px',width:'446px'}} className="px-20" placeholder={type === 'name'?'Search professor with name':'Search for professors by university.'}/>
+                    <div
+                      onClick={searchProfessor}
+                      style={{
+                      height: '70px',
+                      width: '72px',
+                      borderTopRightRadius: '12px',
+                      borderBottomRightRadius: '12px'
+                    }} className="bg-FFA337 flex items-center justify-center cursor-pointer">
+                      <Image height={24} width={24} src="/searchIcon.svg" alt="searchIcon" />
+                    </div>
                 </div>
+                {searchCheck !== '' &&(<span className="text-12 text-ffffff">{searchCheck}</span>)}
+
               </div>
               <div className="col-6">
                 <Image height={540} width={738} src="/index/indexSectionOneImage.png" alt="" />
