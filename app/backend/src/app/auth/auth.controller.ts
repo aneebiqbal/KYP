@@ -4,6 +4,7 @@ import {
   Body,
   HttpCode,
   HttpStatus,
+  Query,
   BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -73,11 +74,14 @@ export class AuthController {
 
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
-  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+  async resetPassword(@Query('token') token: string, @Body() resetPasswordDto: ResetPasswordDto) {
     if (!resetPasswordDto.newPassword) {
       throw new BadRequestException('Password is required');
     }
-    return await this.authService.resetPassword(resetPasswordDto);
+    if (!token) {
+      throw new BadRequestException('Token is required');
+    }
+    return await this.authService.resetPassword(token, resetPasswordDto);
   }
 
 }

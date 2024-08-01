@@ -1,34 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Request, Get, Query } from '@nestjs/common';
+import { JwtAuthGuard } from '../utils/auth.guard';
+import { UpdateStudentProfileDto, UpdatePasswordDto } from './dto/update-profile.dto';
 import { StudentService } from './student.service';
-import { CreateStudentDto } from './dto/create-student.dto';
-import { UpdateStudentDto } from './dto/update-student.dto';
+import { SavedProfessorsQueryDto } from './dto/seach-saved-professor.dto';
 
 @Controller('student')
 export class StudentController {
-  constructor(private readonly studentService: StudentService) {}
-  
-  @Post()
-  create(@Body() createStudentDto: CreateStudentDto) {
-    return this.studentService.create(createStudentDto);
+  constructor(private readonly studentService: StudentService) { }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('update-profile')
+  async updateProfile(@Body() updateProfileDto: UpdateStudentProfileDto, @Request() req) {
+    const studentId = req.user?.id;
+    return this.studentService.updateProfile(studentId, updateProfileDto);
   }
 
-  @Get()
-  findAll() {
-    return this.studentService.findAll();
+  @UseGuards(JwtAuthGuard)
+  @Post('update-password')
+  async updatePassword(@Body() updatePasswordDto: UpdatePasswordDto, @Request() req) {
+    const studentId = req.user?.id;
+    return this.studentService.updatePassword(studentId, updatePasswordDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.studentService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
-    return this.studentService.update(+id, updateStudentDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.studentService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  @Get('saved-professors')
+  async getSavedProfessors(@Query() query: SavedProfessorsQueryDto, @Request() req) {
+    const studentId = req.user?.id; // Get student ID from the request
+    return this.studentService.getSavedProfessors(studentId, query.name, query.institute_name);
   }
 }
