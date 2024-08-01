@@ -1,34 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, UseGuards, HttpCode, HttpStatus, Query, Request } from '@nestjs/common';
 import { StudentService } from './student.service';
-import { CreateStudentDto } from './dto/create-student.dto';
-import { UpdateStudentDto } from './dto/update-student.dto';
+import { JwtAuthGuard } from '../utils/auth.guard';
+import { myRatingDto } from './dto/my-rating.dto';
 
 @Controller('student')
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
   
-  @Post()
-  create(@Body() createStudentDto: CreateStudentDto) {
-    return this.studentService.create(createStudentDto);
+  @UseGuards(JwtAuthGuard)
+  @Get('my-ratings')
+  @HttpCode(HttpStatus.OK)
+  async myRatings (@Query() query: myRatingDto, @Request() req) {
+    const {text, searchBy } = query;
+    const studentId = req.user.id;
+    console.log(studentId)
+    return this.studentService.myRating(text, searchBy,studentId )
   }
-
-  @Get()
-  findAll() {
-    return this.studentService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.studentService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
-    return this.studentService.update(+id, updateStudentDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.studentService.remove(+id);
-  }
+ 
 }
