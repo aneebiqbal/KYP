@@ -49,7 +49,6 @@ export class AuthService {
       external_auth: false,
       first_name: signUpDto.first_name,
       last_name: signUpDto.last_name,
-      image_url: signUpDto.image_url,
       institute: institute,
     });
     await this.studentRepository.save(student);
@@ -64,7 +63,6 @@ export class AuthService {
         first_name: student.first_name,
         last_name: student.last_name,
         email: student.email,
-        image_url: student.image_url,
         isActive: student.isActive,
       },
       token,
@@ -83,7 +81,6 @@ export class AuthService {
       external_auth: true,
       first_name: signUpDto.first_name,
       last_name: signUpDto.last_name,
-      image_url: signUpDto.image_url,
     });
     await this.studentRepository.save(student);
     const token = jwt.sign(
@@ -97,7 +94,6 @@ export class AuthService {
         first_name: student.first_name,
         last_name: student.last_name,
         email: student.email,
-        image_url: student.image_url,
         isActive: student.isActive,
       },
       token,
@@ -130,6 +126,7 @@ export class AuthService {
         email: student.email,
         image_url: student.image_url,
         isActive: student.isActive,
+        institute: student?.institute
       },
       token,
     };
