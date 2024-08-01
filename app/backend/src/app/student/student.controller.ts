@@ -1,9 +1,10 @@
 
-import { Body, Controller, Post, UseGuards, Request, Get, Query } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Request, Get, Query, HttpCode, HttpStatus } from '@nestjs/common';
 import { JwtAuthGuard } from '../utils/auth.guard';
 import { UpdateStudentProfileDto, UpdatePasswordDto } from './dto/update-profile.dto';
 import { StudentService } from './student.service';
 import { SavedProfessorsQueryDto } from './dto/seach-saved-professor.dto';
+import { myRatingDto } from './dto/my-rating.dto';
 
 @Controller('student')
 export class StudentController {
@@ -26,7 +27,7 @@ export class StudentController {
   @UseGuards(JwtAuthGuard)
   @Get('saved-professors')
   async getSavedProfessors(@Query() query: SavedProfessorsQueryDto, @Request() req) {
-    const studentId = req.user?.id; // Get student ID from the request
+    const studentId = req.user?.id; 
     return this.studentService.getSavedProfessors(studentId, query.name, query.institute_name);
   }
 

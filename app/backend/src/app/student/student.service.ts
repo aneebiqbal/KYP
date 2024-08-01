@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Professor, Rating, Student } from '@kyp/db';
+import { Institute, Professor, Rating, Student } from '@kyp/db';
 import { UpdateStudentProfileDto, UpdatePasswordDto } from './dto/update-profile.dto';
 import * as bcrypt from 'bcrypt';
 
@@ -29,6 +29,19 @@ interface CustomRatingResponse {
   }[];
 }
 
+export interface CustomProfessorResponse {
+  name: string;
+  image_url: string;
+  department_name: string;
+  institute_name: string;
+  overall_rating: number;
+  total_ratings: number;
+  is_saved: boolean;
+  take_again: number;
+  love_teaching_style: number;
+}
+
+
 @Injectable()
 export class StudentService {
   constructor(
@@ -38,6 +51,8 @@ export class StudentService {
     private readonly instituteRepository: Repository<Institute>,
     @InjectRepository(Professor)
     private readonly professorRepository: Repository<Professor>,
+    @InjectRepository(Rating)
+  private readonly ratingRepository: Repository<Rating>
   ) { }
 
   async updateProfile(studentId: number, updateProfileDto: UpdateStudentProfileDto): Promise<any> {
@@ -165,6 +180,7 @@ export class StudentService {
         love_teaching_style: parseFloat(loveTeachingStylePercentage.toFixed(2)),
       } as CustomProfessorResponse;
     });
+  }
 
   async myRating(
     text: string,
