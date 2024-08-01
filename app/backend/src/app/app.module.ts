@@ -8,7 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { ProfessorModule } from './professor/professor.module';
 
 @Module({
-  imports: [TypeOrmCustomModule,StudentModule, AuthModule, ProfessorModule],
+  imports: [TypeOrmCustomModule,StudentModule, AuthModule, ProfessorModule, StudentModule],
   controllers: [AppController],
   providers: [AppService],
 })
