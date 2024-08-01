@@ -1,3 +1,4 @@
+
 import { Body, Controller, Post, UseGuards, Request, Get, Query } from '@nestjs/common';
 import { JwtAuthGuard } from '../utils/auth.guard';
 import { UpdateStudentProfileDto, UpdatePasswordDto } from './dto/update-profile.dto';
@@ -28,4 +29,16 @@ export class StudentController {
     const studentId = req.user?.id; // Get student ID from the request
     return this.studentService.getSavedProfessors(studentId, query.name, query.institute_name);
   }
+
+  
+  @UseGuards(JwtAuthGuard)
+  @Get('my-ratings')
+  @HttpCode(HttpStatus.OK)
+  async myRatings (@Query() query: myRatingDto, @Request() req) {
+    const {text, searchBy } = query;
+    const studentId = req.user.id;
+    console.log(studentId)
+    return this.studentService.myRating(text, searchBy,studentId )
+  }
+ 
 }

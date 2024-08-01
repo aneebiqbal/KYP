@@ -8,6 +8,7 @@ import { Professor } from '@kyp/db';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Student, Institute, Professor])],
+
   controllers: [StudentController],
   providers: [StudentService],
 })
