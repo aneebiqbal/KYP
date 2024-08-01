@@ -187,14 +187,14 @@ export class AuthService {
     // };
   }
 
-  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<{ message: string }> {
-    const { token, newPassword } = resetPasswordDto;
+  async resetPassword(token: string, resetPasswordDto: ResetPasswordDto): Promise<{ message: string }> {
+    const { newPassword } = resetPasswordDto;
 
     try {
       const decoded = jwt.verify(token, this.jwtSecret) as { id: number; email: string };
-      const email = decoded.email;
+      const studentId = decoded.id;
 
-      const student = await this.studentRepository.findOne({ where: { email } });
+      const student = await this.studentRepository.findOne({ where: { id: studentId } });
       if (!student) {
         throw new UnauthorizedException('Invalid token');
       }
@@ -208,6 +208,5 @@ export class AuthService {
     } catch (error) {
       throw new BadRequestException('Invalid or expired token');
     }
-
   }
 }

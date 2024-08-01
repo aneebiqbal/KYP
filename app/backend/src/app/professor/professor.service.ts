@@ -26,7 +26,7 @@ export class ProfessorService {
     private readonly professorRepository: Repository<Professor>,
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>
-  ) {}
+  ) { }
 
   async searchProfessors(
     name?: string,
@@ -80,19 +80,19 @@ export class ProfessorService {
       const overallRating =
         totalRatings > 0
           ? professor.ratings.reduce(
-              (acc, rating) =>
-                acc +
-                (rating.course_difficulty +
-                  rating.clarity +
-                  rating.collaboration +
-                  rating.knowledgeable +
-                  rating.helpful +
-                  rating.textbook_use +
-                  rating.exam_difficulty +
-                  rating.love_teaching_style) /
-                  8,
-              0
-            ) / totalRatings
+            (acc, rating) =>
+              acc +
+              (rating.course_difficulty +
+                rating.clarity +
+                rating.collaboration +
+                rating.knowledgeable +
+                rating.helpful +
+                rating.textbook_use +
+                rating.exam_difficulty +
+                rating.love_teaching_style) /
+              8,
+            0
+          ) / totalRatings
           : 0;
 
       const is_saved = savedProfessors.includes(professor.id);
@@ -113,9 +113,9 @@ export class ProfessorService {
       }
       return 0;
     });
-    
+
     return sortedProfessors.map((professor) => {
-      const response: CustomProfessorResponse= {
+      const response: CustomProfessorResponse = {
         name: `${professor.first_name} ${professor.last_name}`,
         image_url: professor.image_url,
         department_name: professor.department_name,
@@ -184,17 +184,20 @@ export class ProfessorService {
     if (!professor) {
       throw new NotFoundException(`Professor with id ${professorId} not found`);
     }
-    const savedProfessorIndex = student.saved_professors.indexOf(professorId);
-    if (savedProfessorIndex === -1) {
-      throw new NotFoundException(
-        `Professor with id ${professorId} is not in the saved professors list`
-      );
-    }
     if (student) {
-      student.saved_professors = student.saved_professors.filter(
-        (id) => id !== professorId
-      );
+      if (!student.saved_professors) {
+        student.saved_professors = [];
+      }
+      const savedProfessorIndex = student.saved_professors.indexOf(professorId);
+      if (savedProfessorIndex === -1) {
+        throw new NotFoundException(
+          `Professor with id ${professorId} is not in the saved professors list`
+        );
+      }
+
+      student.saved_professors = student.saved_professors.filter(id => id !== professorId);
       await this.studentRepository.save(student);
     }
+
   }
 }
