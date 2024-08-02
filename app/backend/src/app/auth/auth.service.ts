@@ -73,6 +73,12 @@ export class AuthService {
   async signUpWithGoogle(
     signUpDto: SignUpDto
   ): Promise<{ student: Partial<Student>; token: string }> {
+    const existingStudent = await this.studentRepository.findOne({
+      where: { auth_pass: signUpDto.googleId },
+    });
+    if (existingStudent) {
+      throw new ConflictException('Student already in use');
+    }
     const timestamp = Date.now();
     const generatedEmail = ` ${timestamp}@kyp.com`;
     const student = this.studentRepository.create({

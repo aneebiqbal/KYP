@@ -27,8 +27,10 @@ export class StudentController {
   @UseGuards(JwtAuthGuard)
   @Get('saved-professors')
   async getSavedProfessors(@Query() query: SavedProfessorsQueryDto, @Request() req) {
+    const {text, searchBy } = query;
     const studentId = req.user?.id; 
-    return this.studentService.getSavedProfessors(studentId, query.name, query.institute_name);
+    console.log(studentId)
+    return this.studentService.getSavedProfessors(text, searchBy,studentId );
   }
 
   

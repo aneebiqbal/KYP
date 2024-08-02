@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Institute, Professor, Rating, Student } from '@kyp/db';
 import { UpdateStudentProfileDto, UpdatePasswordDto } from './dto/update-profile.dto';
 import * as bcrypt from 'bcrypt';
+import { SavedProfessorsQueryDto } from './dto/seach-saved-professor.dto';
 
 interface CustomRatingResponse {
   professor: {
@@ -58,10 +59,10 @@ export class StudentService {
   async updateProfile(studentId: number, updateProfileDto: UpdateStudentProfileDto): Promise<any> {
     const { first_name, last_name, institute_name, email } = updateProfileDto;
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      throw new BadRequestException('Invalid email format');
-    }
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // if (!emailRegex.test(email)) {
+    //   throw new BadRequestException('Invalid email format');
+    // }
 
     const student = await this.studentRepository.findOne({ where: { id: studentId } });
     if (!student) {
@@ -102,7 +103,11 @@ export class StudentService {
     return { message: 'Password updated successfully' };
   }
 
-  async getSavedProfessors(studentId: number, name?: string, institute_name?: string): Promise<CustomProfessorResponse[]> {
+  async getSavedProfessors(
+    text: string,
+    searchBy: 'professor' | 'institute',
+    studentId: number )
+    : Promise<CustomProfessorResponse[]> {
     const student = await this.studentRepository.findOne({
       where: { id: studentId }
     });
@@ -124,22 +129,21 @@ export class StudentService {
       .where('professor.id IN (:...savedProfessorIds)', { savedProfessorIds })
       .andWhere('ratings.deleted_at IS NULL');
 
-    if (name) {
+    if (searchBy === 'professor') {
       query.andWhere(
-        'professor.first_name ILIKE :name OR professor.last_name ILIKE :name',
-        { name: `%${name}%` }
+        'professor.first_name ILIKE :text OR professor.last_name ILIKE :text',
+        { text }
       );
+    } else if (searchBy === 'institute') {
+      query.andWhere('institute.name = :text', { text });
     }
 
-    if (institute_name) {
-      query.andWhere('institute.name = :institute_name', { institute_name });
-    }
 
 
     const professors = await query.getMany();
-    if (institute_name && professors.length === 0) {
+    if ( professors.length === 0) {
       throw new NotFoundException(
-        `No professors found for institute ${institute_name}`
+        `professor not found`
       );
     }
 

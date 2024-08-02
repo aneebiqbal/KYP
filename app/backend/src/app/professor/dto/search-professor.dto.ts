@@ -2,16 +2,16 @@ import { IsOptional, IsString, IsNumber, IsIn, isString } from 'class-validator'
 
 export class SearchProfessorDto {
   @IsOptional()
-  @IsString()
-  name?: string;
-
-  @IsOptional()
-  @IsString()
-  institute_name?: string;
-
-  @IsOptional()
   @IsNumber()
   studentId?: number;
+
+  @IsString()
+  @IsOptional()
+  searchBy: 'professor' | 'institute';
+
+  @IsString()
+  @IsOptional()
+  text: string;
 
   @IsOptional()
   @IsIn(['first_name', 'overall_rating'])

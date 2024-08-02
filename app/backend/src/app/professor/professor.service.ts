@@ -1,6 +1,10 @@
 import { Professor } from '@kyp/db';
 import { Student } from '@kyp/db';
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -10,7 +14,7 @@ interface CustomProfessorResponse {
   department_name: string;
   institute_name: string;
   overall_rating: number;
-  total_ratings: number,
+  total_ratings: number;
   is_saved?: boolean;
   ratings: {
     student_name: string;
@@ -26,14 +30,14 @@ export class ProfessorService {
     private readonly professorRepository: Repository<Professor>,
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>
-  ) { }
+  ) {}
 
   async searchProfessors(
-    name?: string,
-    institute_name?: string,
     studentId?: number,
     sortField: 'first_name' | 'overall_rating' = 'first_name',
-    sortOrder: 'ASC' | 'DESC' = 'ASC'
+    sortOrder: 'ASC' | 'DESC' = 'ASC',
+    text?: string,
+    searchBy?: 'professor' | 'institute'
   ): Promise<CustomProfessorResponse[]> {
     const query = this.professorRepository
       .createQueryBuilder('professor')
@@ -42,15 +46,13 @@ export class ProfessorService {
       .leftJoinAndSelect('ratings.student', 'student')
       .where('ratings.deleted_at IS NULL');
 
-    if (name) {
+    if (searchBy == 'professor') {
       query.andWhere(
-        'professor.first_name ILIKE :name OR professor.last_name ILIKE :name',
-        { name: `%${name}%` }
+        'professor.first_name ILIKE :text OR professor.last_name ILIKE :text',
+        { text }
       );
-    }
-
-    if (institute_name) {
-      query.andWhere('institute.name = :institute_name', { institute_name });
+    } else if (searchBy == 'institute') {
+      query.andWhere('institute.name ILIKE :text', { text });
     }
 
     if (sortField !== 'overall_rating') {
@@ -58,10 +60,8 @@ export class ProfessorService {
     }
     const professors = await query.getMany();
 
-    if (institute_name && professors.length === 0) {
-      throw new NotFoundException(
-        `No professors found for institute ${institute_name}`
-      );
+    if (professors.length === 0) {
+      throw new NotFoundException(`No professors found`);
     }
 
     let savedProfessors: number[] = [];
@@ -80,19 +80,19 @@ export class ProfessorService {
       const overallRating =
         totalRatings > 0
           ? professor.ratings.reduce(
-            (acc, rating) =>
-              acc +
-              (rating.course_difficulty +
-                rating.clarity +
-                rating.collaboration +
-                rating.knowledgeable +
-                rating.helpful +
-                rating.textbook_use +
-                rating.exam_difficulty +
-                rating.love_teaching_style) /
-              8,
-            0
-          ) / totalRatings
+              (acc, rating) =>
+                acc +
+                (rating.course_difficulty +
+                  rating.clarity +
+                  rating.collaboration +
+                  rating.knowledgeable +
+                  rating.helpful +
+                  rating.textbook_use +
+                  rating.exam_difficulty +
+                  rating.love_teaching_style) /
+                  8,
+              0
+            ) / totalRatings
           : 0;
 
       const is_saved = savedProfessors.includes(professor.id);
@@ -126,14 +126,13 @@ export class ProfessorService {
           take_again: rating.take_again,
           love_teaching_style: rating.love_teaching_style,
         })),
-        total_ratings: professor.totalRatings
+        total_ratings: professor.totalRatings,
       };
       if (studentId) {
         response.is_saved = professor.is_saved;
       }
       return response;
-    })
-
+    });
   }
 
   async addSavedProfessor(
@@ -195,9 +194,10 @@ export class ProfessorService {
         );
       }
 
-      student.saved_professors = student.saved_professors.filter(id => id !== professorId);
+      student.saved_professors = student.saved_professors.filter(
+        (id) => id !== professorId
+      );
       await this.studentRepository.save(student);
     }
-
   }
 }

@@ -5,7 +5,11 @@ export class SavedProfessorsQueryDto {
     @IsString()
     name?: string;
 
-    @IsOptional()
     @IsString()
-    institute_name?: string;
+    @IsOptional()
+    searchBy: 'professor' | 'institute';
+
+    @IsString()
+    @IsOptional()
+    text: string;
 }
