@@ -32,7 +32,7 @@ export default function SignUpForm() {
   });
   const handleSubmit = async (values) => {
     try {
-      await AuthApi.signup({firstName:values.firstName,lastName:values.lastName, school:values.school, field:values.field,email: values.email, password: values.password })
+      await AuthApi.signup({first_name:values.firstName,last_name:values.lastName, institute:values.school, field:values.field,email: values.email, password: values.password })
         .then(()=>{
           setPopup({show:true,type:'success',message:'Congratulations! you are registered.',timeout:3000});
           router.push('/');

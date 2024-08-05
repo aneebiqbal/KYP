@@ -5,89 +5,17 @@ import Image from 'next/image';
 import ProfessorsList from './ProfessorsList';
 import { BaseApi } from '../app/(base)/BaseApi';
 export default function ProfessorsListFilter(){
-  const [professors, setProfessors] = useState([
-    {
-      id:1,
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:0,
-      rating:'4.7',
-      reviews:600
-    },
-    {
-      id:1,
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:1,
-      rating:'4.7',
-      reviews:600
-    },
-    {
-      id:1,
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:1,
-      rating:'4.7',
-      reviews:600
-    },
-    {
-      id:1,
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:1,
-      rating:'4.7',
-      reviews:600
-    },
-    {
-      id:1,
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:1,
-      rating:'4.7',
-      reviews:600
-    }
-  ]);
+  const [professors, setProfessors] = useState([]);
   const searchParams = useSearchParams();
   const [type, setType] = useState('0');
   const [sort, setSort] = useState('1');
   const [sortOrder, setSortOrder] = useState(true);
   const [search, setSearch] = useState('');
-  const getProfessors = async (searchBy=type,text=search)=>{
-    try{
-      await BaseApi.getProfessors({sortField:sort,sortOrder:sortOrder?'ASC':'DESC',searchBy:searchBy,search:text})
-        .then((response)=>{
-          let tempProfessors = professors;
-          tempProfessors = tempProfessors.concat(response)
-          setProfessors(tempProfessors)
-        })
-    }catch(e){
-      console.log(e)
-    }
-  }
+
   const updateProfessors = (professorId) => {
     const updatedProfessors = professors.map(professor =>
       professor.id === professorId
-        ? { ...professor, saved: professor.saved === 1 ? 0 : 1 }
+        ? { ...professor, is_saved: professor.is_saved === 1 ? 0 : 1 }
         : professor
     );
     setProfessors(updatedProfessors);
@@ -138,7 +66,14 @@ export default function ProfessorsListFilter(){
         </select>
       </div>
     </div>
-    <ProfessorsList professors={professors} updateProfessors={updateProfessors}/>
+    { professors.length > 0 ?
+      (<ProfessorsList professors={professors} updateProfessors={updateProfessors} />)
+      :(<div className="full-width full-height flex items-center justify-center column">
+        <Image className="mb-20" width={112} height={112} src="/norecordfound.svg" alt="norecordfound"/>
+        <p className="text-weight-600 text-18 text-1F1F1F mb-8">No records found</p>
+        <p className="text-weight-400 text-14 text-595959">The record that you tired to filter is not found</p>
+      </div>)}
+
 
   </>
 }

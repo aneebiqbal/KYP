@@ -12,68 +12,6 @@ export default function UserIndex() {
   const userInfo = JSON.parse(getUserInfo()) ;
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState(Number(searchParams.get('active')) || 0);
-  const [professors, setProfessors] = useState([
-    {
-      id:1,
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:0,
-      rating:'4.7',
-      reviews:600
-    },
-    {
-      id:2,
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:0,
-      rating:'4.7',
-      reviews:600
-    },
-    {
-      id:3,
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:0,
-      rating:'4.7',
-      reviews:600
-    },
-    {
-      id:4,
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:0,
-      rating:'4.7',
-      reviews:600
-    },
-    {
-      id:5,
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:0,
-      rating:'4.7',
-      reviews:600
-    }
-  ]);
   const myRatings = [
     {
       image: '/professor.png',
@@ -198,23 +136,6 @@ export default function UserIndex() {
     },
   ]
 
-  const getSavedProfessors=async (searchBy,search)=>{
-     try{
-       await BaseApi.SavedProfessors({searchBy:searchBy,search:search}).then((response)=>{
-         console.log(response)
-       })
-     }catch(e){
-       console.log('error', e);
-     }
-  }
-  const updateProfessors = (professorId) => {
-    const updatedProfessors = professors.map(professor =>
-      professor.id === professorId
-        ? { ...professor, saved: professor.saved === 1 ? 0 : 1 }
-        : professor
-    );
-    setProfessors(updatedProfessors);
-  }
   useEffect(() => {
     setActiveTab(Number(searchParams.get('active'))|| 0)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -244,7 +165,7 @@ export default function UserIndex() {
         </div>
       </div>
       <div>
-        {activeTab === 0 && (<SavedProfessor professors={professors} updateProfessors={updateProfessors} />)}
+        {activeTab === 0 && (<SavedProfessor />)}
         {activeTab === 1 && (<UserRatings ratings={myRatings} />)}
         {activeTab === 2 && (<Profile userInfo={userInfo} />)}
       </div>
