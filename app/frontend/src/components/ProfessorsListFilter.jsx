@@ -20,6 +20,18 @@ export default function ProfessorsListFilter(){
     );
     setProfessors(updatedProfessors);
   }
+  const getProfessors = async (searchBy=type,text=search)=>{
+    try{
+      await BaseApi.getProfessors({sortField:sort,sortOrder:sortOrder?'ASC':'DESC',searchBy:searchBy,search:text})
+        .then((response)=>{
+          let tempProfessors = professors;
+          tempProfessors = tempProfessors.concat(response)
+          setProfessors(tempProfessors)
+        })
+    }catch(e){
+      console.log(e)
+    }
+  }
   useEffect(() => {
     setSearch(searchParams.get('search')|| '')
     setType(searchParams.get('searchBy') || '0')
