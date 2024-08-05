@@ -1,20 +1,19 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import {getToken} from '../services/JwtService';
-import { NextResponse } from 'next/server';
+import {getToken ,getUserInfo} from '../services/JwtService';
 import {AuthApi} from '../app/(auth)/AuthApi';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
+  const router = useRouter();
   let token = getToken();
-  const data = {
-    id:'11',
-    firstName:'Mazher',
-    lastName:'Hussain',
-    email:'mazherhussain1998@gmail.com'
-  }
+  const data = JSON.parse(getUserInfo()) ;
   const logout = ()=>{
     AuthApi.logout({email:data.email})
+      .then(()=>{
+        router.push('/login')
+      })
   }
   const closeDropDown = (parentClass)=>{
     const dropdown = document.querySelector(parentClass);
@@ -40,11 +39,11 @@ export default function Header() {
                 <div className="nav-dropdown border-radius-8 pa-16 profile-dropdown mt-3">
                   <div className="flex column ">
                     <div className="flex">
-                      <div className="bg-D6C5FD border-radius-8 pa-10 text-capitalize">
-                        {data.firstName[0] + data.lastName[0]}
+                      <div className="text-14 bg-D6C5FD border-radius-8 pa-10 text-uppercase flex items-center justify-center" style={{minWidth:'42px'}}>
+                        {data.first_name[0] + data.last_name[0]}
                       </div>
                       <div className="ml-8">
-                        <p className="text-141414 text-weight-600 text-16">{data.firstName + ' ' + data.lastName}</p>
+                        <p className="text-141414 text-weight-600 text-16 text-capitalize">{data.first_name + ' ' + data.last_name}</p>
                         <p className="text-8C8C8C text-12 text-weight-400">{data.email}</p>
                       </div>
                     </div>
@@ -81,16 +80,16 @@ export default function Header() {
         </div>)}
         {!token && (<div className="flex">
           <button
+            onClick={()=>{router.push('/sign-up')}}
             className="cursor-pointer px-20 py-12 text-18 flex justify-center items-center bg-ffffff text-763FF9 border-color-763FF9 border-radius-4">
             Sign Up
           </button>
 
-          <Link href="/login" className="text-decoration-none">
             <button
+              onClick={()=>{router.push('/login')}}
               className="cursor-pointer px-20 py-12 ml-12 text-18 flex justify-center items-center bg-763FF9 text-ffffff border-color-763FF9 border-radius-4">
               Login
             </button>
-          </Link>
         </div>)}
       </div>
     </nav>

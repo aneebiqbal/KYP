@@ -2,8 +2,13 @@
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import {AuthApi} from '../../app/(auth)/AuthApi';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import PopUp from '../PopUp';
 
 export default function ResetPasswordForm() {
+  const router = useRouter();
+  const [popup, setPopup] = useState({show:false,type:'',message:'',timeout:0});
   const validationSchema = Yup.object({
     password: Yup.string()
       .required('Required'),
@@ -11,10 +16,18 @@ export default function ResetPasswordForm() {
       .required('Required'),
   });
   const handleSubmit = async (values) => {
-    try {
-      await AuthApi.resetPassword({password: values.password, confirmPassword: values.confirmPassword, slug: values.slug});
-    } catch (error) {
-      alert('Something went wrong. Please try again later.');
+    if(values.password !== values.confirmPassword){
+      setPopup({show:true,type:'warning',message:'New Password and Confirm Password must be same',timeout:3000});
+    }else{
+      try {
+        await AuthApi.resetPassword({newPassword: values.password, token: values.slug})
+          .then(()=>{
+            setPopup({show:true,type:'success',message:'Reset Password Link is been sent to your mail ',timeout:3000});
+            router.push('/login')
+          })
+      } catch (error) {
+        setPopup({show:true,type:'error',message:error.message,timeout:3000});
+      }
     }
   };
   return<>
@@ -59,5 +72,6 @@ export default function ResetPasswordForm() {
         </Form>
       )}
     </Formik>
+    <PopUp props={popup}/>
   </>
 }

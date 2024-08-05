@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie';
 export const setToken = (token) => {
-  Cookies.set('userInfo', token, { sameSite: 'Strict' });
+  Cookies.set('auth-token', token, { sameSite: 'Strict' });
 };
 export const getToken = () => {
   return Cookies.get('auth-token');
