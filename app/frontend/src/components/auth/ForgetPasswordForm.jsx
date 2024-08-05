@@ -2,8 +2,10 @@
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import {AuthApi} from '../../app/(auth)/AuthApi';
-
+import PopUp from '../PopUp';
+import { useState } from 'react';
 export default function ForgetPasswordForm() {
+  const [popup, setPopup] = useState({show:false,type:'',message:'',timeout:0});
   const validationSchema = Yup.object({
     email: Yup.string()
       .email('Invalid email')
@@ -12,8 +14,12 @@ export default function ForgetPasswordForm() {
   const handleSubmit = async (values) => {
     try {
       await AuthApi.forgetPassword({ email: values.email })
+        .then(()=>{
+          setPopup({show:true,type:'success',message:'Reset Password Link is been sent to your mail ',timeout:3000});
+        })
     } catch (error) {
-      alert('Something went wrong. Please try again later.');
+      console.log('error----',error)
+      setPopup({show:true,type:'error',message:error.message,timeout:3000});
     }
   };
   return<>
@@ -44,5 +50,6 @@ export default function ForgetPasswordForm() {
         </Form>
       )}
     </Formik>
+    <PopUp props={popup}/>
   </>
 }

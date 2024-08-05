@@ -25,15 +25,15 @@ export default function Page() {
                 <h1 className="text-70 text-ffffff text-weight-600 mb-32 ">Find Professors by <br/> Name and Institution</h1>
                 <p className="text-24 text-F1ECFE text-weight-400 mb-40">Evaluate Your Professors and Enhance the Academic Experience</p>
                 <div className="flex items-center">
-                  <select onChange={(event)=>{setType(event.target.value)}} style={{height:'72px',borderTopLeftRadius:'12px',borderBottomLeftRadius:'12px'}} className="px-20" name="state" value={type}>
+                  <select onChange={(event)=>{setType(event.target.value)}} style={{height:'72px',borderTopLeftRadius:'12px',borderBottomLeftRadius:'12px'}} className="px-20 border-color-D9D9D9" name="state" value={type}>
                     <option value="0">Name</option>
                     <option value="1">Institute</option>
                   </select>
-                  <input value={search} onChange={(event)=>{setSearch(event.target.value);if(searchCheck !== ''){setSearchCheck('')}}} style={{height:'72px',width:'446px'}} className="px-20" placeholder={type === 'name'?'Search professor with name':'Search for professors by university.'}/>
+                  <input value={search} onChange={(event)=>{setSearch(event.target.value);if(searchCheck !== ''){setSearchCheck('')}}} className="px-20 search-input-field" placeholder={type === 'name'?'Search professor with name':'Search for professors by university.'}/>
                     <div
                       onClick={searchProfessor}
                       style={{
-                      height: '70px',
+                      height: '72px',
                       width: '72px',
                       borderTopRightRadius: '12px',
                       borderBottomRightRadius: '12px'

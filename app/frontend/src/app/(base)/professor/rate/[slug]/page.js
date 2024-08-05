@@ -2,7 +2,11 @@
 import * as yup from 'yup';
 import { useState } from 'react';
 import Image from 'next/image';
-export default function page() {
+import Filter from 'bad-words';
+import PopUp from '../../../../../components/PopUp';
+export default function page(string) {
+  const [popup, setPopup] = useState({show:false,type:'',message:'',timeout:0});
+  const filter = new Filter();
   const validationSchema = yup.object().shape({
     course: yup.string().required('Course is required'),
     courseDifficulty: yup.string().required('Course Difficulty is required'),
@@ -70,6 +74,9 @@ export default function page() {
       value: 0,
     }
   ]);
+  const [review, setReview] = useState('');
+  const maxChars = 500;
+
   const tags = ['Tough Grader','Tough Grader1','Tough Grader2','Tough Grader3','Tough Grader4','Tough Grader5'];
   const updateQuestionValue = (index,value)=>{
     let tempQuestions = [...questions];
@@ -77,6 +84,17 @@ export default function page() {
     console.log(value);
     setQuestions(tempQuestions)
   }
+
+  const handleTextChange = (e) => {
+    let inputText = e.target.value;
+    if (filter.isProfane(inputText)) {
+      setPopup({show:true,type:'warning',message:'Please refrain from using offensive language.',timeout:3000});
+      inputText = inputText.split(/\s+/).map(word => filter.isProfane(word) ? '' : word).join(' ').trim();;
+    }
+    if (inputText.length <= maxChars) {
+      setReview(inputText);
+    }
+  };
   return<>
     <main>
       <section>
@@ -192,12 +210,26 @@ export default function page() {
                 </ul>
               </div>
             </div>
-            <textarea placeholder="Write your review" className="pa-10 border-color-D9D9D9 text-434343 mb-16 full-width border-radius-8">
-
+            <textarea value={review} onChange={handleTextChange} placeholder="Write your review"
+                      className="pa-10 border-color-D9D9D9 text-434343 mb-8 full-width border-radius-8 text-area-min-height">
             </textarea>
+            <div className="flex full-width justify-end text-14 text-434343 text-weight-400">
+              {review.length.toString().padStart(3, '0')}/{maxChars}
+            </div>
+            <p className="text-weight-400 text-14 text-1F1F1F mb-16">By clicking the "Submit" button, I acknowledge that I
+              have read and agreed to the Know My Professors <span className="text-0378A6 text-weight-500">Site Guidelines</span> , <span
+                className="text-0378A6 text-weight-500">Terms of Use</span> and <span
+                className="text-0378A6 text-weight-500">Privacy Policy</span>. Submitted data becomes the property of
+              Know My Professors.</p>
+            <button
+              style={{ height: '44px' }}
+              className="px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16"
+              type="submit">Submit
+            </button>
           </div>
         </div>
       </section>
+      <PopUp props={popup}/>
     </main>
   </>
 }
