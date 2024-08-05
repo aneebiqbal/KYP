@@ -3,7 +3,7 @@ import Image from 'next/image';
 export default function Footer() {
   return <>
     <footer >
-      <div className="px-80 py-40">
+      <div className="px-80 py-40 mobile-px-20">
         <div className="flex items-center column">
           <Image className="mb-46"  height={54} width={108} src="/KYP.png" alt="KYPIcon"/>
           <div className="flex mb-40">
@@ -15,9 +15,11 @@ export default function Footer() {
         </div>
         <div className="full-width">
           <div className="separator-x mb-32"></div>
-          <div className="flex justify-between">
+          <div className="flex justify-between mobile-flex-col">
+            <div >
             <p className="text-16 text-weight-400 text-262626">© 2024 Rate Know Your Professor, LLC. All Rights Reserved</p>
-            <div className="flex">
+            </div>
+            <div className="flex mobile-justify-center mobile-py-20">
               <p className="mr-24 text-16 text-weight-400 text-262626">Terms of Service</p>
               <p className="text-16 text-weight-400 text-262626">Privacy Policy</p>
             </div>

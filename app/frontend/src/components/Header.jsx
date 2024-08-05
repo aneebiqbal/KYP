@@ -41,7 +41,7 @@ export default function Header() {
 
   return (
     <nav>
-      <div style={{ height: '80px' }} className="px-160 flex justify-between items-center">
+      <div style={{ height: '80px' }} className="px-160 flex justify-between items-center tablet-px-90 mobile-px-20">
         <Link href="/">
           <Image height={35} width={70} src="/KYP.png" alt="KYPIcon" />
         </Link>
@@ -97,7 +97,7 @@ export default function Header() {
               </div>
             </div>
           ) : (
-            <div className="flex">
+            <div className="flex  ">
               <button onClick={() => {router.push('/sign-up');}} className="cursor-pointer px-20 py-12 text-18 flex justify-center items-center bg-ffffff text-763FF9 border-color-763FF9 border-radius-4">
                 Sign Up
               </button>
