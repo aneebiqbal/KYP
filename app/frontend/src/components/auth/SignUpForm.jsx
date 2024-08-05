@@ -4,10 +4,13 @@ import * as Yup from 'yup';
 import Link from 'next/link';
 import { useState } from 'react';
 import {AuthApi} from '../../app/(auth)/AuthApi';
+import PopUp from '../PopUp';
+import { useRouter } from 'next/navigation';
 
 export default function SignUpForm() {
+  const router = useRouter();
   const [toggleCheck, setToggleCheck] = useState(false);
-
+  const [popup, setPopup] = useState({show:false,type:'',message:'',timeout:0});
   const validationSchema = Yup.object({
     firstName: Yup.string()
       .min(2, 'Too Short!')
@@ -29,9 +32,13 @@ export default function SignUpForm() {
   });
   const handleSubmit = async (values) => {
     try {
-      await AuthApi.signup({firstName:values.firstName,lastName:values.lastName, school:values.school, field:values.field,email: values.email, password: values.password })
+      await AuthApi.signup({first_name:values.firstName,last_name:values.lastName, institute:values.school, field:values.field,email: values.email, password: values.password })
+        .then(()=>{
+          setPopup({show:true,type:'success',message:'Congratulations! you are registered.',timeout:3000});
+          router.push('/');
+        })
     } catch (error) {
-      alert('Something went wrong. Please try again later.');
+      setPopup({show:true,type:'error',message:error.message,timeout:3000});
     }
   };
   const handleToggleChange = (event) => {
@@ -126,5 +133,6 @@ export default function SignUpForm() {
         </Link>
       </p>
     </div>
+    <PopUp props={popup}/>
   </>
 }

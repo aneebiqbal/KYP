@@ -2,11 +2,13 @@ import {BaseApiService} from './BaseApiService';
 
 export const BaseApi = {
   getProfessors:async (data) => {
-    let search = '?sortField='+data.sortField+'&sortOrder='+data.sortOrder+'&searchBy='+data.searchBy+'&name='+data.search;
-    try {await BaseApiService.getProfessors(search)
-      .then((response)=>{
-        return response;
-      })
+    // let search = '?sortField='+data.sortField+'&sortOrder='+data.sortOrder+'&searchBy='+data.searchBy+'&text='+data.search;
+    let search = '?searchBy='+data.searchBy+'&text='+data.search;
+    try {
+      return await BaseApiService.getProfessors(search)
+        .then((response)=>{
+          return response.data;
+        })
     } catch (e) {
       console.log('error', e.message);
       throw e.message;
@@ -23,7 +25,8 @@ export const BaseApi = {
     }
   },
   saveProfessor:async (data) => {
-    try {await BaseApiService.saveProfessor(data)
+    try {
+      return await BaseApiService.saveProfessor(data)
       .then((response)=>{
         return response;
       })
@@ -33,7 +36,9 @@ export const BaseApi = {
     }
   },
   SavedProfessors:async (data) => {
-    try {await BaseApiService.SavedProfessors(data)
+    let search = '?searchBy='+data.searchBy+'&text='+data.search;
+    try {
+      return await BaseApiService.SavedProfessors(search)
       .then((response)=>{
         return response;
       })
