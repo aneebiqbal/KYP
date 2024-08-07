@@ -3,11 +3,15 @@ import styles from '../page.module.css';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import CustomDropdown from '../../components/user/CustomDropdown.';
+
 export default function Page() {
   const router = useRouter();
   const [type, setType] = useState('name');
   const [search, setSearch] = useState('');
   const [searchCheck, setSearchCheck] = useState('');
+
+
   const searchProfessor= ()=>{
     if(search === ''){
       setSearchCheck('Search field can not be empty')
@@ -16,19 +20,21 @@ export default function Page() {
       router.push('/professors-list?searchBy='+type+'&search='+search);
     }
   }
+
   return (<>
       <main className={styles.page}>
         <section>
           <div className="px-120 py-200 tablet-px-90 tablet-py-100 mobile-px-20 mobile-py-48 bg-5F32CA">
             <div className="row tablet-flex-col">
               <div className="col-xl-6 col-lg-12">
-                <h1 className="text-70 text-ffffff text-weight-600 mb-32 ">Find Professors by <br/> Name and Institution</h1>
+                <h1 className="text-70 text-ffffff text-weight-600 mb-32 ">Find Professors by Name and Institution</h1>
                 <p className="text-24 text-F1ECFE text-weight-400 mb-40">Evaluate Your Professors and Enhance the Academic Experience</p>
-                <div className="flex items-center">
-                  <select onChange={(event)=>{setType(event.target.value)}} style={{height:'72px',borderTopLeftRadius:'12px',borderBottomLeftRadius:'12px'}} className="px-20 border-color-D9D9D9 mobile-pa-selection" name="state" value={type}>
-                    <option value="0">Name</option>
-                    <option value="1">Institute</option>
-                  </select>
+                <div className="flex items-center" >
+                  <CustomDropdown
+                    selectedValue={type}
+                    onSelect={setType}
+                    placeholder="Select"
+                  />
                   <input value={search} onChange={(event)=>{setSearch(event.target.value);if(searchCheck !== ''){setSearchCheck('')}}} className="px-20 search-input-field" placeholder={type === 'name'?'Search professor with name':'Search for professors by university.'}/>
                     <div
                       onClick={searchProfessor}

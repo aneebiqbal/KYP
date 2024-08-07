@@ -141,24 +141,24 @@ export default function UserIndex() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams.get('active')]);
   return <>
-    <div className="px-120 py-80">
-      <div className="flex items-center column">
+    <div className="px-120 py-80 tablet-px-90 mobile-px-20">
+      <div className="flex items-center column ">
         <Image width={200} height={200} src="/user/userImage.png" alt="userImage" className="mb-3" />
         <h1 className="text-weight-700 text-1F1F1F text-48 text-capitalize">{userInfo.first_name+' '+userInfo.last_name}</h1>
         <p className="text-434343 text-weight-400 text-24 mb-60">{userInfo?.institute}</p>
-        <div className="flex ">
+        <div className="flex flex-wrap justify-center">
           <p
-            className={`text-141414 text-24 text-weight-400 mr-100 cursor-pointer ${activeTab === 0 ? 'active-user-tab pb-4 ' : ''}`}
+            className={`text-141414 text-24 text-weight-400 mr-100 mr-mobile-50 mb-mobile-50  cursor-pointer  ${activeTab === 0 ? 'active-user-tab pb-4 ' : ''}`}
             onClick={() => {
               setActiveTab(0)
             }}>Saved Professors</p>
           <p
-            className={`text-141414 text-24 text-weight-400 mr-100 cursor-pointer ${activeTab === 1 ? 'active-user-tab pb-4 ' : ''}`}
+            className={`text-141414 text-24 text-weight-400 mr-100 mr-mobile-50 mb-mobile-50 cursor-pointer ${activeTab === 1 ? 'active-user-tab pb-4 ' : ''}`}
             onClick={() => {
               setActiveTab(1)
             }}>Ratings</p>
           <p
-            className={`text-141414 text-24 text-weight-400 mr-100 cursor-pointer ${activeTab === 2 ? 'active-user-tab pb-4 ' : ''}`}
+            className={`text-141414 text-24 text-weight-400 mr-100 mr-mobile-50 cursor-pointer ${activeTab === 2 ? 'active-user-tab pb-4 ' : ''}`}
             onClick={() => {
               setActiveTab(2)
             }}>Profile and settings</p>
