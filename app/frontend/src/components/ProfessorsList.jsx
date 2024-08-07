@@ -19,10 +19,11 @@ export default function ProfessorsList({professors,updateProfessors}) {
     <div key={'professors-list-'+index} className="full-width">
       <div className="border-color-D9D9D9 full-width border-radius-12 py-20 px-28 flex mb-20">
         <div>
-          <Image className="border-radius-100" height={74} width={74} src={false ?professor.image_url:'/professor.png'} alt={professor.image_url}/>
+          <Image className="border-radius-100 professor-img" height={74} width={74} src={false ?professor.image_url:'/professor.png'} alt={professor.image_url}/>
         </div>
+        <div className="flex justify-between professor-mobile-flex-col full-width ">
         <div className="px-20 flex-1">
-          <h2 className="text-20 text-000000 text-weight-600 mb-6">{professor.name}</h2>
+          <h2 className="text-20 text-000000 text-weight-600 mb-6 professor-name-16">{professor.name}</h2>
           <p className="text-14 text-weight-400 text-595959">{professor.department_name} . {professor.institute_name}</p>
           <p className="text-14 text-weight-400 text-595959 mb-18">
             <span className="text-1F1F1F text-weight-600">{professor.takeAgain}%&nbsp;</span> Take Again&nbsp;|&nbsp;
@@ -32,7 +33,7 @@ export default function ProfessorsList({professors,updateProfessors}) {
           {token &&(<div className="flex items-center">
             <button
               style={{ height: '36px' }}
-              className="cursor-pointer px-12 flex items-center justify-between  text-18 flex justify-center items-center bg-763FF9 text-ffffff border-color-763FF9 border-radius-4">
+              className="cursor-pointer px-12 flex items-center justify-between  text-18 flex justify-center items-center bg-763FF9 text-ffffff border-color-763FF9 border-radius-4 professor-text-13">
               Write a Review
             </button>
             <div className="ml-12 cursor-pointer">
@@ -44,11 +45,13 @@ export default function ProfessorsList({professors,updateProfessors}) {
             </div>
           </div>)}
         </div>
-        <div >
-          <div className="flex" style={{height:'fit-content'}}>
-            <p className="text-36 text-FE9900 text-weight-800">{professor.overall_rating}</p>
-            <p className="text-14 text-weight-600 text-1F1F1F mt-2 ml-12">{professor.ratings.length} <br />Reviews</p>
+        <div className='mobile-px-20'>
+          <div className="flex professor-review-center" style={{height:'fit-content'}}>
+            <p className="text-36 text-FE9900 text-weight-800 professor-rating-24">{professor.overall_rating}</p>
+            <p className="text-14 text-weight-600 text-1F1F1F mt-2 ml-12">{professor.ratings.length} <span
+              className="line-break"><br /></span> Reviews</p>
           </div>
+        </div>
         </div>
       </div>
     </div>

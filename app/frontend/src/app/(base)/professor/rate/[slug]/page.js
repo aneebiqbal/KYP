@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Filter from 'bad-words';
 import PopUp from '../../../../../components/PopUp';
+
 export default function page(string) {
   const [popup, setPopup] = useState({show:false,type:'',message:'',timeout:0});
   const filter = new Filter();
@@ -98,7 +99,7 @@ export default function page(string) {
   return<>
     <main>
       <section>
-        <div className="px-120 py-60">
+        <div className="px-120 py-60 tablet-px-90 mobile-px-20">
           <p className="text-14 text-weight-400 text-8C8C8C mb-40">Professors / James Jameson / <span
             className="text-1F1F1F">Write a review</span></p>
           <h1 className="text-1F1F1F text-weight-600 text-24 mb-8">Rate James Jameson</h1>
@@ -106,10 +107,10 @@ export default function page(string) {
             className="text-1F1F1F text-weight-500">English department</span> at <span
             className="text-1F1F1F text-weight-500">Greenville Technical College</span></p>
           <div className="separator-x mb-60"></div>
-          <div className="flex items-center mb-32">
+          <div className="flex items-center mb-32 professor-mobile-results-selection ">
             <select onChange={(event) => {
               setCourse(event.target.value);
-            }} style={{ height: '48px', width: '430px' }} className="px-20 border-radius-8 border-color-D9D9D9"
+            }} style={{ height: '48px', width: '430px' }} className="px-20 border-radius-8 border-color-D9D9D9 full-width-responsive"
                     name="state" value={course}>
               <option value="">Select Course</option>
               <option value="CS106">CS106</option>
@@ -126,9 +127,9 @@ export default function page(string) {
           <div className="full-width border-color-D9D9D9 border-radius-8 pa-16 mb-24">
             {ratings.map((item, index) => (
               <div key={'ratings-rates-' + index}
-                   className={`full-width flex justify-between items-center ${index < ratings.length - 1 ? 'mb-36' : ''}`}>
+                   className={`full-width flex justify-between items-center professor-mobile-results-selection ${index < ratings.length - 1 ? 'mb-36' : ''}`}>
                 <p className="text-weight-600 text-18 text-1F1F1F">{item.label}</p>
-                <div className="flex items-center">
+                <div className="flex items-center ">
                   {[1, 2, 3, 4, 5].map((number, count) => (
                     <div
                       onClick={() => {
@@ -150,16 +151,16 @@ export default function page(string) {
           <div className="full-width border-color-D9D9D9 border-radius-8 pa-16 mb-24">
             {questions.map((item, index) => (
               <div key={'ratings-rates-' + index}
-                   className={`full-width flex justify-between items-center mb-36`}>
+                   className={`full-width flex justify-between items-center mb-36 professor-mobile-results-selection `}>
                 <p className="text-weight-600 text-18 text-1F1F1F">{item.label}</p>
-                <div className="flex items-center">
-                  <label className="flex items-center ratings-questions-checkbox">
+                <div className="flex items-center ">
+                  <label className="flex items-center ratings-questions-checkbox ">
                     <input className="ml-18" type="checkbox" checked={questions[index].value} onChange={(event) => {
                       updateQuestionValue(index, event.target.value)
                     }} />
                     <span className="text-weight-400 text-1F1F1F text-14 ml-8">Yes</span>
                   </label>
-                  <label className="flex items-center ratings-questions-checkbox">
+                  <label className="flex items-center ratings-questions-checkbox ratings-questions-checkbox-mobile-ml">
                     <input className="ml-18" type="checkbox" checked={!questions[index].value} onChange={(event) => {
                       updateQuestionValue(index, !event.target.value)
                     }} />
@@ -168,9 +169,9 @@ export default function page(string) {
                 </div>
               </div>
             ))}
-            <div className="full-width flex justify-between items-center">
+            <div className="full-width flex justify-between items-center professor-mobile-results-selection">
               <p className="text-weight-600 text-18 text-1F1F1F">Select grade received</p>
-              <input className="border-color-D9D9D9 text-434343 text-14 px-20 border-radius-4"
+              <input className="border-color-D9D9D9 text-434343 text-14 px-20 border-radius-4 full-width-responsive"
                      style={{ height: '36px', width: '234px' }} type="text" value={gradeReceived} onChange={(event) => {
                 setGradeReceived(event.target.value)
               }} />
@@ -179,7 +180,7 @@ export default function page(string) {
           <div className="full-width border-color-D9D9D9 border-radius-8 px-16 pt-16 mb-24">
             <p className="text-weight-600 text-18 text-1F1F1F mb-32">Select up to 3 tags</p>
             <div className="row full-width">
-              <div className="col-6 ">
+              <div className="col-12 ">
                 <div className="flex flex-wrap">
                   {tags.map((tag, index) => (
                     <div key={tag + '-' + index}
@@ -223,7 +224,7 @@ export default function page(string) {
               Know My Professors.</p>
             <button
               style={{ height: '44px' }}
-              className="px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16"
+              className="px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 full-width-responsive"
               type="submit">Submit
             </button>
           </div>

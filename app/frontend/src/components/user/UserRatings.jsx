@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Reviews from '../Reviews';
 import { useState } from 'react';
+import CustomDropdown from './CustomDropdown.';
 export default function UserRatings({ratings}) {
   const [type, setType] = useState('name');
   const [search, setSearch] = useState('');
@@ -15,23 +16,20 @@ export default function UserRatings({ratings}) {
   }
   return<>
     <div>
-      <div className="flex full-width justify-center mb-32 mt-60">
-        <div className="flex items-center search-drop-shadow-class border-radius-12">
-          <select onChange={(event) => {
-            setType(event.target.value)
-          }} style={{ height: '72px', borderTopLeftRadius: '12px', borderBottomLeftRadius: '12px' }}
-                  className="px-20 border-color-D9D9D9"
-                  name="state" value={type}>
-            <option value="0">Name</option>
-            <option value="1">Institute</option>
-          </select>
+      <div className="flex full-width justify-center mb-32 mt-60 ">
+        <div className="flex items-center  border-radius-12 professor-mobile-flex-col  full-width-responsive ">
+          <div className=" search-drop-shadow-class flex full-width-responsive">
+            <CustomDropdown  selectedValue={type}
+                             onSelect={setType}
+                             placeholder="Select"/>
           <input value={search} onChange={(event) => {
             setSearch(event.target.value);
             if (searchCheck !== '') {
               setSearchCheck('')
             }
-          }} className="px-20 search-input-field"
+          }} className="px-20 search-input-field rating-input"
                  placeholder={type === 'name' ? 'Search professor with name' : 'Search for professors by university.'} />
+          </div>
           <div
             onClick={searchProfessor}
             style={{
@@ -39,7 +37,7 @@ export default function UserRatings({ratings}) {
               width: '72px',
               borderTopRightRadius: '12px',
               borderBottomRightRadius: '12px'
-            }} className="bg-FFA337 flex items-center justify-center cursor-pointer">
+            }} className="bg-FFA337 flex items-center justify-center cursor-pointer full-width-responsive border-mobile height-search-52">
             <Image height={24} width={24} src="/searchIcon.svg" alt="searchIcon" />
           </div>
         </div>

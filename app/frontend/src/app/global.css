@@ -615,6 +615,8 @@ p{
 }
 
 
+
+
 /*For tablet*/
 @media(max-width: 1024px){
   .tablet-flex-col{
@@ -639,8 +641,148 @@ p{
     width: 100%;
     height:100%
   }
+  .line-break {
+    display: inline;
+  }
+  .professor-review-center{
+    align-items: center;
+  }
 
 }
+
+@media(max-width: 768px){
+  .professor-mobile-flex-col{
+    display: flex;
+    flex-direction: column;
+  }
+  /*.professor-mobile-flex-col input {*/
+  /*  width: 100% !important;*/
+  /*}*/
+  .professor-profile-mobile-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .professor-profile-mobile-center h2, .professor-profile-mobile-center p{
+    text-align: center;
+  }
+
+
+  .professor-mobile-results-selection{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+  }
+
+  .mobile-mt-20{
+    margin-left: 0px;
+    margin-top: 12px;
+  }
+  .sort-dropdown{
+    margin-top: 8px;
+  }
+
+
+  .professer-list-ml-0 {
+    margin-left: 0px;
+    width: 100% !important;
+    margin-top: 12px;
+    height: 52px !important;
+  }
+  .height-search-52 {
+  height: 52px !important;
+}
+
+  .star-rating-full-width{
+    width: 100% !important;
+    border-radius: 8px;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+  }
+
+  .review-tag{
+    width: fit-content;
+    margin-bottom: 12px;
+  }
+  .credit-attendence p {
+  margin-left: 0px;
+  margin-bottom: 4px;
+}
+
+  .ml-mobile-30{
+    margin-left: 30px;
+  }
+
+  .img-input-field-width-mr-0  {
+    margin-right: 0;
+  }
+  .first-name-mb-12{
+    margin-bottom: 20px;
+  }
+  .full-width-responsive{
+    width: 100% !important;
+  }
+  .mr-mobile-50{
+    margin-right: 50px;
+  }
+  .mb-mobile-50{
+    margin-bottom: 50px;
+  }
+  .rating-is-online-checkbox input[type="checkbox"],.ratings-questions-checkbox input[type="checkbox"], .mobil-ml-none {
+    margin-left: 0;
+  }
+  .rating-is-online-checkbox{
+    margin-top: 30px;
+  }
+
+  .ratings-questions-checkbox-mobile-ml{
+    margin-left: 12px;
+  }
+
+  .mobile-mt-28{
+    margin-top: 28px;
+
+  }
+  .mobile-mb-8{
+    margin-bottom: 8px;
+  }
+  .professor-name-mt-24{
+    margin-top: 24px;
+  }
+
+  .border-mobile{
+    border-radius: 12px;
+    margin-top: 12px;
+  }
+.rating-input{
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+.pr-0-mobile{
+  padding-right: 0;
+}
+
+.mobile-padding-right-0{
+  padding-right: 0;
+}
+  .line-break {
+    display: none;
+  }
+
+  .professor-flex-review{
+    flex-direction: row;
+    align-items: center;
+  }
+  .mobile-width-ml-none-2 {
+
+    margin-left: 0;
+    height: 650px !important;
+
+  }
+
+}
+
 
 @media(max-width: 520px) {
   .mobile-flex-col{
@@ -680,7 +822,9 @@ p{
   }
 
   .search-input-field{
-    width: 250px;
+    width: 100%;
+    height: 52px !important;
+    font-size: 13px;
   }
 
   .mobile-pa-selection{
@@ -688,7 +832,7 @@ p{
     padding-left:10px;
   }
   .search-icon-width-mobile{
-    width: 52px;
+    height: 52px !important;
   }
 
   .mobile-button-width-320 button{
@@ -697,5 +841,92 @@ p{
   .mobile-justify-center{
     justify-content: center;
   }
+  .professor-img{
+    width:34px;
+    height:34px;
+  }
+
+  .professor-name-16{
+    font-size: 16px;
+  }
+
+  .professor-rating-24{
+    font-size: 24px;
+  }
+  .professor-text-13{
+    font-size: 13px;
+  }
+ .reviews > img {
+  width: 38px;
+  height:38px
+}
+ .reviews > p {
+   font-size:20px
+ }
+  .mobile-px-10{
+    padding-right: 10px;
+    padding-left: 10px;
+
+  }
+  .mobile-width-dropdown{
+    width: 100px !important;
+    height: 52px !important;
+  }
+
+   .mobile-text-13{
+    font-size:13px ;
+  }
+
+   .mobile-width-sort-dropdown{
+
+   }
+
+
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 300px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-content {
+    padding: 20px;
+  }
+
+  .close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 30px;
+    cursor: pointer;
+  }
+
+  /* Overlay */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+
 
 }
+
+
+
