@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 interface CustomProfessorResponse {
+  id:number,
   name: string;
   image_url: string;
   department_name: string;
@@ -30,7 +31,7 @@ export class ProfessorService {
 
   async searchProfessors(
     name?: string,
-    institute_name?: string,
+    searchBy?: string,
     studentId?: number,
     sortField: 'first_name' | 'overall_rating' = 'first_name',
     sortOrder: 'ASC' | 'DESC' = 'ASC'
@@ -41,26 +42,31 @@ export class ProfessorService {
       .leftJoinAndSelect('professor.ratings', 'ratings')
       .leftJoinAndSelect('ratings.student', 'student')
       .where('ratings.deleted_at IS NULL');
-
     if (name) {
-      query.andWhere(
-        'professor.first_name ILIKE :name OR professor.last_name ILIKE :name',
-        { name: `%${name}%` }
-      );
+      if(searchBy === 'name'){
+          query.andWhere(
+            'professor.first_name ILIKE :name OR professor.last_name ILIKE :name',
+            { name: `%${name}%` }
+          );
+      }else if(searchBy === 'institute'){
+        query.andWhere(
+          `institute.name ILIKE :name`,
+          { name }
+        );
+      }
     }
 
-    if (institute_name) {
-      query.andWhere('institute.name = :institute_name', { institute_name });
-    }
+    // if (institute_name) {
+    //   query.andWhere('institute.name = :institute_name', { institute_name });
+    // }
 
     if (sortField !== 'overall_rating') {
       query.orderBy(`professor.${sortField}`, sortOrder);
     }
     const professors = await query.getMany();
-
-    if (institute_name && professors.length === 0) {
+    if ( professors.length === 0) {
       throw new NotFoundException(
-        `No professors found for institute ${institute_name}`
+        `No professors found by ${searchBy}`
       );
     }
 
@@ -107,15 +113,16 @@ export class ProfessorService {
 
     const sortedProfessors = professorsWithRatings.sort((a, b) => {
       if (sortField === 'overall_rating') {
-        return sortOrder === 'ASC'
+        return sortOrder === 'DESC'
           ? a.overallRating - b.overallRating
           : b.overallRating - a.overallRating;
       }
       return 0;
     });
-    
+
     return sortedProfessors.map((professor) => {
       const response: CustomProfessorResponse= {
+        id: professor.id,
         name: `${professor.first_name} ${professor.last_name}`,
         image_url: professor.image_url,
         department_name: professor.department_name,
@@ -139,11 +146,10 @@ export class ProfessorService {
   async addSavedProfessor(
     studentId: number,
     professorId: number
-  ): Promise<void> {
+  ): Promise<number> {
     const student = await this.studentRepository.findOne({
       where: { id: studentId },
     });
-
     if (!student) {
       throw new NotFoundException(`Student with ID ${studentId} not found`);
     }
@@ -166,12 +172,13 @@ export class ProfessorService {
       student.saved_professors.push(professorId);
       await this.studentRepository.save(student);
     }
+    return professorId;
   }
 
   async removeSavedProfessor(
     studentId: number,
     professorId: number
-  ): Promise<void> {
+  ): Promise<number> {
     const student = await this.studentRepository.findOne({
       where: { id: studentId },
     });
@@ -196,5 +203,6 @@ export class ProfessorService {
       );
       await this.studentRepository.save(student);
     }
+    return professorId;
   }
 }

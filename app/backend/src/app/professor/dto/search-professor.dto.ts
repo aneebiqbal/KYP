@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsNumber, IsIn, isString } from 'class-validator';
+import { IsOptional, IsString, IsIn } from 'class-validator';
 
 export class SearchProfessorDto {
   @IsOptional()
@@ -7,11 +7,7 @@ export class SearchProfessorDto {
 
   @IsOptional()
   @IsString()
-  institute_name?: string;
-
-  @IsOptional()
-  @IsNumber()
-  studentId?: number;
+  searchBy?: string;
 
   @IsOptional()
   @IsIn(['first_name', 'overall_rating'])

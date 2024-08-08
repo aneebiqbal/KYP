@@ -51,6 +51,7 @@ export class AuthService {
       last_name: signUpDto.last_name,
       image_url: signUpDto.image_url,
       institute: institute,
+      department: signUpDto.department
     });
     await this.studentRepository.save(student);
     const token = jwt.sign(
@@ -66,6 +67,8 @@ export class AuthService {
         email: student.email,
         image_url: student.image_url,
         isActive: student.isActive,
+        institute: student.institute,
+        department: student.department
       },
       token,
     };

@@ -4,7 +4,7 @@ import {
   Body,
   HttpCode,
   HttpStatus,
-  BadRequestException,
+  BadRequestException, UsePipes, ValidationPipe
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup.dto';
@@ -16,24 +16,19 @@ import { ForgetPasswordDto, ResetPasswordDto } from './dto/forget-password.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
-  @Post('Signup')
+  @Post('signup')
   @HttpCode(HttpStatus.CREATED)
-  async signup(@Body() SignUpDto: SignUpDto) {
-    const { email, password, googleId } = SignUpDto;
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async signup(@Body() signUpDto: SignUpDto) {
+    const { email, password, googleId } = signUpDto;
     if (googleId) {
-      const { student, token } = await this.authService.signUpWithGoogle(
-        SignUpDto
-      );
+      const { student, token } = await this.authService.signUpWithGoogle(signUpDto);
       return { message: 'Signed up with Google', student, token };
     } else {
       if (!email || !password) {
-        throw new BadRequestException(
-          'Email and password are required for signup.'
-        );
+        throw new BadRequestException('Email and password are required');
       }
-      const { student, token } = await this.authService.signUpWithEmail(
-        SignUpDto
-      );
+      const { student, token } = await this.authService.signUpWithEmail(signUpDto);
       return { message: 'Signed up with email', student, token };
     }
   }
@@ -60,7 +55,6 @@ export class AuthController {
       return { message: 'Signed in with email', student, token };
     }
   }
-
 
   @Post('forget-password')
   @HttpCode(HttpStatus.OK)

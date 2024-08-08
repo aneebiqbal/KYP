@@ -32,6 +32,9 @@ export class Student {
   @ManyToOne(() => Institute, (institute) => institute.students, { onDelete: 'CASCADE' })
   institute!: Institute;
 
+  @Column({ length: 255,nullable: true })
+  department!: string;
+
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at!: Date;
 

@@ -1,12 +1,15 @@
-import { IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class SaveProfessorDto {
     @IsNumber()
+    @IsOptional()
     studentId: number;
 
-    @IsNumber()
+    @IsString()
+    @IsNotEmpty()
     professorId: number;
 
-    @IsNumber()
+    @IsString()
+    @IsNotEmpty()
     flag: number;
 }
