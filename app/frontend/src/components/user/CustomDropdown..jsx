@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 
 const CustomDropdown = ({  selectedValue, onSelect, placeholder }) => {
@@ -41,8 +42,8 @@ const CustomDropdown = ({  selectedValue, onSelect, placeholder }) => {
         className="px-20 border-color-D9D9D9  mobile-px-10 mobile-width-dropdown"
       >
         <p className='text-18 mobile-text-13'> {options.find(option => option.value === selectedValue)?.label || placeholder}</p>
-
-        <span style={{ marginLeft: '8px' }}>▼</span>
+        <Image style={{ marginLeft: '8px' }} height={10} width={10} src="/arrowicon.svg" alt="searchIcon" />
+        {/* <span style={{ marginLeft: '8px' }}>▼</span> */}
       </div>
       {isDropdownOpen && (
         <div
