@@ -43,7 +43,6 @@ const CustomDropdown = ({  selectedValue, onSelect, placeholder }) => {
       >
         <p className='text-18 mobile-text-13'> {options.find(option => option.value === selectedValue)?.label || placeholder}</p>
         <Image style={{ marginLeft: '8px' }} height={10} width={10} src="/arrowicon.svg" alt="searchIcon" />
-        {/* <span style={{ marginLeft: '8px' }}>▼</span> */}
       </div>
       {isDropdownOpen && (
         <div
