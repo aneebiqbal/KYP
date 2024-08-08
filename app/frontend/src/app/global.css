@@ -759,9 +759,6 @@ p{
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
 }
-.pr-0-mobile{
-  padding-right: 0;
-}
 
 .mobile-padding-right-0{
   padding-right: 0;
@@ -876,12 +873,6 @@ p{
    .mobile-text-13{
     font-size:13px ;
   }
-
-   .mobile-width-sort-dropdown{
-
-   }
-
-
 
   /* Sidebar */
   .sidebar {
