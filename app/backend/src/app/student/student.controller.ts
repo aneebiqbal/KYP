@@ -1,34 +1,47 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+
+import { Body, Controller, Post, UseGuards, Request, Get, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { JwtAuthGuard } from '../utils/auth.guard';
+import { UpdateStudentProfileDto, UpdatePasswordDto } from './dto/update-profile.dto';
 import { StudentService } from './student.service';
-import { CreateStudentDto } from './dto/create-student.dto';
-import { UpdateStudentDto } from './dto/update-student.dto';
+import { SavedProfessorsQueryDto } from './dto/seach-saved-professor.dto';
+import { myRatingDto } from './dto/my-rating.dto';
 
 @Controller('student')
 export class StudentController {
-  constructor(private readonly studentService: StudentService) {}
+  constructor(private readonly studentService: StudentService) { }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('update-profile')
+  async updateProfile(@Body() updateProfileDto: UpdateStudentProfileDto, @Request() req) {
+    const studentId = req.user?.id;
+    return this.studentService.updateProfile(studentId, updateProfileDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('update-password')
+  async updatePassword(@Body() updatePasswordDto: UpdatePasswordDto, @Request() req) {
+    const studentId = req.user?.id;
+    return this.studentService.updatePassword(studentId, updatePasswordDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('saved-professors')
+  async getSavedProfessors(@Query() query: SavedProfessorsQueryDto, @Request() req) {
+    const {text, searchBy } = query;
+    const studentId = req.user?.id; 
+    console.log(studentId)
+    return this.studentService.getSavedProfessors(text, searchBy,studentId );
+  }
+
   
-  @Post()
-  create(@Body() createStudentDto: CreateStudentDto) {
-    return this.studentService.create(createStudentDto);
+  @UseGuards(JwtAuthGuard)
+  @Get('my-ratings')
+  @HttpCode(HttpStatus.OK)
+  async myRatings (@Query() query: myRatingDto, @Request() req) {
+    const {text, searchBy } = query;
+    const studentId = req.user.id;
+    console.log(studentId)
+    return this.studentService.myRating(text, searchBy,studentId )
   }
-
-  @Get()
-  findAll() {
-    return this.studentService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.studentService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStudentDto: UpdateStudentDto) {
-    return this.studentService.update(+id, updateStudentDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.studentService.remove(+id);
-  }
+ 
 }

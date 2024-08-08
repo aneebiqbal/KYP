@@ -10,8 +10,5 @@ export class ForgetPasswordDto {
 
 export class ResetPasswordDto {
   @IsString()
-  token!: string;
-
-  @IsString()
   newPassword!: string;
 }

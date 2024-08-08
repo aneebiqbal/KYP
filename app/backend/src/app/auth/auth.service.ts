@@ -49,7 +49,6 @@ export class AuthService {
       external_auth: false,
       first_name: signUpDto.first_name,
       last_name: signUpDto.last_name,
-      image_url: signUpDto.image_url,
       institute: institute,
     });
     await this.studentRepository.save(student);
@@ -64,7 +63,6 @@ export class AuthService {
         first_name: student.first_name,
         last_name: student.last_name,
         email: student.email,
-        image_url: student.image_url,
         isActive: student.isActive,
       },
       token,
@@ -75,6 +73,12 @@ export class AuthService {
   async signUpWithGoogle(
     signUpDto: SignUpDto
   ): Promise<{ student: Partial<Student>; token: string }> {
+    const existingStudent = await this.studentRepository.findOne({
+      where: { auth_pass: signUpDto.googleId },
+    });
+    if (existingStudent) {
+      throw new ConflictException('Student already in use');
+    }
     const timestamp = Date.now();
     const generatedEmail = ` ${timestamp}@kyp.com`;
     const student = this.studentRepository.create({
@@ -83,7 +87,6 @@ export class AuthService {
       external_auth: true,
       first_name: signUpDto.first_name,
       last_name: signUpDto.last_name,
-      image_url: signUpDto.image_url,
     });
     await this.studentRepository.save(student);
     const token = jwt.sign(
@@ -97,7 +100,6 @@ export class AuthService {
         first_name: student.first_name,
         last_name: student.last_name,
         email: student.email,
-        image_url: student.image_url,
         isActive: student.isActive,
       },
       token,
@@ -130,6 +132,7 @@ export class AuthService {
         email: student.email,
         image_url: student.image_url,
         isActive: student.isActive,
+        institute: student?.institute
       },
       token,
     };
@@ -190,14 +193,14 @@ export class AuthService {
     // };
   }
 
-  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<{ message: string }> {
-    const { token, newPassword } = resetPasswordDto;
+  async resetPassword(token: string, resetPasswordDto: ResetPasswordDto): Promise<{ message: string }> {
+    const { newPassword } = resetPasswordDto;
 
     try {
       const decoded = jwt.verify(token, this.jwtSecret) as { id: number; email: string };
-      const email = decoded.email;
+      const studentId = decoded.id;
 
-      const student = await this.studentRepository.findOne({ where: { email } });
+      const student = await this.studentRepository.findOne({ where: { id: studentId } });
       if (!student) {
         throw new UnauthorizedException('Invalid token');
       }
@@ -211,6 +214,5 @@ export class AuthService {
     } catch (error) {
       throw new BadRequestException('Invalid or expired token');
     }
-
   }
 }

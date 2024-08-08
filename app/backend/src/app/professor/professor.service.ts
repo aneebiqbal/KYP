@@ -1,6 +1,10 @@
 import { Professor } from '@kyp/db';
 import { Student } from '@kyp/db';
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -10,7 +14,7 @@ interface CustomProfessorResponse {
   department_name: string;
   institute_name: string;
   overall_rating: number;
-  // total_ratings: number,
+  total_ratings: number;
   is_saved?: boolean;
   ratings: {
     student_name: string;
@@ -29,11 +33,11 @@ export class ProfessorService {
   ) {}
 
   async searchProfessors(
-    name?: string,
-    institute_name?: string,
     studentId?: number,
     sortField: 'first_name' | 'overall_rating' = 'first_name',
-    sortOrder: 'ASC' | 'DESC' = 'ASC'
+    sortOrder: 'ASC' | 'DESC' = 'ASC',
+    text?: string,
+    searchBy?: 'professor' | 'institute'
   ): Promise<CustomProfessorResponse[]> {
     const query = this.professorRepository
       .createQueryBuilder('professor')
@@ -42,15 +46,13 @@ export class ProfessorService {
       .leftJoinAndSelect('ratings.student', 'student')
       .where('ratings.deleted_at IS NULL');
 
-    if (name) {
+    if (searchBy == 'professor') {
       query.andWhere(
-        'professor.first_name ILIKE :name OR professor.last_name ILIKE :name',
-        { name: `%${name}%` }
+        'professor.first_name ILIKE :text OR professor.last_name ILIKE :text',
+        { text }
       );
-    }
-
-    if (institute_name) {
-      query.andWhere('institute.name = :institute_name', { institute_name });
+    } else if (searchBy == 'institute') {
+      query.andWhere('institute.name ILIKE :text', { text });
     }
 
     if (sortField !== 'overall_rating') {
@@ -58,10 +60,8 @@ export class ProfessorService {
     }
     const professors = await query.getMany();
 
-    if (institute_name && professors.length === 0) {
-      throw new NotFoundException(
-        `No professors found for institute ${institute_name}`
-      );
+    if (professors.length === 0) {
+      throw new NotFoundException(`No professors found`);
     }
 
     let savedProfessors: number[] = [];
@@ -100,7 +100,7 @@ export class ProfessorService {
       return {
         ...professor,
         overallRating: parseFloat(overallRating.toFixed(2)),
-        // totalRatings,
+        totalRatings,
         is_saved,
       };
     });
@@ -113,9 +113,9 @@ export class ProfessorService {
       }
       return 0;
     });
-    
+
     return sortedProfessors.map((professor) => {
-      const response: CustomProfessorResponse= {
+      const response: CustomProfessorResponse = {
         name: `${professor.first_name} ${professor.last_name}`,
         image_url: professor.image_url,
         department_name: professor.department_name,
@@ -126,14 +126,13 @@ export class ProfessorService {
           take_again: rating.take_again,
           love_teaching_style: rating.love_teaching_style,
         })),
-        // total_ratings: professor.totalRatings
+        total_ratings: professor.totalRatings,
       };
       if (studentId) {
         response.is_saved = professor.is_saved;
       }
       return response;
-    })
-
+    });
   }
 
   async addSavedProfessor(
@@ -184,13 +183,17 @@ export class ProfessorService {
     if (!professor) {
       throw new NotFoundException(`Professor with id ${professorId} not found`);
     }
-    const savedProfessorIndex = student.saved_professors.indexOf(professorId);
-    if (savedProfessorIndex === -1) {
-      throw new NotFoundException(
-        `Professor with id ${professorId} is not in the saved professors list`
-      );
-    }
     if (student) {
+      if (!student.saved_professors) {
+        student.saved_professors = [];
+      }
+      const savedProfessorIndex = student.saved_professors.indexOf(professorId);
+      if (savedProfessorIndex === -1) {
+        throw new NotFoundException(
+          `Professor with id ${professorId} is not in the saved professors list`
+        );
+      }
+
       student.saved_professors = student.saved_professors.filter(
         (id) => id !== professorId
       );
