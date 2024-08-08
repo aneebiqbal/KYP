@@ -7,6 +7,10 @@ export class SearchProfessorDto {
 
   @IsString()
   @IsOptional()
+  name: string;
+
+  @IsString()
+  @IsOptional()
   searchBy: 'professor' | 'institute';
 
 

@@ -35,11 +35,10 @@ export class ProfessorService {
 
   async searchProfessors(
     name?: string,
-    studentId?: number,
+    searchBy?: string,
     sortField: 'first_name' | 'overall_rating' = 'first_name',
     sortOrder: 'ASC' | 'DESC' = 'ASC',
-    text?: string,
-    searchBy?: string
+    studentId?:number
   ): Promise<CustomProfessorResponse[]> {
     const query = this.professorRepository
       .createQueryBuilder('professor')

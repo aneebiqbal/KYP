@@ -173,13 +173,14 @@ export class StudentService {
       const loveTeachingStylePercentage = totalRatings > 0 ? (totalLoveTeachingStyle / (totalRatings * 5)) * 100 : 0;
 
       return {
+        id:professor.id,
         name: `${professor.first_name} ${professor.last_name}`,
         image_url: professor.image_url,
         department_name: professor.department_name,
         institute_name: professor.institute.name,
         overall_rating: parseFloat(overallRating.toFixed(2)),
         total_ratings: totalRatings,
-        is_saved: true, 
+        is_saved: true,
         take_again: parseFloat(takeAgainPercentage.toFixed(2)),
         love_teaching_style: parseFloat(loveTeachingStylePercentage.toFixed(2)),
       } as CustomProfessorResponse;
