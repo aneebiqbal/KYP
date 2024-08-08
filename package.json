@@ -16,6 +16,7 @@
     "@nx/nest": "^19.5.3",
     "axios": "^1.6.0",
     "bcrypt": "^5.1.1",
+    "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "jsonwebtoken": "^9.0.2",
     "next": "14.2.3",

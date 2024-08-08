@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsNotEmpty,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 
 export class SignUpDto {
@@ -11,24 +12,38 @@ export class SignUpDto {
   @IsNotEmpty()
   email!: string;
 
+  @ValidateIf(o => !o.googleId)
   @IsString()
-  @IsOptional()
   @MinLength(6)
-  password!: string; //--only required for email signups
+  @IsNotEmpty()
+  password!: string; // Only required for email signups
 
   @IsString()
   @IsOptional()
-  googleId?: string; //--only required for google signups
+  googleId?: string; // Only required for Google signups
 
-  @IsOptional()
+  @ValidateIf(o => !o.googleId)
   @IsString()
+  @IsNotEmpty()
   first_name?: string;
 
-  @IsOptional()
+  @ValidateIf(o => !o.googleId)
   @IsString()
+  @IsNotEmpty()
   last_name?: string;
 
-  @IsOptional()
+  @ValidateIf(o => !o.googleId)
   @IsString()
+  @IsOptional()
+  image_url?: string;
+
+  @ValidateIf(o => !o.googleId)
+  @IsString()
+  @IsNotEmpty()
   instituteName?: string;
+
+  @ValidateIf(o => !o.googleId)
+  @IsString()
+  @IsNotEmpty()
+  department?: string;
 }

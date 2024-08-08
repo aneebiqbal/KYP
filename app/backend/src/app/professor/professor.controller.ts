@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Request, Query, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+  Request,
+  UsePipes,
+  ValidationPipe
+} from '@nestjs/common';
 import { ProfessorService } from './professor.service';
 import { SearchProfessorDto } from './dto/search-professor.dto';
 import { JwtAuthGuard } from '../utils/auth.guard';
@@ -13,15 +24,16 @@ export class ProfessorController {
   @Get('search')
   @HttpCode(HttpStatus.OK)
   async searchProfessor(@Query() query: SearchProfessorDto, @Request() req) {
-    const { sortField, sortOrder, text, searchBy } = query;
+    const { name, searchBy, sortField, sortOrder } = query;
     const studentId = req.user?.id;
-    return this.professorService.searchProfessors( studentId, sortField, sortOrder, text, searchBy);
+    return this.professorService.searchProfessors(name, searchBy, studentId, sortField, sortOrder);
   }
 
 
   @UseGuards(JwtAuthGuard)
   @Post('saved')
   @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async saveProfessor(@Query() query: SaveProfessorDto, @Request() req) {
     const studentId = req.user?.id;
     const { professorId, flag } = query;
