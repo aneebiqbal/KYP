@@ -4,7 +4,7 @@ export class myRatingDto {
 
     @IsString()
     @IsOptional()
-    searchBy: 'professor' | 'course';
+    searchBy: 'name' | 'institute';
 
     @IsString()
     @IsOptional()

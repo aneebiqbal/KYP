@@ -192,7 +192,7 @@ export class StudentService {
 
   async myRating(
     text: string,
-    searchBy: 'professor' | 'course',
+    searchBy: 'name' | 'institute',
     studentId: number,
     page = 1,
     limit = 1
@@ -205,12 +205,12 @@ export class StudentService {
       .leftJoinAndSelect('professor.institute', 'institute')
       .where('student.id = :studentId', { studentId });
 
-    if (searchBy === 'professor') {
+    if (searchBy === 'name') {
       query.andWhere(
         'professor.first_name ILIKE :text OR professor.last_name ILIKE :text',
         { text }
       );
-    } else if (searchBy === 'course') {
+    } else if (searchBy === 'institute') {
       query.andWhere('course.name ILIKE :text', { text });
     }
 
