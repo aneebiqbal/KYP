@@ -27,21 +27,20 @@ export class StudentController {
   @UseGuards(JwtAuthGuard)
   @Get('saved-professors')
   async getSavedProfessors(@Query() query: SavedProfessorsQueryDto, @Request() req) {
-    const {text, searchBy } = query;
-    const studentId = req.user?.id; 
-    console.log(studentId)
-    return this.studentService.getSavedProfessors(text, searchBy,studentId );
+    const {search, searchBy,page } = query;
+    const studentId = req.user?.id;
+    return this.studentService.getSavedProfessors(search, searchBy,studentId, page);
   }
 
-  
+
   @UseGuards(JwtAuthGuard)
   @Get('my-ratings')
   @HttpCode(HttpStatus.OK)
   async myRatings (@Query() query: myRatingDto, @Request() req) {
-    const {text, searchBy } = query;
+    const {search, searchBy, page } = query;
     const studentId = req.user.id;
     console.log(studentId)
-    return this.studentService.myRating(text, searchBy,studentId )
+    return this.studentService.myRating(search, searchBy,studentId, page )
   }
- 
+
 }

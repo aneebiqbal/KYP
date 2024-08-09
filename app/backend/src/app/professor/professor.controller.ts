@@ -24,9 +24,9 @@ export class ProfessorController {
   @Get('search')
   @HttpCode(HttpStatus.OK)
   async searchProfessor(@Query() query: SearchProfessorDto, @Request() req) {
-    const { name, searchBy, sortField, sortOrder } = query;
+    const { search, searchBy, sortField, sortOrder,page} = query;
     const studentId = req.user?.id;
-    return this.professorService.searchProfessors(name, searchBy,  sortField, sortOrder, studentId);
+    return this.professorService.searchProfessors(search, searchBy,  sortField, sortOrder, studentId, page);
   }
 
 

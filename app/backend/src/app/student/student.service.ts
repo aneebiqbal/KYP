@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Institute, Professor, Rating, Student } from '@kyp/db';
 import { UpdateStudentProfileDto, UpdatePasswordDto } from './dto/update-profile.dto';
 import * as bcrypt from 'bcrypt';
-import { SavedProfessorsQueryDto } from './dto/seach-saved-professor.dto';
+import { getPaginated, PaginatedResult } from '../utils/getPaginated';
 
 interface CustomRatingResponse {
   professor: {
@@ -105,9 +105,12 @@ export class StudentService {
 
   async getSavedProfessors(
     text: string,
-    searchBy: 'professor' | 'institute',
-    studentId: number )
-    : Promise<CustomProfessorResponse[]> {
+    searchBy: 'name' | 'institute',
+    studentId: number,
+    page = 1,
+    limit = 1
+  )
+    : Promise<PaginatedResult<CustomProfessorResponse>> {
     const student = await this.studentRepository.findOne({
       where: { id: studentId }
     });
@@ -129,7 +132,7 @@ export class StudentService {
       .where('professor.id IN (:...savedProfessorIds)', { savedProfessorIds })
       .andWhere('ratings.deleted_at IS NULL');
 
-    if (searchBy === 'professor') {
+    if (searchBy === 'name') {
       query.andWhere(
         'professor.first_name ILIKE :text OR professor.last_name ILIKE :text',
         { text }
@@ -147,7 +150,7 @@ export class StudentService {
       );
     }
 
-    return professors.map(professor => {
+    return getPaginated(professors.map(professor => {
       const totalRatings = professor.ratings.length;
       const overallRating =
         totalRatings > 0
@@ -184,14 +187,16 @@ export class StudentService {
         take_again: parseFloat(takeAgainPercentage.toFixed(2)),
         love_teaching_style: parseFloat(loveTeachingStylePercentage.toFixed(2)),
       } as CustomProfessorResponse;
-    });
+    }),page,limit);
   }
 
   async myRating(
     text: string,
     searchBy: 'professor' | 'course',
-    studentId: number
-  ): Promise<CustomRatingResponse[]> {
+    studentId: number,
+    page = 1,
+    limit = 1
+  ): Promise<PaginatedResult<CustomRatingResponse>> {
     const query = this.ratingRepository
       .createQueryBuilder('rating')
       .leftJoinAndSelect('rating.student', 'student')
@@ -292,6 +297,6 @@ export class StudentService {
         professorData.professor.average_rating = averageRating;
       });
     });
-    return Object.values(groupedByProfessor);
+    return getPaginated(Object.values(groupedByProfessor),page,limit);
   }
 }

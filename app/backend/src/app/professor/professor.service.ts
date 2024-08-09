@@ -1,15 +1,12 @@
-import { Professor } from '@kyp/db';
-import { Student } from '@kyp/db';
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Professor, Student } from '@kyp/db';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { getPaginated, PaginatedResult } from '../utils/getPaginated';
 
-interface CustomProfessorResponse {
-  id:number,
+
+interface professor{
+  id:number;
   name: string;
   image_url: string;
   department_name: string;
@@ -17,11 +14,8 @@ interface CustomProfessorResponse {
   overall_rating: number;
   total_ratings: number;
   is_saved?: boolean;
-  ratings: {
-    student_name: string;
-    take_again: boolean;
-    love_teaching_style: number;
-  }[];
+  take_again: number;
+  love_teaching_style: number;
 }
 
 @Injectable()
@@ -38,8 +32,10 @@ export class ProfessorService {
     searchBy?: string,
     sortField: 'first_name' | 'overall_rating' = 'first_name',
     sortOrder: 'ASC' | 'DESC' = 'ASC',
-    studentId?:number
-  ): Promise<CustomProfessorResponse[]> {
+    studentId?:number,
+    page = 1,
+    limit = 1
+  ): Promise<PaginatedResult<professor>> {
     const query = this.professorRepository
       .createQueryBuilder('professor')
       .leftJoinAndSelect('professor.institute', 'institute')
@@ -124,26 +120,28 @@ export class ProfessorService {
       return 0;
     });
 
-    return sortedProfessors.map((professor) => {
-      const response: CustomProfessorResponse= {
+    return getPaginated(sortedProfessors.map((professor) => {
+      const totalRatings = professor.ratings.length;
+      const totalTakeAgain = professor.ratings.filter(rating => rating.take_again).length;
+      const takeAgainPercentage = totalRatings > 0 ? (totalTakeAgain / totalRatings) * 100 : 0;
+      const totalLoveTeachingStyle = professor.ratings.reduce((acc, rating) => acc + rating.love_teaching_style, 0);
+      const loveTeachingStylePercentage = totalRatings > 0 ? (totalLoveTeachingStyle / (totalRatings * 5)) * 100 : 0;
+      const response: professor = {
         id: professor.id,
         name: `${professor.first_name} ${professor.last_name}`,
         image_url: professor.image_url,
         department_name: professor.department_name,
         institute_name: professor.institute.name,
         overall_rating: professor.overallRating,
-        ratings: professor.ratings.map((rating) => ({
-          student_name: `${rating.student.first_name} ${rating.student.last_name}`,
-          take_again: rating.take_again,
-          love_teaching_style: rating.love_teaching_style,
-        })),
+        take_again: parseFloat(takeAgainPercentage.toFixed(2)),
+        love_teaching_style: parseFloat(loveTeachingStylePercentage.toFixed(2)),
         total_ratings: professor.totalRatings,
       };
       if (studentId) {
         response.is_saved = professor.is_saved;
       }
       return response;
-    });
+    }), page, limit);
   }
 
   async addSavedProfessor(
