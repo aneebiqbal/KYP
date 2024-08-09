@@ -20,8 +20,8 @@ const CustomDropdown = ({  selectedValue, onSelect, placeholder }) => {
   }, []);
 
   const options = [
-    { value: '0', label: 'Name' },
-    { value: '1', label: 'University' }
+    { value: 'name', label: 'Name' },
+    { value: 'institute', label: 'University' }
   ];
 
   return (

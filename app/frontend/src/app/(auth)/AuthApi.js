@@ -44,16 +44,12 @@ export const AuthApi = {
       throw e.response.data;
     }
   },
-  logout: async(logoutData) => {
+  logout: async() => {
     try {
-      await AuthApiService.logout(logoutData)
-        .then(()=>{
-          destroyToken();
-          destroyUserInfo();
-        })
+      destroyToken();
+      destroyUserInfo();
     } catch (e) {
       console.log('error', e);
-      throw e.response.data;
     }
   },
 };
