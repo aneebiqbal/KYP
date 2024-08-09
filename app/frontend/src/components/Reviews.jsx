@@ -4,7 +4,7 @@ export default function Reviews({reviews}) {
   return<>
     {reviews.map((review,index) => (
       <div key={'review'+index} className="flex mb-20">
-        <div className="flex column items-center">
+        <div className="flex column items-center reviews">
           <Image className="border-radius-100" height={48} width={48} src={review.image} alt={review.image} />
           <p className="text-0378A6 text-26 text-weight-600">{review.rating}</p>
         </div>
@@ -14,14 +14,14 @@ export default function Reviews({reviews}) {
             <p className="text-14 text-141414 text-weight-600">{review.date}</p>
           </div>
           <p className="text-141414 text-16 text-weight-400 mb-20">{review.review}</p>
-          <div className="flex mb-20">
+          <div className="flex mb-20 professor-mobile-flex-col">
             {review.tags.map((tag,index) => (
-              <div key={tag+'-'+index} className=" bg-CDE4ED text-14 text-024864 text-weight-400 pa-10 border-radius-6 mr-16">
+              <div key={tag+'-'+index} className=" bg-CDE4ED text-14 text-024864 text-weight-400 pa-10 border-radius-6 mr-16  review-tag ">
                 {tag}
               </div>
             ))}
           </div>
-          <div className="flex mb-10">
+          <div className="flex mb-10 professor-mobile-flex-col credit-attendence">
             <p className="text-434343 text-14 text-weight-400">For Credit: <span className="text-weight-600 text-141414">{review.credit}</span></p>
             <p className=" ml-12 text-434343 text-14 text-weight-400">Attendance: <span className="text-weight-600 text-141414">{review.attendance}</span></p>
           </div>

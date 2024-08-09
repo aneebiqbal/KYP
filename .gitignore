@@ -44,3 +44,11 @@ Thumbs.db
 # Next.js
 .next
 out
+
+data-persistence
+helm/charts
+.nx/cache
+
+
+.env
+.env.local
