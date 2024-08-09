@@ -24,7 +24,7 @@ export default function Header() {
 
   const logout = () => {
     if (userInfo && userInfo.email) {
-      AuthApi.logout({ email: userInfo.email }).then(() => {
+      AuthApi.logout().then(() => {
         router.push('/login');
       });
     }

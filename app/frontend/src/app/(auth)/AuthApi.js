@@ -1,38 +1,38 @@
 import { AuthApiService } from './AuthApiService';
-import { NextResponse } from 'next/server';
 import {setToken, destroyToken, destroyUserInfo, setUserInfo} from '../../services/JwtService';
 
+
 export const AuthApi = {
+
   login:async (loginData) => {
-    try {await AuthApiService.login(loginData)
+    try {
+      await AuthApiService.login(loginData)
       .then((response)=>{
-        setUserInfo(response.data.userInfo);
+        setUserInfo(JSON.stringify(response.data.student));
         setToken(response.data.token);
-        NextResponse.redirect(new URL('/'));
       })
     } catch (e) {
-      console.log('error', e.message);
-      throw e.message;
+      console.log('error', e.response.data.message);
+      throw e.response.data;
     }
   },
   signup: async(signUpData) => {
     try {
       return await AuthApiService.signup(signUpData)
         .then((response)=>{
-          setUserInfo(response.data.userInfo);
+          setUserInfo(JSON.stringify(response.data.student));
           setToken(response.data.token);
-          NextResponse.redirect(new URL('/'));
         })
     } catch (e) {
-      console.log('error', e.message);
-      throw e.message;
+      console.log('error', e.response.data);
+      throw e.response.data;
     }
   },
   forgetPassword: async(forgetPasswordData) => {
     try {
       return await AuthApiService.forgetPassword(forgetPasswordData);
     } catch (e) {
-      console.log('error', e);
+      console.log('error', e.response.data);
       throw e.response.data;
     }
   },
@@ -44,17 +44,12 @@ export const AuthApi = {
       throw e.response.data;
     }
   },
-  logout: async(logoutData) => {
+  logout: async() => {
     try {
-      await AuthApiService.logout(logoutData)
-        .then(()=>{
-          destroyToken();
-          destroyUserInfo();
-          NextResponse.redirect(new URL('/login'));
-        })
+      destroyToken();
+      destroyUserInfo();
     } catch (e) {
       console.log('error', e);
-      throw e.response.data;
     }
   },
 };
