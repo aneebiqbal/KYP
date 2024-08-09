@@ -1,17 +1,20 @@
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class myRatingDto {
 
     @IsString()
     @IsOptional()
-    searchBy: 'professor' | 'course';
+    searchBy: 'name' | 'institute';
 
     @IsString()
     @IsOptional()
-    text: string;
+    search: string;
 
     @IsOptional()
     @IsNumber()
     studentId?: number;
 
+    @IsNotEmpty()
+    @IsNumber()
+    page?: number;
 }

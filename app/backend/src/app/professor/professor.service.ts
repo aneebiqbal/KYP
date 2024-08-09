@@ -1,14 +1,12 @@
-import { Professor } from '@kyp/db';
-import { Student } from '@kyp/db';
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Professor, Student } from '@kyp/db';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { getPaginated, PaginatedResult } from '../utils/getPaginated';
 
-interface CustomProfessorResponse {
+
+interface professor{
+  id:number;
   name: string;
   image_url: string;
   department_name: string;
@@ -16,11 +14,8 @@ interface CustomProfessorResponse {
   overall_rating: number;
   total_ratings: number;
   is_saved?: boolean;
-  ratings: {
-    student_name: string;
-    take_again: boolean;
-    love_teaching_style: number;
-  }[];
+  take_again: number;
+  love_teaching_style: number;
 }
 
 @Injectable()
@@ -33,35 +28,46 @@ export class ProfessorService {
   ) {}
 
   async searchProfessors(
-    studentId?: number,
+    name?: string,
+    searchBy?: string,
     sortField: 'first_name' | 'overall_rating' = 'first_name',
     sortOrder: 'ASC' | 'DESC' = 'ASC',
-    text?: string,
-    searchBy?: 'professor' | 'institute'
-  ): Promise<CustomProfessorResponse[]> {
+    studentId?:number,
+    page = 1,
+    limit = 1
+  ): Promise<PaginatedResult<professor>> {
     const query = this.professorRepository
       .createQueryBuilder('professor')
       .leftJoinAndSelect('professor.institute', 'institute')
       .leftJoinAndSelect('professor.ratings', 'ratings')
       .leftJoinAndSelect('ratings.student', 'student')
       .where('ratings.deleted_at IS NULL');
-
-    if (searchBy == 'professor') {
-      query.andWhere(
-        'professor.first_name ILIKE :text OR professor.last_name ILIKE :text',
-        { text }
-      );
-    } else if (searchBy == 'institute') {
-      query.andWhere('institute.name ILIKE :text', { text });
+    if (name) {
+      if(searchBy === 'name'){
+          query.andWhere(
+            'professor.first_name ILIKE :name OR professor.last_name ILIKE :name',
+            { name: `%${name}%` }
+          );
+      }else if(searchBy === 'institute'){
+        query.andWhere(
+          `institute.name ILIKE :name`,
+          { name }
+        );
+      }
     }
+
+    // if (institute_name) {
+    //   query.andWhere('institute.name = :institute_name', { institute_name });
+    // }
 
     if (sortField !== 'overall_rating') {
       query.orderBy(`professor.${sortField}`, sortOrder);
     }
     const professors = await query.getMany();
-
-    if (professors.length === 0) {
-      throw new NotFoundException(`No professors found`);
+    if ( professors.length === 0) {
+      throw new NotFoundException(
+        `No professors found by ${searchBy}`
+      );
     }
 
     let savedProfessors: number[] = [];
@@ -107,32 +113,35 @@ export class ProfessorService {
 
     const sortedProfessors = professorsWithRatings.sort((a, b) => {
       if (sortField === 'overall_rating') {
-        return sortOrder === 'ASC'
+        return sortOrder === 'DESC'
           ? a.overallRating - b.overallRating
           : b.overallRating - a.overallRating;
       }
       return 0;
     });
 
-    return sortedProfessors.map((professor) => {
-      const response: CustomProfessorResponse = {
+    return getPaginated(sortedProfessors.map((professor) => {
+      const totalRatings = professor.ratings.length;
+      const totalTakeAgain = professor.ratings.filter(rating => rating.take_again).length;
+      const takeAgainPercentage = totalRatings > 0 ? (totalTakeAgain / totalRatings) * 100 : 0;
+      const totalLoveTeachingStyle = professor.ratings.reduce((acc, rating) => acc + rating.love_teaching_style, 0);
+      const loveTeachingStylePercentage = totalRatings > 0 ? (totalLoveTeachingStyle / (totalRatings * 5)) * 100 : 0;
+      const response: professor = {
+        id: professor.id,
         name: `${professor.first_name} ${professor.last_name}`,
         image_url: professor.image_url,
         department_name: professor.department_name,
         institute_name: professor.institute.name,
         overall_rating: professor.overallRating,
-        ratings: professor.ratings.map((rating) => ({
-          student_name: `${rating.student.first_name} ${rating.student.last_name}`,
-          take_again: rating.take_again,
-          love_teaching_style: rating.love_teaching_style,
-        })),
+        take_again: parseFloat(takeAgainPercentage.toFixed(2)),
+        love_teaching_style: parseFloat(loveTeachingStylePercentage.toFixed(2)),
         total_ratings: professor.totalRatings,
       };
       if (studentId) {
         response.is_saved = professor.is_saved;
       }
       return response;
-    });
+    }), page, limit);
   }
 
   async addSavedProfessor(
