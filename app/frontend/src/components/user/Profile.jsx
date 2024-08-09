@@ -80,10 +80,10 @@ export default function Profile({userInfo}) {
     }
   }
   return<>
-    <div>
-      <p className="text-weight-600 text-24 text-1F1F1F mb-32 ">Account settings</p>
+    <div className='mt-30'>
+      <p className="text-weight-600 text-24 text-1F1F1F mb-32  ">Account settings</p>
       <div className="flex mb-60 professor-profile-mobile-center">
-        <div className="border-color-D9D9D9 border-radius-8 pa-40 mr-80 img-input-field-width-mr-0" style={{ width: '368px' }}>
+        <div className="border-color-D9D9D9 border-radius-8 pa-40 mr-80 img-input-field-width-mr-0 full-width-mobile-responsive" style={{ width: '368px' }}>
           <div className="mb-20 position-relative">
             <Image style={{width:'100%'}} height={280} width={280} src={preview} alt={userInfo.image} />
             <input  ref={fileInputRef} style={{visibility:'hidden', left:'0',bottom:'0',width:'0',height:'0'}} className="position-absolute" type="file" accept="image/*" onChange={handleImageUpload} />
@@ -104,7 +104,7 @@ export default function Profile({userInfo}) {
           >
             {({ errors, touched }) => (
               <Form className="flex column justify-between full-height">
-                <div  className="row full-width  ">
+                <div  className="row full-width ">
                   <div className=" mb-20 col-12 mobile-padding-right-0 ">
                     <label className="text-141414 text-weight-400 text-14 mb-2">Full Name</label>
                     <div className="row ">
@@ -116,7 +116,7 @@ export default function Profile({userInfo}) {
                         />
                         <ErrorMessage name="firstName" component="div" />
                       </div>
-                      <div className="col-md-12 col-lg-6 mt-md-2 mobile-padding-right-0 ">
+                      <div className="col-md-12 col-lg-6 mt-md-2 mt-lg-0 mobile-padding-right-0 ">
                         <Field type="text" name="lastName"
                                style={{ height: '46px' }}
                                className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-8"

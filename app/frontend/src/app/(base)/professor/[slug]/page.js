@@ -1,8 +1,34 @@
+'use client'
+
 import Image from 'next/image';
 import Reviews from '../../../../components/Reviews';
 import StarRating from '../../../../components/StarRating';
 import RatingBar from '../../../../components/RatingBar';
+import { useState, useEffect, useRef } from 'react';
+
 export default function page(){
+  const [course, setCourse] = useState('');
+  const [DropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const options = [
+    { value: '0', label: 'CS106' },
+    { value: '1', label: 'CS107' },
+  ];
+
   const reviews = [
     {
       image:'/student.png',
@@ -85,7 +111,7 @@ export default function page(){
   ]
   const tags = ['Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader',];
   return<>
-    <div className="px-120 py-30 tablet-px-90 mobile-px-20">
+    <div className="px-120 py-30 tablet-px-90 tablet-px-50 mobile-px-20">
 
       <p className="text-8C8C8C text-14 text-weight-400 mb-40">Professor / <span
         className="text-1F1F1F">James Jameson</span></p>
@@ -97,7 +123,8 @@ export default function page(){
         <div className="px-20 flex-1 flex column justify-center professor-name-mt-24">
           <h2 className="text-24 text-1F1F1F text-weight-600 mb-6">James Jameson</h2>
           <p className="text-14 text-weight-400 text-434343">Professor in the
-            <span className="text-1F1F1F text-weight-600"> English department</span> at
+            <span className="text-1F1F1F text-weight-600"> English department</span> at <span
+              className="line-break-2"><br />  </span>
             <span className="text-1F1F1F text-weight-600"> Greenville Technical College</span></p>
         </div>
         <div className="flex items-center mobile-mt-28">
@@ -261,6 +288,63 @@ export default function page(){
 
       <div>
         <p className="text-1D2026 text-weight-600 text-24 mb-20 ">Reviews (154)</p>
+        <div className="relative sort-dropdown my-28" ref={dropdownRef}>
+                <div
+                  onClick={() => setDropdownOpen(!DropdownOpen)}
+                  style={{
+                    
+                    height: '72px',
+                    maxWidth: '341px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                  className="px-28 border-radius-12 border-color-D9D9D9"
+                >
+                  <p className="text-18">
+                    {options.find((option) => option.value === course)?.label ||
+                      'Select Course'}
+                  </p>
+                  <Image
+                    style={{ marginLeft: '24px' }}
+                    height={10}
+                    width={10}
+                    src="/arrowicon.svg"
+                    alt="searchIcon"
+                  />
+                </div>
+                {DropdownOpen && (
+                  <div
+                    style={{
+                      position: 'absolute',
+
+                      width: '200px',
+                      borderRadius: '12px',
+                      border: '1px solid #D9D9D9',
+                      backgroundColor: '#ffffff',
+                      zIndex: 10,
+                      maxHeight: '200px',
+                    }}
+                    className="px-10 border-color-D9D9D9"
+                  >
+                    {options.map((option) => (
+                      <div
+                        key={option.value}
+                        onClick={() => {
+                          setCourse(option.value);
+                          setDropdownOpen(false);
+                        }}
+                        style={{
+                          cursor: 'pointer',
+                        }}
+                        className="px-10 py-12"
+                      >
+                        {option.label}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
         <Reviews reviews={reviews} />
       </div>
     </div>

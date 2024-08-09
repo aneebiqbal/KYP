@@ -121,7 +121,7 @@ return<>
             if (searchCheck !== '') {
               setSearchCheck('')
             }
-          }} className="px-20 search-input-field rating-input"
+          }} className="px-20 search-input-field rating-input mobile-border-right"
                  placeholder={type === 'name' ? 'Search professor with name' : 'Search for professors by university.'} />
         </div>
         <div
@@ -131,7 +131,7 @@ return<>
             width: '72px',
             borderTopRightRadius: '12px',
             borderBottomRightRadius: '12px'
-          }} className="bg-FFA337 flex items-center justify-center cursor-pointer full-width-responsive border-mobile height-search-52">
+          }} className=" bg-FFA337 flex items-center justify-center cursor-pointer full-width-responsive border-mobile height-search-52">
           <Image height={24} width={24} src="/searchIcon.svg" alt="searchIcon" />
         </div>
       </div>

@@ -24,7 +24,7 @@ export default function Page() {
   return (<>
       <main className={styles.page}>
         <section>
-          <div className="px-120 py-200 tablet-px-90 tablet-py-100 mobile-px-20 mobile-py-48 bg-5F32CA">
+          <div className="px-120 py-200 tablet-px-90 tablet-px-50 tablet-py-100 mobile-px-20 mobile-py-48 bg-5F32CA">
             <div className="row tablet-flex-col">
               <div className="col-xl-6 col-lg-12">
                 <h1 className="text-70 text-ffffff text-weight-600 mb-32 ">Find Professors by Name and Institution</h1>

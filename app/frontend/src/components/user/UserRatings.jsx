@@ -27,7 +27,7 @@ export default function UserRatings({ratings}) {
             if (searchCheck !== '') {
               setSearchCheck('')
             }
-          }} className="px-20 search-input-field rating-input"
+          }} className="px-20 search-input-field rating-input mobile-border-right "
                  placeholder={type === 'name' ? 'Search professor with name' : 'Search for professors by university.'} />
           </div>
           <div
@@ -63,10 +63,11 @@ export default function UserRatings({ratings}) {
                 </p>
               </div>
               <div style={{ top: '64px', left: '22px' }} className="position-absolute">
-                <Image width={32} height={108} src="/user/myRatingLine.svg" alt="myRatingLine" />
+                <Image width={32} height={108} src="/user/myRatingLine.svg" alt="myRatingLine" className='desktop-display-rating-img'/>
+                <div className='tablet-display' style={{borderRight: "1px solid #D9D9D9", height:'75px'}}></div>
               </div>
             </div>
-            <div className="pl-72">
+            <div className="pl-72 mobile-padding-left-0">
               <Reviews reviews={rating.reviews} />
             </div>
             {index < ratings.length - 1 && (<div className="separator-x my-4"></div>)}

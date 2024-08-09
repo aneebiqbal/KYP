@@ -40,6 +40,17 @@ export default function Header() {
     }
   };
 
+  useEffect(() => {
+    if(sidebarOpen){
+      document.body.style.overflow = 'hidden'
+    }
+    else {
+      document.body.style.overflow = 'auto'
+    }
+  
+  }, [sidebarOpen])
+  
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -50,7 +61,7 @@ export default function Header() {
 
   return (
     <nav>
-      <div style={{ height: '80px' }} className="px-160 flex justify-between items-center tablet-px-90 mobile-px-20">
+      <div style={{ height: '80px', borderBottom: "1.25px solid #E4E7EC" }} className=" px-160 flex justify-between items-center tablet-px-90 tablet-px-50 mobile-px-20">
         <Link href="/">
           <Image height={35} width={70} src="/KYP.png" alt="KYPIcon" />
         </Link>
@@ -178,21 +189,28 @@ export default function Header() {
                   <p className="text-weight-400 text-14 text-1F1F1F ml-12">Logout</p>
                 </div>
               </div>
-            </div> ) : (<div>
-              <button onClick={() => {
-                router.push('/sign-up');
-              }}
-                      className="cursor-pointer px-20 py-12 text-18 flex justify-center items-center bg-ffffff text-763FF9 border-color-763FF9 border-radius-4 mb-6">
-                Sign Up
-              </button>
-
-              <button onClick={() => {
-                router.push('/login');
-              }}
-                      className="cursor-pointer px-20 py-12 ml-12 text-18 flex justify-center items-center bg-763FF9 text-ffffff border-color-763FF9 border-radius-4">
-                Login
-              </button>
-            </div>)}
+            </div> ) : (
+             <div className='mt-30'>
+             <div
+               onClick={() => {
+                 router.push('/sign-up');
+               }}
+               className="cursor-pointer px-20 py-12 text-18  text-763FF9 "
+             >
+               Sign Up
+             </div>
+           
+             <div
+               onClick={() => {
+                 router.push('/login');
+               }}
+               className="cursor-pointer px-20 py-12 text-18  text-763FF9 "
+             >
+               Login
+             </div>
+           </div>
+           
+          )}
 
 
           </div>
