@@ -41,12 +41,15 @@ export default function Header() {
   };
 
   useEffect(() => {
-    if(sidebarOpen){
-      document.body.style.overflow = 'hidden'
+    if(window.innerWidth <= 576){
+      if(sidebarOpen){
+        document.body.style.overflow = 'hidden'
+      }
+      else {
+        document.body.style.overflow = 'auto'
+      }
     }
-    else {
-      document.body.style.overflow = 'auto'
-    }
+   
   
   }, [sidebarOpen])
   
