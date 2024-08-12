@@ -48,7 +48,7 @@ const CustomDropdown = ({  selectedValue, onSelect, placeholder }) => {
         <div
           style={{
             position: 'absolute',
-
+            marginTop:'4px',
             width: '200px',
             borderRadius: '12px',
             border: '1px solid #D9D9D9',

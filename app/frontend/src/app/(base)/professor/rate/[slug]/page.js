@@ -150,7 +150,7 @@ export default function page(string) {
     <>
       <main>
         <section>
-          <div className="px-120 py-60 tablet-px-90 mobile-px-20">
+          <div className="px-120 py-60 tablet-px-90 tablet-px-50 mobile-px-20">
             <p className="text-14 text-weight-400 text-8C8C8C mb-40">
               Professors / James Jameson /{' '}
               <span className="text-1F1F1F">Write a review</span>
@@ -198,7 +198,7 @@ export default function page(string) {
                   <div
                     style={{
                       position: 'absolute',
-
+                      marginTop:"4px",
                       width: '200px',
                       borderRadius: '12px',
                       border: '1px solid #D9D9D9',
@@ -356,6 +356,7 @@ export default function page(string) {
                     <div
                       style={{
                         position: 'absolute',
+                        marginTop:"4px",
                         width: '200px',
                         borderRadius: '12px',
                         border: '1px solid #D9D9D9',

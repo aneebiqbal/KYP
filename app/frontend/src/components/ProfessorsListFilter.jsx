@@ -70,7 +70,7 @@ export default function ProfessorsListFilter(){
                         placeholder="Select"/>
 
         <input value={search} onChange={(event)=>{setSearch(event.target.value)}} style={{ height: '72px', width: '420px', borderTopRightRadius: '12px', borderBottomRightRadius: '12px' }}
-               className="px-20 border-color-D9D9D9 mobile-px-10 search-input-field border-right"
+               className="px-20 border-color-D9D9D9 mobile-px-10 search-input-field border-right search-input-full-width"
                placeholder={type === 'name' ? 'Search professor with name' : 'Search for professors by university.'} />
         </div>
         <div

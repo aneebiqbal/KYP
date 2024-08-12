@@ -25,7 +25,7 @@ export default function Page() {
       <main className={styles.page}>
         <section>
           <div className="px-120 py-200 tablet-px-90 tablet-px-50 tablet-py-100 mobile-px-20 mobile-py-48 bg-5F32CA">
-            <div className="row tablet-flex-col">
+            <div className="row items-center   tablet-flex-col">
               <div className="col-xl-6 col-lg-12">
                 <h1 className="text-70 text-ffffff text-weight-600 mb-32 ">Find Professors by Name and Institution</h1>
                 <p className="text-24 text-F1ECFE text-weight-400 mb-40 mobile-text-16">Evaluate Your Professors and Enhance the Academic Experience</p>
@@ -51,19 +51,21 @@ export default function Page() {
 
               </div>
               <div className="col-xl-6 col-lg-12 home-section-tablet-img">
-                <Image height={540} width={738} src="/index/indexSectionOneImage.png" alt=""  className="full-width"/>
+                <Image height={540} width={738} src="/index/indexSectionOneImage.png" alt=""  
+                // className="full-width"
+                />
               </div>
             </div>
           </div>
         </section>
         <section >
-          <div className="px-120 py-150 tablet-px-90 tablet-py-100 mobile-px-20 mobile-py-40">
+          <div className="px-120 py-150 tablet-px-90 tablet-px-50 tablet-py-100 mobile-px-20 mobile-py-40">
             <div className="flex justify-between items-center mb-80 tablet-flex-col tablet-align-start ">
               <h2 className="text-1F1F1F text-70 text-weight-700 ">Join and Rate <br/> The KYP Family</h2>
               <div className="mobile-button-width-320">
                 <p className="text-18 text-595959 text-weight-400 mb-2">Love KYP Family? Let's make it official.</p>
                 <button
-                  className="cursor-pointer px-20 py-12  text-18 flex justify-center items-center bg-763FF9 text-ffffff border-color-763FF9 border-radius-4">
+                  className="cursor-pointer px-20 py-12 width-225  text-18 flex justify-center items-center bg-763FF9 text-ffffff border-color-763FF9 border-radius-4">
                   Sign Up Now!
                 </button>
               </div>

@@ -227,7 +227,7 @@ export default function page(){
                 </div>
               </div>
             </div>
-            <div className="col-sm-12 col-md-6 mobile-mt-20 flex column justify-between full-width-responsive">
+            <div className="col-sm-12 col-md-6 mobile-mt-24 flex column justify-between full-width-responsive">
               <div className="flex items-center">
                 <div className="border-radius-8 flex items-center justify-center bg-E6F1F6"
                      style={{ width: '60px', height: '60px' }}>
@@ -317,7 +317,7 @@ export default function page(){
                   <div
                     style={{
                       position: 'absolute',
-
+                      marginTop:"4px",
                       width: '200px',
                       borderRadius: '12px',
                       border: '1px solid #D9D9D9',
