@@ -127,7 +127,9 @@ export default function Profile({userInfo}) {
                     </div>
 
                   </div>
-                  <div className="col-12 mb-20 mobile-padding-right-0 ">
+                  <div className=" col-12 mobile-padding-right-0 ">
+                    <div className="row ">
+                    <div className="col-12 mb-20 mobile-padding-right-0 ">
                     <label className="text-141414 text-weight-400 text-14 mb-2">Email</label>
                     <Field style={{ height: '46px' }} type="text" name="email"
                            className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-8"
@@ -145,6 +147,9 @@ export default function Profile({userInfo}) {
                     </Field>
                     <ErrorMessage name="university" component="div" />
                   </div>
+                    </div>
+                  </div>
+                  
                 </div>
                 <div className="">
                   <button
