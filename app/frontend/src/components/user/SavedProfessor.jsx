@@ -7,79 +7,21 @@ export default function SavedProfessor() {
   const [type, setType] = useState('0');
   const [search, setSearch] = useState('');
   const [searchCheck, setSearchCheck] = useState('');
-  const [professors, setProfessors] = useState([
-    {
-      id:1,
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:0,
-      rating:'4.7',
-      ratings:[]
-    },
-    {
-      id:2,
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:0,
-      rating:'4.7',
-      ratings:[]
-    },
-    {
-      id:3,
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:0,
-      rating:'4.7',
-      ratings:[]
-    },
-    {
-      id:4,
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:0,
-      rating:'4.7',
-      ratings:[]
-    },
-    {
-      id:5,
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:0,
-      rating:'4.7',
-      ratings:[]
-    }
-  ]);
+  const [professors, setProfessors] = useState([]);
+  const [professorsData, setProfessorsData] = useState({});
 
   const updateProfessors = (professorId) => {
-    const updatedProfessors = professors.map(professor =>
-      professor.id === professorId
-        ? { ...professor, saved: professor.saved === 1 ? 0 : 1 }
-        : professor
+    console.log('professorId', professorId);
+    const updatedProfessors = professors.filter(professor =>
+      !(professor.id === professorId )
     );
+    if(updatedProfessors.length === 0 && professorsData.page < professorsData.total) {
+      getProfessors(type, search, false,  1);
+    }
     setProfessors(updatedProfessors);
   }
 
-  const searchProfessor= ()=>{
+  const searchProfessor = ()=>{
     if(search === ''){
       setSearchCheck('Search field can not be empty')
     }else{
@@ -87,18 +29,21 @@ export default function SavedProfessor() {
       setSearchCheck('')
     }
   }
-  const getProfessors = async (searchBy=type,text=search,seeMore= false)=>{
+  const getProfessors = async (searchBy=type,text=search,seeMore= false,page=1)=>{
     try{
-      await BaseApi.SavedProfessors({searchBy:searchBy,search:text})
+      await BaseApi.SavedProfessors({searchBy:searchBy,search:text,page:page})
         .then((response)=>{
           console.log('response----', response);
           if(seeMore){
             let tempProfessors = professors;
-            tempProfessors = tempProfessors.concat(response);
+            tempProfessors = tempProfessors.concat(response.data.data);
+            console.log('tempProfessors:', tempProfessors);
             setProfessors(tempProfessors);
           }else{
-            setProfessors(response);
+            console.log(response.data.data);
+            setProfessors(response.data.data);
           }
+          setProfessorsData(response.data)
         })
     }catch(e){
       console.log(e)
@@ -106,7 +51,7 @@ export default function SavedProfessor() {
   }
 
   useEffect(() => {
-    // getProfessors();
+    getProfessors();
   }, []);
 return<>
   <div>
@@ -139,9 +84,17 @@ return<>
     {searchCheck !== '' && (<span className="text-12 text-ffffff">{searchCheck}</span>)}
     <div className="flex justify-between mb-32">
       <p className="text-weight-600 text-24 text-1F1F1F">Saved</p>
-      <p className="text-weight-600 text-18 text-8C8C8C">58</p>
+      <p className="text-weight-600 text-18 text-8C8C8C">{professorsData.total}</p>
     </div>
-    <ProfessorsList professors={professors} updateProfessors={updateProfessors} />
+    {professors.length>0 &&(<div>
+      <ProfessorsList professors={professors} updateProfessors={updateProfessors} />
+      {Number(professorsData.page) < professorsData.lastPage && (<div className="flex items-center justify-center mt-4">
+        <p className="text-weight-600 text-763FF9 text-24 cursor-pointer" onClick={() => {
+          getProfessors(type, search, true, Number(professorsData.page) + 1);
+        }}>See more</p>
+      </div>)}
+    </div>)}
+
   </div>
 </>
 }

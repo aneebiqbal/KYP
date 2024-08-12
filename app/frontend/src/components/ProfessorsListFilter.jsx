@@ -11,10 +11,10 @@ export default function ProfessorsListFilter(){
   const [professors, setProfessors] = useState([]);
   const searchParams = useSearchParams();
   const [type, setType] = useState('0');
-  const [sort, setSort] = useState('1');
+  const [sort, setSort] = useState('first_name');
   const [sortOrder, setSortOrder] = useState(true);
   const [search, setSearch] = useState('');
-
+  const [professorData, setProfessorData] = useState({});
   const [DropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -32,24 +32,30 @@ export default function ProfessorsListFilter(){
   }, []);
 
   const options = [
-    { value: '0', label: 'Name' },
-    { value: '1', label: 'Rating' }
+    { value: 'first_name', label: 'Name' },
+    { value: 'overall_rating', label: 'Rating' }
   ];
   const updateProfessors = (professorId) => {
     const updatedProfessors = professors.map(professor =>
       professor.id === professorId
-        ? { ...professor, is_saved: professor.is_saved === 1 ? 0 : 1 }
+        ? { ...professor, is_saved: !professor.is_saved }
         : professor
     );
+    console.log(updatedProfessors);
     setProfessors(updatedProfessors);
   }
-  const getProfessors = async (searchBy=type,text=search)=>{
+  const getProfessors = async (searchBy=type,text=search,concatCheck = false, page=1)=>{
     try{
-      await BaseApi.getProfessors({sortField:sort,sortOrder:sortOrder?'ASC':'DESC',searchBy:searchBy,search:text})
+      await BaseApi.getProfessors({sortField:sort,sortOrder:sortOrder?'ASC':'DESC',searchBy:searchBy,search:text,page:page})
         .then((response)=>{
-          let tempProfessors = professors;
-          tempProfessors = tempProfessors.concat(response)
-          setProfessors(tempProfessors)
+          if(concatCheck){
+            let tempProfessors = professors;
+            tempProfessors = tempProfessors.concat(response.data)
+            setProfessors(tempProfessors)
+          }else{
+            setProfessors(response.data)
+          }
+          setProfessorData(response)
         })
     }catch(e){
       console.log(e)
@@ -61,6 +67,10 @@ export default function ProfessorsListFilter(){
     getProfessors(searchParams.get('searchBy'),searchParams.get('search'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ searchParams.get('search')]);
+  useEffect(() => {
+    getProfessors(type,search,false,1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortOrder]);
   return <>
     <div className="mb-60">
       <div className="flex flex-nowrap professor-mobile-flex-col ">
@@ -74,7 +84,7 @@ export default function ProfessorsListFilter(){
                placeholder={type === 'name' ? 'Search professor with name' : 'Search for professors by university.'} />
         </div>
         <div
-          onClick={()=>{getProfessors()}}
+          onClick={()=>{getProfessors(type,search,false,1)}}
           style={{ height: '72px', width: '72px' }}
           className="bg-FFA337 flex items-center justify-center border-radius-12 ml-30 cursor-pointer professer-list-ml-0">
           <Image height={24} width={24} src="/searchIcon.svg" alt="searchIcon" />
@@ -84,11 +94,11 @@ export default function ProfessorsListFilter(){
     <div className="flex justify-between mb-32 professor-mobile-flex-col">
       <div className="flex items-center">
         <p className="text-24 text-1F1F1F text-weight-600">Search Results</p>
-        <Image onClick={()=>{setSortOrder(!sortOrder)}} className="ml-12 cursor-pointer" width={20} height={16} src="/sortingIcon.svg" alt="sortingIcon"/>
+        <Image onClick={()=>{setSortOrder(!sortOrder);}} className="ml-12 cursor-pointer" width={20} height={16} src="/sortingIcon.svg" alt="sortingIcon"/>
         <p className="ml-8 text-12 text-434343">{sortOrder?'ASC':'DESC'}</p>
       </div>
       <div className="flex items-center professor-mobile-results-selection  mobile-mt-20">
-        <p className="text-weight-600 text-8C8C8C text-18">5,872 Results found</p>
+        <p className="text-weight-600 text-8C8C8C text-18">{professorData?.total} Results found</p>
         <div className="relative sort-dropdown" ref={dropdownRef}>
           <div
             onClick={() => setDropdownOpen(!DropdownOpen)}
@@ -129,6 +139,7 @@ export default function ProfessorsListFilter(){
                   onClick={() => {
                     setSort(option.value);
                     setDropdownOpen(false);
+                    getProfessors(type,search,false,1)
                   }}
                   style={{
 
@@ -146,7 +157,15 @@ export default function ProfessorsListFilter(){
       </div>
     </div>
     {professors.length > 0 ?
-      (<ProfessorsList professors={professors} updateProfessors={updateProfessors} />)
+      (
+        <div>
+          <ProfessorsList professors={professors} updateProfessors={updateProfessors} />
+          {Number(professorData.page) < professorData.lastPage &&(<div className="flex items-center justify-center mt-4">
+            <p className="text-weight-600 text-763FF9 text-24 cursor-pointer" onClick={()=>{getProfessors(type,search,true,Number(professorData.page)+1)}}>See more</p>
+          </div>)}
+        </div>
+
+      )
       : (<div className="full-width full-height flex items-center justify-center column">
         <Image className="mb-20" width={112} height={112} src="/norecordfound.svg" alt="norecordfound" />
         <p className="text-weight-600 text-18 text-1F1F1F mb-8">No records found</p>

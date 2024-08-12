@@ -3,7 +3,7 @@ import {BaseApiService} from './BaseApiService';
 export const BaseApi = {
   getProfessors:async (data) => {
     // let search = '?sortField='+data.sortField+'&sortOrder='+data.sortOrder+'&searchBy='+data.searchBy+'&text='+data.search;
-    let search = '?searchBy='+data.searchBy+'&text='+data.search;
+    let search = '?searchBy='+data.searchBy+'&search='+data.search+'&page='+data.page+'&sortField='+data.sortField+'&sortOrder='+data.sortOrder;
     try {
       return await BaseApiService.getProfessors(search)
         .then((response)=>{
@@ -25,6 +25,7 @@ export const BaseApi = {
     }
   },
   saveProfessor:async (data) => {
+    console.log(data);
     try {
       return await BaseApiService.saveProfessor(data)
       .then((response)=>{
@@ -36,7 +37,7 @@ export const BaseApi = {
     }
   },
   SavedProfessors:async (data) => {
-    let search = '?searchBy='+data.searchBy+'&text='+data.search;
+    let search = '?searchBy='+data.searchBy+'&search='+data.search+'&page='+data.page;
     try {
       return await BaseApiService.SavedProfessors(search)
       .then((response)=>{
@@ -58,7 +59,9 @@ export const BaseApi = {
     }
   },
   getReviews:async (data) => {
-    try {await BaseApiService.getReviews(data)
+    let search = '?searchBy='+data.searchBy+'&search='+data.search+'&page='+data.page;
+    try {
+      return await BaseApiService.getReviews(search)
       .then((response)=>{
         return response;
       })

@@ -205,13 +205,16 @@ export class StudentService {
       .leftJoinAndSelect('professor.institute', 'institute')
       .where('student.id = :studentId', { studentId });
 
-    if (searchBy === 'name') {
-      query.andWhere(
-        'professor.first_name ILIKE :text OR professor.last_name ILIKE :text',
-        { text }
-      );
-    } else if (searchBy === 'institute') {
-      query.andWhere('course.name ILIKE :text', { text });
+
+    if (text) {
+      if (searchBy === 'name') {
+        query.andWhere(
+          'professor.first_name ILIKE :text OR professor.last_name ILIKE :text',
+          { text }
+        );
+      } else if (searchBy === 'institute') {
+        query.andWhere('course.name ILIKE :text', { text });
+      }
     }
 
     const ratings = await query.getMany();

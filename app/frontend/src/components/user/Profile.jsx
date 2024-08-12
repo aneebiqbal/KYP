@@ -2,11 +2,11 @@
 import Image from 'next/image';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {BaseApi} from '../../app/(base)/BaseApi';
 import PopUp from '../PopUp';
+import { getToken, getUserInfo } from '../../services/JwtService';
 export default function Profile({userInfo}) {
-
   const [popup, setPopup] = useState({show:false,type:'',message:'',timeout:0});
   const validationUserInfo = Yup.object({
     firstName: Yup.string()
@@ -27,24 +27,26 @@ export default function Profile({userInfo}) {
     confirmPassword: Yup.string()
       .required('Required'),
   });
-  const [preview, setPreview] = useState(userInfo?.image);
+  const [preview, setPreview] = useState(userInfo.image_url);
   const [image, setImage] = useState(null);
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
   const handleSubmit = async (values) => {
     try{
-      const formData = new FormData();
-      formData.append('image', image);
-      formData.append('firstName', values.firstName);
-      formData.append('lastName', values.lastName);
-      formData.append('email', values.email);
-      formData.append('institute', values.university);
-      formData.append('id', userInfo.id);
-      await BaseApi.updateProfile(formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }).then(() => {
+      // const formData = new FormData();
+      // formData.append('image', image);
+      // formData.append('first_name', values.firstName);
+      // formData.append('last_name', values.lastName);
+      // formData.append('email', values.email);
+      // formData.append('institute_name', values.university);
+      // formData.append('id', userInfo.id);
+      await BaseApi.updateProfile({first_name:values.firstName,last_name:values.lastName,email:values.email,institute_name:values.university}
+      //   , {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data',
+      //   },
+      // }
+      ).then(() => {
         setPopup({ show: true, type: 'success', message: 'Profile Updated Successfully', timeout: 3000 });
       });
     }catch (e){
@@ -56,7 +58,7 @@ export default function Profile({userInfo}) {
       setPopup({show:true,type:'warning',message:'New Password and Confirm Password must be same',timeout:3000});
     }else{
       try{
-        await BaseApi.updatePassword({newPassword:values.newPassword, id:userInfo.id})
+        await BaseApi.updatePassword({oldPassword:values.currentPassword,newPassword:values.newPassword,confirmPassword:values.confirmPassword , id:userInfo.id})
           .then(()=>{
             setPopup({show:true,type:'success',message:'Password Updated Successfully',timeout:3000});
           })
@@ -85,7 +87,7 @@ export default function Profile({userInfo}) {
       <div className="flex mb-60 professor-profile-mobile-center">
         <div className="border-color-D9D9D9 border-radius-8 pa-40 mr-80 img-input-field-width-mr-0" style={{ width: '368px' }}>
           <div className="mb-20 position-relative">
-            <Image style={{width:'100%'}} height={280} width={280} src={preview} alt={userInfo.image} />
+            <Image style={{width:'100%'}} height={280} width={280} src="/user/userImage.png" alt={'userInfo?.image_url'} />
             <input  ref={fileInputRef} style={{visibility:'hidden', left:'0',bottom:'0',width:'0',height:'0'}} className="position-absolute" type="file" accept="image/*" onChange={handleImageUpload} />
             <div onClick={()=>{fileInputRef.current.click();}} className="position-absolute flex items-center justify-center cursor-pointer " style={{bottom:'0',left:'0',width:'100%',height:'48px',background:'rgba(0, 0, 0, 0.5)'}}>
               <Image width={24} height={24} src="/uploadIcon.svg" alt="uploadIcon"/>
@@ -98,7 +100,7 @@ export default function Profile({userInfo}) {
         </div>
         <div className="mobile-mt-28 flex-1">
           <Formik
-            initialValues={{ firstName:userInfo.first_name, lastName: userInfo.last_name, email: userInfo.email,university:userInfo?.institute }}
+            initialValues={{ firstName:userInfo?.first_name, lastName: userInfo?.last_name, email: userInfo?.email,university:userInfo?.institute }}
             validationSchema={validationUserInfo}
             onSubmit={handleSubmit}
           >

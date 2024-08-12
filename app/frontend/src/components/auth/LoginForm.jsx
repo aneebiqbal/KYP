@@ -3,8 +3,10 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Link from 'next/link';
 import {AuthApi} from '../../app/(auth)/AuthApi';
+import { useRouter } from 'next/navigation';
 
 export default function LoginForm() {
+  const router = useRouter();
   const validationSchema = Yup.object({
     email: Yup.string()
       .email('Invalid email')
@@ -14,7 +16,9 @@ export default function LoginForm() {
   });
   const handleSubmit = async (values) => {
     try {
-      await AuthApi.login({ email: values.email,password: values.password })
+      await AuthApi.login({ email: values.email,password: values.password }).then(()=>{
+        router.push('/')
+      })
     } catch (error) {
       alert('Something went wrong. Please try again later.'+error);
     }

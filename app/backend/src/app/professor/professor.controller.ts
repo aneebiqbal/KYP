@@ -8,7 +8,7 @@ import {
   UseGuards,
   Request,
   UsePipes,
-  ValidationPipe
+  ValidationPipe, Body
 } from '@nestjs/common';
 import { ProfessorService } from './professor.service';
 import { SearchProfessorDto } from './dto/search-professor.dto';
@@ -34,9 +34,9 @@ export class ProfessorController {
   @Post('saved')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async saveProfessor(@Query() query: SaveProfessorDto, @Request() req) {
+  async saveProfessor(@Body() body: SaveProfessorDto, @Request() req) {
     const studentId = req.user?.id;
-    const { professorId, flag } = query;
+    const { professorId, flag } = body;
     const professorIdNumber = Number(professorId);
     const flagNumber = Number(flag);
     if (flagNumber === 1) {

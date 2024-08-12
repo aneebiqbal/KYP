@@ -5,198 +5,13 @@ import UserRatings from '../../../../components/user/UserRatings';
 import Profile from '../../../../components/user/Profile';
 import {useSearchParams} from "next/navigation";
 import { useState,useEffect } from 'react';
+import { getUserInfo } from '../../../../services/JwtService';
 export default function page(){
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const searchParams = useSearchParams();
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [activeTab, setActiveTab] = useState(Number(searchParams.get('active')) || 0);
-  const professors = [
-    {
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:true,
-      rating:'4.7',
-      reviews:600
-    },
-    {
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:true,
-      rating:'4.7',
-      reviews:600
-    },
-    {
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:true,
-      rating:'4.7',
-      reviews:600
-    },
-    {
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:true,
-      rating:'4.7',
-      reviews:600
-    },
-    {
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      saved:true,
-      rating:'4.7',
-      reviews:600
-    }
-  ]
-  const myRatings = [
-    {
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      reviews:[
-        {
-          image:'/student.png',
-          rating:4.3,
-          courseCode:'ENG101',
-          date:'Aug 19, 2021',
-          review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-          tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-          credit:'Yes',
-          attendance:'Mandatory',
-          upVotes:5,
-          downVotes:5,
-          reports:3,
-        }
-      ]
-    },
-    {
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      reviews:[
-        {
-          image:'/student.png',
-          rating:4.3,
-          courseCode:'ENG101',
-          date:'Aug 19, 2021',
-          review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-          tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-          credit:'Yes',
-          attendance:'Mandatory',
-          upVotes:5,
-          downVotes:5,
-          reports:3,
-        },
-        {
-          image:'/student.png',
-          rating:4.3,
-          courseCode:'ENG101',
-          date:'Aug 19, 2021',
-          review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-          tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-          credit:'Yes',
-          attendance:'Mandatory',
-          upVotes:5,
-          downVotes:5,
-          reports:3,
-        },
-        {
-          image:'/student.png',
-          rating:4.3,
-          courseCode:'ENG101',
-          date:'Aug 19, 2021',
-          review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-          tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-          credit:'Yes',
-          attendance:'Mandatory',
-          upVotes:5,
-          downVotes:5,
-          reports:3,
-        }
-      ]
-    },
-    {
-      image: '/professor.png',
-      name: 'James Tortolano',
-      department: 'Journalism',
-      institute: 'Tech University USA',
-      takeAgain:'40',
-      loveTeaching:'80',
-      reviews:[
-        {
-          image:'/student.png',
-          rating:4.3,
-          courseCode:'ENG101',
-          date:'Aug 19, 2021',
-          review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-          tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-          credit:'Yes',
-          attendance:'Mandatory',
-          upVotes:5,
-          downVotes:5,
-          reports:3,
-        },
-        {
-          image:'/student.png',
-          rating:4.3,
-          courseCode:'ENG101',
-          date:'Aug 19, 2021',
-          review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-          tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-          credit:'Yes',
-          attendance:'Mandatory',
-          upVotes:5,
-          downVotes:5,
-          reports:3,
-        },
-        {
-          image:'/student.png',
-          rating:4.3,
-          courseCode:'ENG101',
-          date:'Aug 19, 2021',
-          review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-          tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-          credit:'Yes',
-          attendance:'Mandatory',
-          upVotes:5,
-          downVotes:5,
-          reports:3,
-        }
-      ]
-    },
-  ]
-  const userInfo = {
-    name:'Mazher Hussain',
-    email:'mazherhussain1998@gmail.com',
-    university:'COMSATS',
-    image:'/professor.png',
-
-  }
+ const userInfo = JSON.parse(getUserInfo())
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     setActiveTab(Number(searchParams.get('active'))|| 0)
@@ -217,9 +32,9 @@ export default function page(){
             </div>
           </div>
           <div>
-            {activeTab === 0 &&(<SavedProfessor professors={professors} />)}
-            {activeTab === 1 &&(<UserRatings ratings={myRatings} />)}
-            {activeTab === 2 &&(<Profile userInfo={userInfo} />)}
+            {activeTab === 0 &&(<SavedProfessor  />)}
+            {activeTab === 1 &&(<UserRatings  />)}
+            {activeTab === 2 && userInfo !== undefined &&(<Profile  userInfo={userInfo} />)}
           </div>
         </div>
       </section>

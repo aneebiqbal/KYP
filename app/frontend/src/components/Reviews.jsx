@@ -5,7 +5,7 @@ export default function Reviews({reviews}) {
     {reviews.map((review,index) => (
       <div key={'review'+index} className="flex mb-20">
         <div className="flex column items-center reviews">
-          <Image className="border-radius-100" height={48} width={48} src={review.image} alt={review.image} />
+          <Image className="border-radius-100" height={48} width={48} src={false?review.image_url:'/student.png'} alt={review.image_url} />
           <p className="text-0378A6 text-26 text-weight-600">{review.rating}</p>
         </div>
         <div className="flex-1 ml-12  border-radius-10 pa-20 bg-E6F1F6">
