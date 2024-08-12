@@ -23,6 +23,7 @@ interface CustomRatingResponse {
     for_credit: boolean;
     attendance: boolean;
     tags: string[];
+    reactRatings:any[];
     course_name: string;
     grade_received: string;
     comment: string | null;
@@ -203,6 +204,7 @@ export class StudentService {
       .leftJoinAndSelect('rating.professor', 'professor')
       .leftJoinAndSelect('rating.course', 'course')
       .leftJoinAndSelect('professor.institute', 'institute')
+      .leftJoinAndSelect('rating.reactRatings', 'reactRatings')
       .where('student.id = :studentId', { studentId });
 
     if (searchBy === 'name') {
@@ -211,7 +213,7 @@ export class StudentService {
         { text }
       );
     } else if (searchBy === 'institute') {
-      query.andWhere('course.name ILIKE :text', { text });
+      query.andWhere('institute.name ILIKE :text', { text });
     }
 
     const ratings = await query.getMany();
@@ -274,8 +276,9 @@ export class StudentService {
         for_credit: rating.for_credit,
         attendance: rating.mandatory_attendance,
         tags: rating.tags || [],
-        course_name: rating.course?.name || 'N/A',
+        course_name: rating.course?.course_code || 'N/A',
         grade_received: rating.grade_received,
+        reactRatings: rating.reactRatings || [],
         comment: rating.comment || null,
         created_at: rating.created_at,
       });
