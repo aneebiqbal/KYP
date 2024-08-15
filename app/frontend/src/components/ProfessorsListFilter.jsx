@@ -80,13 +80,13 @@ export default function ProfessorsListFilter(){
                         placeholder="Select"/>
 
         <input value={search} onChange={(event)=>{setSearch(event.target.value)}} style={{ height: '72px', width: '420px', borderTopRightRadius: '12px', borderBottomRightRadius: '12px' }}
-               className="px-20 border-color-D9D9D9 mobile-px-10 search-input-field"
+               className="px-20 border-color-D9D9D9 mobile-px-10 search-input-field border-right search-input-full-width"
                placeholder={type === 'name' ? 'Search professor with name' : 'Search for professors by university.'} />
         </div>
         <div
           onClick={()=>{getProfessors(type,search,false,1)}}
           style={{ height: '72px', width: '72px' }}
-          className="bg-FFA337 flex items-center justify-center border-radius-12 ml-30 cursor-pointer professer-list-ml-0">
+          className="bg-FFA337 flex items-center justify-center border-radius-12 ml-30 cursor-pointer professer-list-ml-0 height-search-52">
           <Image height={24} width={24} src="/searchIcon.svg" alt="searchIcon" />
         </div>
       </div>
@@ -98,7 +98,7 @@ export default function ProfessorsListFilter(){
         <p className="ml-8 text-12 text-434343">{sortOrder?'ASC':'DESC'}</p>
       </div>
       <div className="flex items-center professor-mobile-results-selection  mobile-mt-20">
-        <p className="text-weight-600 text-8C8C8C text-18">{professorData?.total} Results found</p>
+        <p className="text-weight-600 text-8C8C8C text-18 mr-16">{professorData?.total} Results found</p>
         <div className="relative sort-dropdown" ref={dropdownRef}>
           <div
             onClick={() => setDropdownOpen(!DropdownOpen)}
@@ -115,14 +115,13 @@ export default function ProfessorsListFilter(){
             className="px-28 border-color-D9D9D9 mobile-width-sort-dropdown"
           >
           <p className='text-18'>{options.find(option => option.value === sort)?.label || "Sort By"}</p>
-            <span style={{ marginLeft: '20px' }}>▼</span>
+          <Image style={{ marginLeft: '24px' }} height={10} width={10} src="/arrowicon.svg" alt="searchIcon" />
           </div>
           {DropdownOpen && (
             <div
               style={{
                 position: 'absolute',
-                // top: '100%',
-                // left: '0',
+
                 width: '200px',
                 borderRadius: '12px',
                 border: '1px solid #D9D9D9',
