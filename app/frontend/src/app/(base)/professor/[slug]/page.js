@@ -184,7 +184,7 @@ export default function page(){
         {/*d-none d-sm-block*/}
         "
         >
-          <div className="row  ml-60  ml-mobile-30 mobile-width-ml-none-2" style={{ height: 504 }}  >
+          <div className="row  ml-60  ml-mobile-30 mobile-width-ml-none-2 tablet-margin-left-12" style={{ height: 504 }}  >
             <div className="col-sm-12 col-md-6 flex column justify-between full-width-responsive">
               <div className="flex items-center professor-flex-review ">
                 <div className="border-radius-8 flex items-center justify-center bg-E4D9FE"

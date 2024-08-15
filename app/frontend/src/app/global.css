@@ -632,6 +632,9 @@ p {
 
 /*For tablet*/
 @media (max-width: 1024px) {
+  .tablet-margin-left-12 {
+    margin-left: 12px;
+  }
   .tablet-flex-col {
     display: flex;
     flex-direction: column;
@@ -818,6 +821,14 @@ p {
   .mobile-mt-24{
     margin-top: 24px;
   }
+  .larger-mobile-px-20{
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+  .mobile-py-20 {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -825,10 +836,10 @@ p {
     display: flex;
     flex-direction: column;
   }
-  .mobile-py-20 {
+  /* .mobile-py-20 {
     padding-top: 20px;
     padding-bottom: 20px;
-  }
+  } */
 
   .mobile-py-48 {
     padding-right: 48px;

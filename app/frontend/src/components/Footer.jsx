@@ -15,7 +15,7 @@ export default function Footer() {
         </div>
         <div className="full-width">
           <div className="separator-x mb-32"></div>
-          <div className="flex justify-between mobile-flex-col">
+          <div className="flex justify-between professor-profile-mobile-center">
             <div >
             <p className="text-16 text-weight-400 text-262626">© 2024 Rate Know Your Professor, LLC. All Rights Reserved</p>
             </div>

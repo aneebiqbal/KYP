@@ -121,7 +121,7 @@ export default function ProfessorsListFilter(){
             <div
               style={{
                 position: 'absolute',
-
+                marginTop:'4px',
                 width: '200px',
                 borderRadius: '12px',
                 border: '1px solid #D9D9D9',
@@ -141,9 +141,7 @@ export default function ProfessorsListFilter(){
                     getProfessors(type,search,false,1)
                   }}
                   style={{
-
                     cursor: 'pointer',
-
                   }}
                   className="px-10 py-12"
                 >

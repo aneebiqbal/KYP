@@ -169,8 +169,8 @@ export default function page(string) {
               </span>
             </p>
             <div className="separator-x mb-60"></div>
-            <div className="flex items-center mb-32 professor-mobile-results-selection ">
-              <div className="relative sort-dropdown" ref={dropdownRef}>
+            <div className="flex items-center mb-32 professor-mobile-results-selection  ">
+              <div className="relative sort-dropdown  full-width-responsive" ref={dropdownRef}>
                 <div
                   onClick={() => setDropdownOpen(!DropdownOpen)}
                   style={{
@@ -324,7 +324,7 @@ export default function page(string) {
                   Select grade received
                 </p>
 
-                <div className="relative sort-dropdown" ref={dropdownRef}>
+                <div className="relative sort-dropdown full-width-responsive" ref={dropdownRef}>
                   <div
                     onClick={() => setDropdownOpen(!DropdownOpen)}
                     style={{
@@ -338,7 +338,7 @@ export default function page(string) {
                       alignItems: 'center',
                       justifyContent: 'space-between',
                     }}
-                    className="px-16 border-color-D9D9D9 mobile-width-sort-dropdown"
+                    className="px-16 border-color-D9D9D9 mobile-width-sort-dropdown full-width-responsive"
                   >
                     <p className="text-14">
                       {options.find((option) => option.value === gradeReceived)
