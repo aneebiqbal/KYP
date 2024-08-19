@@ -8,7 +8,8 @@ import {
   UseGuards,
   Request,
   UsePipes,
-  ValidationPipe
+  ValidationPipe,
+  Param
 } from '@nestjs/common';
 import { ProfessorService } from './professor.service';
 import { SearchProfessorDto } from './dto/search-professor.dto';
@@ -48,5 +49,12 @@ export class ProfessorController {
     } else {
       return { message: 'Invalid flag value' };
     }
+  }
+
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async getProfessorDetails(@Param('id') professorid: number) {
+    return this.professorService.getProfessorDetails(professorid)
   }
 }

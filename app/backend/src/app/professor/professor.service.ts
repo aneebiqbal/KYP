@@ -1,4 +1,4 @@
-import { Professor, Student } from '@kyp/db';
+import { Professor, Rating, Student } from '@kyp/db';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -24,7 +24,9 @@ export class ProfessorService {
     @InjectRepository(Professor)
     private readonly professorRepository: Repository<Professor>,
     @InjectRepository(Student)
-    private readonly studentRepository: Repository<Student>
+    private readonly studentRepository: Repository<Student>,
+    @InjectRepository(Rating)
+    private readonly ratingRepository: Repository<Rating>,
   ) {}
 
   async searchProfessors(
@@ -207,6 +209,94 @@ export class ProfessorService {
         (id) => id !== professorId
       );
       await this.studentRepository.save(student);
+    }
+  }
+
+  async getProfessorDetails(professorId: number): Promise<any> {
+    try {
+      const professor = await this.professorRepository.findOne({
+        where: { id: professorId },
+        relations: ['institute', 'ratings'],
+      });
+  
+      if (!professor) {
+        throw new NotFoundException(`Professor with ID ${professorId} not found`);
+      }
+  
+      const ratings = professor.ratings;
+      if (ratings.length === 0) {
+        throw new NotFoundException(`No ratings found for professor with ID ${professorId}`);
+      }
+  
+      const totalRatings = {
+        course_difficulty: 0,
+        clarity: 0,
+        collaboration: 0,
+        knowledgeable: 0,
+        helpful: 0,
+        textbook_use: 0,
+        exam_difficulty: 0,
+        love_teaching_style: 0,
+      };
+  
+      const starCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      const tagCounts = new Map<string, number>();
+  
+      ratings.forEach((rating) => {
+        Object.keys(totalRatings).forEach((key) => {
+          totalRatings[key] += rating[key];
+        });
+  
+        const starAverage = Math.round(
+          Object.values(totalRatings).reduce((acc, val) => acc + val, 0) / 8
+        );
+        starCounts[starAverage]++;
+  
+        rating.tags?.forEach((tag) => {
+          tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+        });
+      });
+  
+      const ratingCount = ratings.length;
+      const getPercentage = (count: number) => (count / ratingCount) * 100;
+      const getCriteriaAverage = (total: number) => (total / ratingCount / 5) * 100;
+  
+      const response = {
+        professor: {
+          id: professor.id,
+          first_name: professor.first_name,
+          last_name: professor.last_name,
+          image_url: professor.image_url,
+          department_name: professor.department_name,
+          institute_name: professor.institute.name,
+          star_distribution: {
+            one_star: getPercentage(starCounts[1]),
+            two_star: getPercentage(starCounts[2]),
+            three_star: getPercentage(starCounts[3]),
+            four_star: getPercentage(starCounts[4]),
+            five_star: getPercentage(starCounts[5]),
+          },
+          criteria_averages: {
+            course_difficulty: getCriteriaAverage(totalRatings.course_difficulty),
+            clarity: getCriteriaAverage(totalRatings.clarity),
+            collaboration: getCriteriaAverage(totalRatings.collaboration),
+            knowledgeable: getCriteriaAverage(totalRatings.knowledgeable),
+            helpful: getCriteriaAverage(totalRatings.helpful),
+            textbook_use: getCriteriaAverage(totalRatings.textbook_use),
+            exam_difficulty: getCriteriaAverage(totalRatings.exam_difficulty),
+            love_teaching_style: getCriteriaAverage(totalRatings.love_teaching_style),
+          },
+          top_tags: Array.from(tagCounts.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([tag]) => tag),
+        },
+      };
+  
+      return response;
+  
+    } catch (error) {
+      
     }
   }
 }
