@@ -64,17 +64,20 @@ export default function LoginForm() {
       )}
     </Formik>
     <div className="separator-x mt-3 mb-3"></div>
-    <div className="flex column items-center">
+    <div className="d-flex flex-column items-center ">
       <button
         style={{ height: '44px' }}
         className="full-width bg-F1ECFE border-none border-radius-4 text-262626 text-weight-500 text-16 mb-32">
         Continue with Google
       </button>
-      <p className="text-weight-400 text-14 text-262626 ">Don't have an account? &nbsp;
-        <Link href="/sign-up" className="text-14 text-weight-400 text-0378A6 text-decoration-none">
+      <div className='d-flex flex-sm-row flex-column'>
+      <p className="  text-weight-400 text-14 text-262626 mr-6 ">Don't have an account? </p>  
+        <Link href="/sign-up" className="text-14 text-weight-400 text-0378A6 text-decoration-none text-center mobile-margin-top">
           Create Account
         </Link>
-      </p>
+      </div>
+      
+      
     </div>
   </>
 }

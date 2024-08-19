@@ -832,6 +832,9 @@ p {
 }
 
 @media (max-width: 576px) {
+  .mobile-margin-top {  
+    margin-top: 8px;
+  }
   .mobile-flex-col {
     display: flex;
     flex-direction: column;
