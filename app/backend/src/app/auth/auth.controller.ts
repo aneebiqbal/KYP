@@ -4,51 +4,48 @@ import {
   Body,
   HttpCode,
   HttpStatus,
-  BadRequestException, UsePipes, ValidationPipe, Query
+  BadRequestException,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signin.dto';
 import { ForgetPasswordDto, ResetPasswordDto } from './dto/forget-password.dto';
 
-
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async signup(@Body() signUpDto: SignUpDto) {
-    const { email, password, googleId } = signUpDto;
-    if (googleId) {
-      const { student, token } = await this.authService.signUpWithGoogle(signUpDto);
+    const { isGmail } = signUpDto;
+    if (isGmail) {
+      const { student, token } = await this.authService.signUpWithGoogle(
+        signUpDto
+      );
       return { message: 'Signed up with Google', student, token };
     } else {
-      if (!email || !password) {
-        throw new BadRequestException('Email and password are required');
-      }
-      const { student, token } = await this.authService.signUpWithEmail(signUpDto);
+      const { student, token } = await this.authService.signUpWithEmail(
+        signUpDto
+      );
       return { message: 'Signed up with email', student, token };
     }
   }
 
-
   @Post('Signin')
   @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async signin(@Body() signInDto: SignInDto) {
-    const { email, password, googleId } = signInDto;
-    if (googleId) {
+    const { isGmail } = signInDto;
+    if (isGmail) {
       const { student, token } = await this.authService.signInWithGoogle(
         signInDto
       );
       return { message: 'Signed in with Google', student, token };
     } else {
-      if (!email || !password) {
-        throw new BadRequestException(
-          'Email and password are required for email sign-in.'
-        );
-      }
       const { student, token } = await this.authService.signInWithEmail(
         signInDto
       );
@@ -67,14 +64,16 @@ export class AuthController {
 
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
-  async resetPassword(@Query('token') token: string, @Body() resetPasswordDto: ResetPasswordDto) {
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     if (!resetPasswordDto.newPassword) {
       throw new BadRequestException('Password is required');
     }
-    if (!token) {
+    if (!resetPasswordDto.token) {
       throw new BadRequestException('Token is required');
     }
-    return await this.authService.resetPassword(token, resetPasswordDto);
+    return await this.authService.resetPassword(
+      resetPasswordDto.token,
+      resetPasswordDto
+    );
   }
-
 }

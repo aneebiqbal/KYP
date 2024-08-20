@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Institute } from './institute.entity';
 import { ReactRating } from './react-rating.entity';
 import { Rating } from './rating.entity';
@@ -20,7 +26,7 @@ export class Student {
   @Column({ length: 512, nullable: true })
   image_url!: string;
 
-  @Column('jsonb', { nullable: true, default: []  })
+  @Column('jsonb', { nullable: true, default: [] })
   saved_professors!: number[];
 
   @Column({ length: 255, nullable: true })
@@ -29,10 +35,13 @@ export class Student {
   @Column({ default: true })
   isActive!: boolean;
 
-  @ManyToOne(() => Institute, (institute) => institute.students, { onDelete: 'CASCADE' })
-  institute!: Institute;
+  @ManyToOne(() => Institute, (institute) => institute.students, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  institute?: Institute;
 
-  @Column({ length: 255,nullable: true })
+  @Column({ length: 255, nullable: true })
   department!: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
@@ -44,7 +53,11 @@ export class Student {
   @Column({ default: false })
   external_auth!: boolean;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
   updated_at!: Date;
 
   @OneToMany(() => Rating, (rating) => rating.student)

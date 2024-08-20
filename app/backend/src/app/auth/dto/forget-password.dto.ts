@@ -1,7 +1,4 @@
-import {
-  IsString,
-  IsEmail,
-} from 'class-validator';
+import { IsString, IsEmail } from 'class-validator';
 
 export class ForgetPasswordDto {
   @IsEmail({}, { message: 'Invalid email address' })
@@ -9,6 +6,9 @@ export class ForgetPasswordDto {
 }
 
 export class ResetPasswordDto {
+  @IsString()
+  token!: string;
+
   @IsString()
   newPassword!: string;
 }
