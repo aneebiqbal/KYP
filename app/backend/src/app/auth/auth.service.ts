@@ -1,4 +1,10 @@
-import { Injectable, UnauthorizedException, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
@@ -18,8 +24,8 @@ export class AuthService {
     private readonly studentRepository: Repository<Student>,
     @InjectRepository(Institute)
     private readonly instituteRepository: Repository<Institute>,
-    private readonly mailService: MailService,
-  ) { }
+    private readonly mailService: MailService
+  ) {}
 
   async signUpWithEmail(
     signUpDto: SignUpDto
@@ -50,7 +56,7 @@ export class AuthService {
       first_name: signUpDto.first_name,
       last_name: signUpDto.last_name,
       institute: institute,
-      department: signUpDto.department
+      department: signUpDto.department,
     });
     await this.studentRepository.save(student);
     const token = jwt.sign(
@@ -66,30 +72,27 @@ export class AuthService {
         email: student.email,
         isActive: student.isActive,
         institute: student.institute,
-        department: student.department
+        department: student.department,
       },
       token,
     };
   }
 
-
   async signUpWithGoogle(
     signUpDto: SignUpDto
   ): Promise<{ student: Partial<Student>; token: string }> {
     const existingStudent = await this.studentRepository.findOne({
-      where: { auth_pass: signUpDto.googleId },
+      where: { email: signUpDto.email },
     });
     if (existingStudent) {
       throw new ConflictException('Student already in use');
     }
-    const timestamp = Date.now();
-    const generatedEmail = ` ${timestamp}@kyp.com`;
     const student = this.studentRepository.create({
-      email: generatedEmail,
-      auth_pass: signUpDto.googleId,
+      email: signUpDto.email,
       external_auth: true,
       first_name: signUpDto.first_name,
       last_name: signUpDto.last_name,
+      image_url: signUpDto.image_url,
     });
     await this.studentRepository.save(student);
     const token = jwt.sign(
@@ -108,7 +111,6 @@ export class AuthService {
       token,
     };
   }
-
 
   async signInWithEmail(
     signInDto: SignInDto
@@ -135,22 +137,21 @@ export class AuthService {
         email: student.email,
         image_url: student.image_url,
         isActive: student.isActive,
-        institute: student?.institute
+        institute: student?.institute,
       },
       token,
     };
   }
 
-
   async signInWithGoogle(
     signInDto: SignInDto
   ): Promise<{ student: Partial<Student>; token: string }> {
-    const { googleId } = signInDto;
+    const { email } = signInDto;
     const student = await this.studentRepository.findOne({
-      where: { auth_pass: googleId },
+      where: { email: email },
     });
     if (!student) {
-      throw new UnauthorizedException('Invalid Google ID');
+      throw new UnauthorizedException('User does not exist!');
     }
     const token = jwt.sign(
       { id: student.id, email: student.email },
@@ -171,15 +172,24 @@ export class AuthService {
   }
 
   async forgetPassword(forgetPasswordDto: ForgetPasswordDto): Promise<boolean> {
-    const student = await this.studentRepository.findOne({ where: { email: forgetPasswordDto.email } });
+    const student = await this.studentRepository.findOne({
+      where: { email: forgetPasswordDto.email },
+    });
 
     if (!student) {
       throw new NotFoundException('Student not found');
     }
 
-    const token = jwt.sign({ id: student.id, email: student.email }, this.jwtSecret, { expiresIn: '1h' });
+    const token = jwt.sign(
+      { id: student.id, email: student.email },
+      this.jwtSecret,
+      { expiresIn: '1h' }
+    );
 
-    await this.mailService.sendPasswordResetEmail(forgetPasswordDto.email, token);
+    await this.mailService.sendPasswordResetEmail(
+      forgetPasswordDto.email,
+      token
+    );
 
     return true;
     // {
@@ -196,14 +206,22 @@ export class AuthService {
     // };
   }
 
-  async resetPassword(token: string, resetPasswordDto: ResetPasswordDto): Promise<{ message: string }> {
+  async resetPassword(
+    token: string,
+    resetPasswordDto: ResetPasswordDto
+  ): Promise<{ message: string }> {
     const { newPassword } = resetPasswordDto;
 
     try {
-      const decoded = jwt.verify(token, this.jwtSecret) as { id: number; email: string };
+      const decoded = jwt.verify(token, this.jwtSecret) as {
+        id: number;
+        email: string;
+      };
       const studentId = decoded.id;
 
-      const student = await this.studentRepository.findOne({ where: { id: studentId } });
+      const student = await this.studentRepository.findOne({
+        where: { id: studentId },
+      });
       if (!student) {
         throw new UnauthorizedException('Invalid token');
       }
@@ -212,8 +230,7 @@ export class AuthService {
       student.password = hashedPassword;
 
       await this.studentRepository.save(student);
-      return { message: "Password Reset Successfully" }
-
+      return { message: 'Password Reset Successfully' };
     } catch (error) {
       throw new BadRequestException('Invalid or expired token');
     }
