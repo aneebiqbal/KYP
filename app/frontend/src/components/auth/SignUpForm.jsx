@@ -52,8 +52,8 @@ export default function SignUpForm() {
     >
       {({ errors, touched }) => (
         <Form>
-          <div className="row">
-            <div className="col-6 pl-15 mb-32">
+          <div className="row  ">
+            <div className="col-md-6 col-12 pl-15 mb-32">
               <label className="text-141414 text-weight-400 text-14 mb-2">First Name</label>
               <Field type="text" name="firstName"
                      style={{ height: '46px' }}
@@ -61,7 +61,7 @@ export default function SignUpForm() {
               />
               <ErrorMessage name="firstName" component="div" />
             </div>
-            <div className="col-6 pl-15 mb-32">
+            <div className="col-md-6 col-12 pl-15 mb-32">
               <label className="text-141414 text-weight-400 text-14 mb-2">Last Name</label>
               <Field type="text" name="lastName"
                      style={{ height: '46px' }}
@@ -69,7 +69,7 @@ export default function SignUpForm() {
               />
               <ErrorMessage name="lastName" component="div" />
             </div>
-            <div className="col-6 pl-15 mb-32">
+            <div className="col-md-6 col-12 pl-15 mb-32">
               <label className="text-141414 text-weight-400 text-14 mb-2">Institute</label>
               <Field type="text" name="school"
                      style={{ height: '46px' }}
@@ -77,7 +77,7 @@ export default function SignUpForm() {
               />
               <ErrorMessage name="school" component="div" />
             </div>
-            <div className="col-6 pl-15 mb-32">
+            <div className="col-md-6 col-12 pl-15 mb-32">
               <label className="text-141414 text-weight-400 text-14 mb-2">Field of study</label>
               <Field type="text" name="field"
                      style={{ height: '46px' }}
@@ -85,7 +85,7 @@ export default function SignUpForm() {
               />
               <ErrorMessage name="field" component="div" />
             </div>
-            <div className="col-6 pl-15 mb-32">
+            <div className="col-md-6 col-12 pl-15 mb-32">
               <label className="text-141414 text-weight-400 text-14 mb-2">Email</label>
               <Field type="text" name="email"
                      style={{ height: '46px' }}
@@ -93,7 +93,7 @@ export default function SignUpForm() {
               />
               <ErrorMessage name="email" component="div" />
             </div>
-            <div className="col-6 pl-15 mb-32">
+            <div className="col-md-6 col-12 pl-15 mb-32">
               <label className="text-141414 text-weight-400 text-14 mb-2">Password</label>
               <Field style={{ height: '46px' }} type="password" name="password"
                      className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"

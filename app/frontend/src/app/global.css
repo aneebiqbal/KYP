@@ -669,6 +669,10 @@ p {
   .width-225{
     width: 225px;
   }
+  .tablet-mx-0{
+    margin-right: 0;
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 768px) {
