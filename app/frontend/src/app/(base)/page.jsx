@@ -62,10 +62,10 @@ export default function Page() {
           <div className="px-120 py-150 tablet-px-90 tablet-px-50 tablet-py-100 mobile-px-20 mobile-py-40">
             <div className="flex justify-between items-center mb-80 tablet-flex-col tablet-align-start ">
               <h2 className="text-1F1F1F text-70 text-weight-700 ">Join and Rate <br/> The KYP Family</h2>
-              <div className="mobile-button-width-320">
+              <div className="">
                 <p className="text-18 text-595959 text-weight-400 mb-2">Love KYP Family? Let's make it official.</p>
                 <button
-                  className="cursor-pointer px-20 py-12 width-225  text-18 flex justify-center items-center bg-763FF9 text-ffffff border-color-763FF9 border-radius-4">
+                  className="cursor-pointer px-20 py-12 width-225  text-18 flex justify-center items-center bg-763FF9 text-ffffff border-color-763FF9 border-radius-4 full-width-responsive">
                   Sign Up Now!
                 </button>
               </div>
@@ -73,7 +73,7 @@ export default function Page() {
             <div className="row gx-4 gy-4 mobile-font-24">
               <div className="col-xl-4 col-lg-12">
                 <div className="bg-56ABFF pa-40 border-radius-20 flex column items-center">
-                  <Image height={302} width={408} src="/index/indexSectionTwoImageOne.png" alt="" />
+                  <Image height={302} width={302} src="/homePageSectionOne.png" alt="" />
                   <p className="text-ffffff text-38 text-weight-600 text-center">Manage and edit your ratings</p>
                 </div>
               </div>
