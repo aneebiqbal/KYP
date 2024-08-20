@@ -1,20 +1,24 @@
 import {
-    IsEmail,
-    IsString,
-    IsOptional,
-    IsNotEmpty,
+  IsEmail,
+  IsString,
+  IsOptional,
+  IsNotEmpty,
+  isBoolean,
+  IsBoolean,
+  ValidateIf,
 } from 'class-validator';
 
 export class SignInDto {
-    @IsEmail({}, { message: 'Invalid email address' })
-    @IsOptional()
-    email?: string;
+  @IsEmail({}, { message: 'Invalid email address' })
+  @IsNotEmpty()
+  email: string;
 
-    @IsString()
-    @IsOptional()
-    password?: string;
+  @ValidateIf((o) => !o.isGmail)
+  @IsString()
+  @IsNotEmpty()
+  password: string;
 
-    @IsString()
-    @IsOptional()
-    googleId?: string;
+  @IsBoolean()
+  @IsOptional()
+  isGmail?: boolean;
 }

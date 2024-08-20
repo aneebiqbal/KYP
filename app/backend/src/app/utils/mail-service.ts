@@ -1,4 +1,3 @@
-// src/app/utils/mail.service.ts
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 
@@ -8,12 +7,10 @@ export class MailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: 'smtp.mailosaur.net',
-      port: 587,
-      secure: false,
+      service: 'gmail',
       auth: {
-        user: 'byudgj4q@mailosaur.net',
-        pass: 'HlHKKCaE9odBUHWZ1FD84lSF5tGwzacE',
+        user: process.env.SENDER_EMAIL,
+        pass: process.env.SENDER_EMAIL_APP_PASSWORD, // Replace with your Gmail app password
       },
     });
   }
