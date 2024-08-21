@@ -9,6 +9,7 @@ import {
   Request,
   UsePipes,
   ValidationPipe,
+  Body,
   Param
 } from '@nestjs/common';
 import { ProfessorService } from './professor.service';

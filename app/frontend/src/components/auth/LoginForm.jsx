@@ -4,9 +4,14 @@ import * as Yup from 'yup';
 import Link from 'next/link';
 import {AuthApi} from '../../app/(auth)/AuthApi';
 import { useRouter } from 'next/navigation';
+import { GoogleLogin } from '@react-oauth/google';
+import {jwtDecode} from 'jwt-decode';
+
+
 
 export default function LoginForm() {
   const router = useRouter();
+
   const validationSchema = Yup.object({
     email: Yup.string()
       .email('Invalid email')
@@ -22,6 +27,27 @@ export default function LoginForm() {
     } catch (error) {
       alert('Something went wrong. Please try again later.'+error);
     }
+  };
+
+  const handleGoogleLoginSuccess = async (res) => {
+    console.log('Google Credential Response:', res);
+
+    try {
+      const decoded = jwtDecode(res.credential);
+      console.log('Decoded:', decoded);
+      const email = decoded.email;
+
+
+      await AuthApi.login({ email, isGmail:true  }).then(() => {
+        router.push('/');
+      });
+    } catch (error) {
+      alert('Something went wrong. Please try again later.'+error);
+    }
+  };
+
+  const handleGoogleLoginError = (error) => {
+    alert('Something went wrong. Please try again later.'+error);
   };
   return<>
     <Formik
@@ -65,11 +91,11 @@ export default function LoginForm() {
     </Formik>
     <div className="separator-x mt-3 mb-3"></div>
     <div className="d-flex flex-column items-center ">
-      <button
-        style={{ height: '44px' }}
-        className="full-width bg-F1ECFE border-none border-radius-4 text-262626 text-weight-500 text-16 mb-32">
-        Continue with Google
-      </button>
+    <GoogleLogin
+          onSuccess={handleGoogleLoginSuccess}
+          onError={handleGoogleLoginError}
+          ux_mode="popup" 
+        />
       <div className='d-flex flex-sm-row flex-column'>
       <p className="  text-weight-400 text-14 text-262626 mr-6 ">Don't have an account? </p>  
         <Link href="/sign-up" className="text-14 text-weight-400 text-0378A6 text-decoration-none text-center mobile-margin-top">

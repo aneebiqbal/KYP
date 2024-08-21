@@ -2,11 +2,14 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import React from 'react';
 import '../global.css';
 import Image from 'next/image';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 
 export default function AuthLayout({ children }) {
   return (
     <html lang="en">
     <body style={{height:'100vh'}}>
+      <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID}>
     <main style={{height:'inherit'}}>
       <section style={{height:'inherit'}} className="auth-background-image">
         <div style={{height:'inherit'}} className="px-120 py-200 tablet-px-90 tablet-px-50 mobile-px-20 flex items-center ">
@@ -23,6 +26,7 @@ export default function AuthLayout({ children }) {
 
       </section>
     </main>
+    </GoogleOAuthProvider>
     </body>
     </html>
   );

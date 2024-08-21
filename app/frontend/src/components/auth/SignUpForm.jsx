@@ -6,6 +6,8 @@ import { useState } from 'react';
 import {AuthApi} from '../../app/(auth)/AuthApi';
 import PopUp from '../PopUp';
 import { useRouter } from 'next/navigation';
+import {  GoogleLogin } from '@react-oauth/google';
+import {jwtDecode} from 'jwt-decode';
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -32,7 +34,14 @@ export default function SignUpForm() {
   });
   const handleSubmit = async (values) => {
     try {
-      await AuthApi.signup({first_name:values.firstName,last_name:values.lastName, institute:values.school, field:values.field,email: values.email, password: values.password })
+      await AuthApi.signup({
+        first_name:values.firstName,
+        last_name: values.lastName, 
+        instituteName: values.school, 
+        department:values.field,
+        email: values.email, 
+        password: values.password
+       })
         .then(()=>{
           setPopup({show:true,type:'success',message:'Congratulations! you are registered.',timeout:3000});
           router.push('/');
@@ -44,6 +53,47 @@ export default function SignUpForm() {
   const handleToggleChange = (event) => {
     setToggleCheck(event.target.checked);
   };
+
+
+  const handleGoogleLoginSuccess = async (res) => {
+    console.log('Google Credential Response:', res);
+
+    try {
+      const decoded = jwtDecode(res.credential);
+      console.log('Decoded:', decoded);
+      const email = decoded.email;
+      const first_name=decoded.given_name;
+      const last_name=decoded.family_name;
+      const image_url = decoded.picture;
+
+      await AuthApi.signup({ email,first_name, last_name, image_url, isGmail:true  }).then(() => {
+        setPopup({
+          show: true,
+          type: 'success',
+          message: 'Congratulations! you are registered.',
+          timeout: 3000,
+        });
+        router.push('/');
+      });
+    } catch (error) {
+      setPopup({
+        show: true,
+        type: 'error',
+        message: error.message,
+        timeout: 3000,
+      });
+    }
+  };
+
+  const handleGoogleLoginError = () => {
+    setPopup({
+      show: true,
+      type: 'error',
+      message: 'Google login failed. Please try again.',
+      timeout: 3000,
+    });
+  };
+
   return<>
     <Formik
       initialValues={{ firstName:'',lastName:'',school:'',field:'',email: '',password:'' }}
@@ -122,11 +172,11 @@ export default function SignUpForm() {
     </Formik>
     <div className="separator-x mt-3 mb-3"></div>
     <div className="flex column items-center">
-      <button
-        style={{ height: '44px' }}
-        className="full-width bg-F1ECFE border-none border-radius-4 text-262626 text-weight-500 text-16 mb-32">
-        Continue with Google
-      </button>
+        <GoogleLogin
+          onSuccess={handleGoogleLoginSuccess}
+          onError={handleGoogleLoginError}
+        />
+
       <p className="text-weight-400 text-14 text-262626 ">Already have an account? &nbsp;
         <Link href="/login" className="text-14 text-weight-400 text-0378A6 text-decoration-none">
           Sign In
