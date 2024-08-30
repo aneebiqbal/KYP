@@ -90,4 +90,15 @@ export const BaseApi = {
       throw e.message;
     }
   },
+  reactRatings:async (data) => {
+    try {
+      return await BaseApiService.reactRatings(data)
+      .then((response)=>{
+        return response;
+      })
+    } catch (e) {
+      console.log('error', e.message);
+      throw e.message;
+    }
+  },
 };

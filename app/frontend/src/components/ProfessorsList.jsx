@@ -50,7 +50,7 @@ export default function ProfessorsList({professors,updateProfessors}) {
         </div>
         <div className='larger-mobile-px-20'>
           <div className="flex professor-review-center" style={{height:'fit-content'}}>
-            <p className="text-36 text-FE9900 text-weight-800 professor-rating-24">{professor.overall_rating}</p>
+            <p className="text-36 text-FE9900 text-weight-800 professor-rating-24">{(professor.overall_rating).toFixed(2)}</p>
             <p className="text-14 text-weight-600 text-1F1F1F mt-2 ml-12">{professor.total_ratings} <span
               className="line-break"><br /></span> Reviews</p>
           </div>

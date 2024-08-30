@@ -8,4 +8,5 @@ export const BaseApiService = {
   getReviews: (data) => api.get('/student/my-ratings'+data),
   updateProfile: (data) => api.post(`/student/update-profile`,data),
   updatePassword: (data) => api.post(`/student/update-password`,data),
+  reactRatings: (data) => api.post(`/rating/react-rating`,data),
 };

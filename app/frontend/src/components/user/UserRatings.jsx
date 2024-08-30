@@ -36,7 +36,14 @@ export default function UserRatings() {
       console.log(e)
     }
   }
-
+  const updateRatings =  (updatedReview,professorId) => {
+     const tempRatings = ratings.map(rating =>
+       rating.professor.id === professorId
+        ? {...rating, ratings:rating.ratings.map(review => review.id === updatedReview.id ? { ...review, updatedReview } : review) }
+        : rating
+    );
+    setRatings(tempRatings)
+  }
   useEffect(() => {
     getRatings();
   }, []);
@@ -94,7 +101,7 @@ export default function UserRatings() {
               </div>
             </div>
             <div className="pl-72 mobile-padding-left-0">
-              <Reviews reviews={rating.ratings} />
+              <Reviews reviews={rating.ratings} updateRatings={updateRatings} professorId={rating.professor.id} />
             </div>
             {index < ratings.length - 1 && (<div className="separator-x my-4"></div>)}
           </div>

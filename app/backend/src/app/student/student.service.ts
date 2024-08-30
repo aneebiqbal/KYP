@@ -18,16 +18,21 @@ interface CustomRatingResponse {
     average_rating: number;
   };
   ratings: {
+    id:number;
     student_name: string;
     student_image_url: string;
     for_credit: boolean;
     attendance: boolean;
     tags: string[];
-    reactRatings:any[];
+    reactRatings:object;
     course_name: string;
     grade_received: string;
     comment: string | null;
     created_at: Date;
+    rating:number;
+    upVotes:number;
+    downVotes:number;
+    reports:number;
   }[];
 }
 
@@ -200,20 +205,24 @@ export class StudentService {
   ): Promise<PaginatedResult<CustomRatingResponse>> {
     const query = this.ratingRepository
       .createQueryBuilder('rating')
-      .leftJoinAndSelect('rating.student', 'student')
-      .leftJoinAndSelect('rating.professor', 'professor')
-      .leftJoinAndSelect('rating.course', 'course')
-      .leftJoinAndSelect('professor.institute', 'institute')
-      .leftJoinAndSelect('rating.reactRatings', 'reactRatings')
+      .leftJoinAndSelect('rating.student', 'student') // Join the student entity
+      .leftJoinAndSelect('rating.professor', 'professor') // Join the professor entity
+      .leftJoinAndSelect('rating.course', 'course') // Join the course entity
+      .leftJoinAndSelect('professor.institute', 'institute') // Join the institute entity
+      .leftJoinAndSelect('rating.reactRatings', 'reactRatings') // Join the reactRatings entity
+      .leftJoin('reactRatings.student', 'reactRatingStudent') // Join student within reactRatings
+      .addSelect('reactRatingStudent.id') // Explicitly select only the 'id' of reactRatingStudent
       .where('student.id = :studentId', { studentId });
 
-    if (searchBy === 'name') {
-      query.andWhere(
-        'professor.first_name ILIKE :text OR professor.last_name ILIKE :text',
-        { text }
-      );
-    } else if (searchBy === 'institute') {
-      query.andWhere('institute.name ILIKE :text', { text });
+    if (text) {
+      if (searchBy === 'name') {
+        query.andWhere(
+          'professor.first_name ILIKE :text OR professor.last_name ILIKE :text',
+          { text }
+        );
+      } else if (searchBy === 'institute') {
+        query.andWhere('institute.name ILIKE :text', { text });
+      }
     }
 
     const ratings = await query.getMany();
@@ -256,9 +265,7 @@ export class StudentService {
       if (rating.take_again) professorTakeAgainCount[professorId] += 1;
       if (rating.love_teaching_style >= 4)
         professorLoveTeachingStyleCount[professorId] += 1;
-
-      professorTotalRating[professorId] +=
-        (rating.course_difficulty +
+      const reviewRating = parseFloat(((rating.course_difficulty +
           rating.clarity +
           rating.collaboration +
           rating.knowledgeable +
@@ -266,11 +273,30 @@ export class StudentService {
           rating.textbook_use +
           rating.exam_difficulty +
           rating.love_teaching_style) /
-        8;
-
+        8).toFixed(2));
+      professorTotalRating[professorId] += reviewRating;
       professorRatingCount[professorId] += 1;
 
+      let upVotesCount = 0;
+      let downVotesCount = 0;
+      let reportsCount = 0;
+      const studentReactRating = {
+        upvote:false,
+        downvote:false,
+        reported:false,
+      };
+      rating.reactRatings.forEach((reactRating) => {
+        if (reactRating.downvote) downVotesCount++;
+        if (reactRating.upvote) upVotesCount++;
+        if (reactRating.reported) reportsCount++;
+        if(reactRating.student.id === studentId) {
+          studentReactRating.upvote = reactRating.upvote;
+          studentReactRating.downvote = reactRating.downvote;
+          studentReactRating.reported = reactRating.reported;
+        }
+      });
       groupedByProfessor[professorId].ratings.push({
+        id:rating.id,
         student_name: `${rating.student.first_name} ${rating.student.last_name}`,
         student_image_url: rating.student.image_url || 'N/A',
         for_credit: rating.for_credit,
@@ -278,9 +304,13 @@ export class StudentService {
         tags: rating.tags || [],
         course_name: rating.course?.course_code || 'N/A',
         grade_received: rating.grade_received,
-        reactRatings: rating.reactRatings || [],
+        reactRatings: studentReactRating || {},
         comment: rating.comment || null,
         created_at: rating.created_at,
+        rating:reviewRating,
+        upVotes:upVotesCount,
+        downVotes:downVotesCount,
+        reports:reportsCount,
       });
 
       Object.values(groupedByProfessor).forEach((professorData) => {
