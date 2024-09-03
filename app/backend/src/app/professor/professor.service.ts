@@ -1,4 +1,4 @@
-import { Professor, Rating, Student } from '@kyp/db';
+import { Professor, Rating, Student,ProfessorCourses} from '@kyp/db';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -27,6 +27,8 @@ export class ProfessorService {
     private readonly studentRepository: Repository<Student>,
     @InjectRepository(Rating)
     private readonly ratingRepository: Repository<Rating>,
+    @InjectRepository(ProfessorCourses)
+    private readonly professorCourses: Repository<ProfessorCourses>,
   ) {}
 
   async searchProfessors(
@@ -218,6 +220,13 @@ export class ProfessorService {
         where: { id: professorId },
         relations: ['institute', 'ratings'],
       });
+
+      const course = await this.professorCourses.find({
+        where: { professor: { id: professorId } },
+      });
+      console.log("couse: ",course);
+
+
   
       if (!professor) {
         throw new NotFoundException(`Professor with ID ${professorId} not found`);
