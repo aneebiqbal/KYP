@@ -63,7 +63,7 @@ export class StudentService {
   ) { }
 
   async updateProfile(studentId: number, updateProfileDto: UpdateStudentProfileDto): Promise<any> {
-    const { first_name, last_name, institute_name, email } = updateProfileDto;
+    const { first_name, last_name, institute_name, email,image_url } = updateProfileDto;
 
     // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     // if (!emailRegex.test(email)) {
@@ -84,10 +84,24 @@ export class StudentService {
     student.last_name = last_name;
     student.institute = institute;
     student.email = email;
-
+    student.image_url=image_url;
+    
     await this.studentRepository.save(student);
     return { message: 'Profile updated successfully' };
   }
+
+  // async updateProfilePic(studentId: number, updateProfileDto: UpdateImageDto): Promise<any> {
+  //   const { image_url } = updateProfileDto;
+  //   console.log("profic pic url: ",image_url);
+  //   console.log("student id: ",studentId);
+  //   const student = await this.studentRepository.findOne({ where: { id: studentId } });
+  //   if (!student) {
+  //     throw new NotFoundException(`Student with ID ${studentId} not found`);
+  //   }
+  //   student.image_url=image_url;
+  //   await this.studentRepository.save(student);
+  //   return { message: 'Profile Pic updated successfully' };
+  // }
 
   async updatePassword(studentId: number, updatePasswordDto: UpdatePasswordDto): Promise<any> {
     const { oldPassword, newPassword } = updatePasswordDto;

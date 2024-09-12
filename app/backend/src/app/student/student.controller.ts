@@ -17,6 +17,13 @@ export class StudentController {
     return this.studentService.updateProfile(studentId, updateProfileDto);
   }
 
+  // @UseGuards(JwtAuthGuard)
+  // @Post('update-profile-pic')
+  // async updateProfilePic(@Body() updateProfileDto: UpdateImageDto, @Request() req) {
+  //   const studentId = req.user?.id;
+  //   return this.studentService.updateProfilePic(studentId, updateProfileDto);
+  // }
+
   @UseGuards(JwtAuthGuard)
   @Post('update-password')
   async updatePassword(@Body() updatePasswordDto: UpdatePasswordDto, @Request() req) {
