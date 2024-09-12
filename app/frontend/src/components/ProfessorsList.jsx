@@ -1,9 +1,11 @@
 import Image from 'next/image';
 import {getToken} from '../services/JwtService';
 import {BaseApi} from '../app/(base)/BaseApi';
+import { useRouter } from 'next/navigation';
 
 export default function ProfessorsList({professors,updateProfessors}) {
   let token = getToken();
+  const router = useRouter();
   const saveProfessor = async (id,flag) => {
     console.log(id);
     try{
@@ -16,17 +18,25 @@ export default function ProfessorsList({professors,updateProfessors}) {
       console.error(err);
     }
   }
-  console.log(professors)
-  return<>
+
+  const goToReviewPage = (professer) => {
+    router.push(`/professor/rate/${professer.id}`);
+  }
+
+  const getDetails = (professer) =>{
+    router.push(`/professor/${professer.id}`);
+  }
+  console.log("professor: ",professors)
+  return <>
   {professors.map((professor,index) => (
-    <div key={'professors-list-'+index} className="full-width">
+    <div key={'professors-list-'+index} className="full-width" >
       <div className="border-color-D9D9D9 full-width border-radius-12 py-20 px-28 flex mb-20">
         <div>
-          <Image className="border-radius-100 professor-img" height={74} width={74} src={false ?professor.image_url:'/professor.png'} alt={professor.image_url}/>
+          <Image className="border-radius-100 professor-img cursor-pointer" height={74} width={74} src={false ?professor.image_url:'/professor.png'} alt={professor.image_url} onClick={()=>getDetails(professor)} />
         </div>
         <div className="flex justify-between professor-mobile-flex-col full-width ">
         <div className="px-20 flex-1">
-          <h2 className="text-20 text-000000 text-weight-600 mb-6 professor-name-16">{professor.name}</h2>
+          <h2 className="text-20 text-000000 text-weight-600 mb-6 professor-name-16 cursor-pointer" onClick={()=>getDetails(professor)} >{professor.name}</h2>
           <p className="text-14 text-weight-400 text-595959">{professor.department_name} . {professor.institute_name}</p>
           <p className="text-14 text-weight-400 text-595959 mb-18">
             <span className="text-1F1F1F text-weight-600">{professor.take_again}%&nbsp;</span> Take Again&nbsp;|&nbsp;
@@ -35,6 +45,7 @@ export default function ProfessorsList({professors,updateProfessors}) {
           </p>
           {token &&(<div className="flex items-center">
             <button
+              onClick={()=>goToReviewPage(professor)}
               style={{ height: '36px' }}
               className="cursor-pointer px-12 flex items-center justify-between  text-18 flex justify-center items-center bg-763FF9 text-ffffff border-color-763FF9 border-radius-4 professor-text-13">
               Write a Review
@@ -58,5 +69,6 @@ export default function ProfessorsList({professors,updateProfessors}) {
         </div>
       </div>
     </div>
-  ))}</>
+  ))}
+  </>
 }
