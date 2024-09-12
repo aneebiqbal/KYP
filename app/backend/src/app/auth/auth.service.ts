@@ -116,7 +116,7 @@ export class AuthService {
     signInDto: SignInDto
   ): Promise<{ student: Partial<Student>; token: string }> {
     const { email, password } = signInDto;
-    const student = await this.studentRepository.findOne({ where: { email } });
+    const student = await this.studentRepository.findOne({ where: { email }, relations: ['institute']  });
     if (!student) {
       throw new UnauthorizedException('Invalid email or password');
     }
@@ -129,6 +129,7 @@ export class AuthService {
       this.jwtSecret,
       { expiresIn: '1h' }
     );
+    console.log("inside Student--------",student)
     return {
       student: {
         id: student.id,
