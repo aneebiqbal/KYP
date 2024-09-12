@@ -13,7 +13,18 @@ export default function page() {
   const [activeTab, setActiveTab] = useState(
     Number(searchParams.get('active')) || 0
   );
-  const userInfo = JSON.parse(getUserInfo());
+  const [userInfo,setUserInfo] = useState(JSON.parse(getUserInfo()));
+  // console.log("userInfo: ",userInfo);
+
+  // function getCookie(name) {
+  //   const value = `; ${document.cookie}`;
+  //   const parts = value.split(`; ${name}=`);
+  //   if (parts.length === 2) return parts.pop().split(';').shift();
+  // }
+//   useEffect(() => {
+// getCookie('user-info')
+//   }, [userInfo]);
+
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     setActiveTab(Number(searchParams.get('active')) || 0);
@@ -28,15 +39,15 @@ export default function page() {
               <Image
                 width={200}
                 height={200}
-                src="/user/userImage.png"
+                src={userInfo?.image_url || "/user/userImage.png"}
                 alt="userImage"
                 className="mb-3 img-fluid"
               />
               <h1 className="text-weight-700 text-1F1F1F text-48 text-capitalize text-center">
-              Khusan Akhmedov
+              {userInfo?.first_name + " " + userInfo?.last_name || "Name here"} 
               </h1>
               <p className="text-434343 text-weight-400 text-24 mb-60">
-                {userInfo?.institute || 'School Name here'}
+                {userInfo?.institute?.name ||'School Name here'}
               </p>
               <div className="d-flex flex-wrap justify-content-center mt-5 gap-5">
                 <p
@@ -69,7 +80,7 @@ export default function page() {
               {activeTab === 0 && <SavedProfessor />}
               {activeTab === 1 && <UserRatings />}
               {activeTab === 2 && userInfo !== undefined && (
-                <Profile userInfo={userInfo} />
+                <Profile userInfo={userInfo} setUserProfileInfo={setUserInfo} />
               )}
             </div>
           </div>
