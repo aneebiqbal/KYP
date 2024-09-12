@@ -9,6 +9,9 @@ export class UpdateStudentProfileDto {
 
     @IsString()
     institute_name: string;
+    
+    @IsString()
+    image_url: string;
 
     @IsEmail()
     email: string;
@@ -21,3 +24,8 @@ export class UpdatePasswordDto {
     @IsString()
     newPassword: string;
 }
+
+// export class UpdateImageDto {
+//     @IsString()
+//     image_url: string;
+// }
