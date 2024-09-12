@@ -52,10 +52,29 @@ export class ProfessorController {
     }
   }
 
+ @UseGuards(OptionalJwtAuthGuard)
+ @Get('saved/professors/:id')
+ async getSavedProfessor(@Request() req: any,@Param('id') professorid: number) {
+   const studentId = req.user?.id;
+   console.log(" request user : ",req.user);
+   console.log("student id ",studentId)
+   console.log("professorID_____ ",professorid)
+   return this.professorService.getSavedProfessor(studentId,professorid)
+ }
 
-  @UseGuards(JwtAuthGuard)
-  @Get(':id')
-  async getProfessorDetails(@Param('id') professorid: number) {
-    return this.professorService.getProfessorDetails(professorid)
+
+  @UseGuards(OptionalJwtAuthGuard)
+  @Get('details/:id/:courseCode?')
+  async getProfessorDetails(@Request() req: any,@Param('id') professorid: number,@Param('courseCode') courseCode?: string) {
+    const studentId = req.user?.id;
+    console.log(" request user : ",req.user);
+    console.log("student id ",studentId)
+    return this.professorService.getProfessorDetails(studentId,professorid,courseCode)
+  }
+
+  @Get('course/:professorid')
+  async getProfessorCourse(@Param('professorid') professorid: number) {
+      console.log("Inside ------- professor id:", professorid);
+      return this.professorService.getProfessorCourse(professorid);
   }
 }

@@ -29,6 +29,7 @@ export class RatingService {
     reactRatingDto: ReactRatingDto
   ): Promise<any> {
     const { ratingId, upvote, downvote, report } = reactRatingDto;
+    console.log("data in react rating: ",reactRatingDto)
     try {
       if (upvote && downvote) {
         throw new BadRequestException(
@@ -62,8 +63,10 @@ export class RatingService {
           downvote: downvote ?? false,
           reported: report ?? false,
         });
+        console.log("created")
       }
 
+      console.log("react rating: ",reactRating)
       await this.reactRatingRepository.save(reactRating);
       return { message: 'Reaction updated successfully' };
     } catch (error) {
@@ -78,7 +81,7 @@ export class RatingService {
     }
   }
 
-  async rateProfessor(studentId: number, rateProfessorDto): Promise<any> {
+  async rateProfessor(studentId: number, rateProfessorDto: any): Promise<any> {
     try {
       const {
         professorId,
@@ -136,6 +139,11 @@ export class RatingService {
         },
       });
   
+      console.log("Student ID: ",studentId);
+      console.log("Course ID: ",courseId);
+      console.log("Professor ID: ",professorId);
+      console.log("exiting rating: ",existingRating);
+
       if (existingRating) {
         throw new BadRequestException(
           'You have already rated this professor for this course.'

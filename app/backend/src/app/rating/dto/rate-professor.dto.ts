@@ -18,6 +18,11 @@ export class rateProfessorDto {
   @IsInt()
   @Min(1)
   @Max(5)
+  knowledgeable: number;
+
+  @IsInt()
+  @Min(1)
+  @Max(5)
   clarity: number;
 
   @IsInt()

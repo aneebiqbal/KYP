@@ -1,7 +1,5 @@
 const StarRating = ({ rating }) => {
   const getStarClass = (value) => {
-    console.log(rating - value)
-
     if (rating >= value) {
       return 'filled';
     } else if ((value - rating)* 100 < 100 ) {
@@ -12,7 +10,6 @@ const StarRating = ({ rating }) => {
   };
 
   const getHalfStarWidth = (value) => {
-    console.log(rating - value)
     if ((value - rating)* 100 < 100 ) {
       return 100-((value - rating)* 100) +'%'
     }

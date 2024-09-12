@@ -51,4 +51,4 @@ helm/charts
 
 
 .env
-.env.local
+.env.local.env

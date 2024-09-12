@@ -8,7 +8,7 @@ import CustomDropdown from './user/CustomDropdown.';
 
 
 export default function ProfessorsListFilter(){
-  const [professors, setProfessors] = useState([]);
+  const [professors, setProfessors] = useState(null);
   const searchParams = useSearchParams();
   const [type, setType] = useState('0');
   const [sort, setSort] = useState('first_name');
@@ -17,6 +17,7 @@ export default function ProfessorsListFilter(){
   const [professorData, setProfessorData] = useState({});
   const [DropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [loading,setLoading] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -46,6 +47,7 @@ export default function ProfessorsListFilter(){
   }
   const getProfessors = async (searchBy=type,text=search,concatCheck = false, page=1)=>{
     try{
+      setLoading(true)
       await BaseApi.getProfessors({sortField:sort,sortOrder:sortOrder?'ASC':'DESC',searchBy:searchBy,search:text,page:page})
         .then((response)=>{
           if(concatCheck){
@@ -56,9 +58,11 @@ export default function ProfessorsListFilter(){
             setProfessors(response.data)
           }
           setProfessorData(response)
+      setLoading(false)
         })
     }catch(e){
       console.log(e)
+      setLoading(false)
     }
   }
   useEffect(() => {
@@ -72,6 +76,11 @@ export default function ProfessorsListFilter(){
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortOrder]);
   return <>
+  { !professors|| loading 
+    ? 
+    <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"30%", margin:"30%"}}><span className="loader"></span> </div> 
+    :
+    <>
     <div className="mb-60">
       <div className="flex flex-nowrap professor-mobile-flex-col ">
         <div className="flex items-center ">
@@ -169,6 +178,6 @@ export default function ProfessorsListFilter(){
         <p className="text-weight-400 text-14 text-595959">The record that you tired to filter is not found</p>
       </div>)}
 
-
+</>}
   </>
 }

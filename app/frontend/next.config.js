@@ -12,6 +12,10 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
+  images: {
+    domains: ['reactkypprofilepics.s3.ap-south-1.amazonaws.com'],
+  },
+  reactStrictMode: false,
 };
 
 const plugins = [

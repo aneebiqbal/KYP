@@ -1,14 +1,15 @@
-import { Professor, Rating, Student } from '@kyp/db';
+import { Professor, Rating, Student} from '@kyp/db';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { getPaginated, PaginatedResult } from '../utils/getPaginated';
 
 
+
 interface professor{
   id:number;
   name: string;
-  image_url: string;
+  image_url: string; 
   department_name: string;
   institute_name: string;
   overall_rating: number;
@@ -27,6 +28,8 @@ export class ProfessorService {
     private readonly studentRepository: Repository<Student>,
     @InjectRepository(Rating)
     private readonly ratingRepository: Repository<Rating>,
+    // @InjectRepository(ProfessorCourses)
+    // private readonly professorCourses: Repository<ProfessorCourses>,
   ) {}
 
   async searchProfessors(
@@ -212,22 +215,88 @@ export class ProfessorService {
     }
   }
 
-  async getProfessorDetails(professorId: number): Promise<any> {
+  async getProfessorCourse(professorId: number): Promise<any> {
     try {
+      let courses=[]
+      // let tags=[];
+
       const professor = await this.professorRepository.findOne({
         where: { id: professorId },
-        relations: ['institute', 'ratings'],
+        relations: ['institute'],
       });
-  
+
       if (!professor) {
-        throw new NotFoundException(`Professor with ID ${professorId} not found`);
+        return new NotFoundException(`Professor with ID ${professorId} not found`);
       }
-  
-      const ratings = professor.ratings;
-      if (ratings.length === 0) {
-        throw new NotFoundException(`No ratings found for professor with ID ${professorId}`);
+      const query = this.professorRepository
+      .createQueryBuilder('professor')
+      .innerJoinAndSelect('professor.professorCourses', 'professorCourses')
+      .innerJoinAndSelect('professorCourses.course', 'course')
+      // .innerJoinAndSelect('course.ratings', 'rating')
+      .where('professorCourses.professor_id = :professorId', { professorId })
+      // .andWhere('rating.professor_id = :professorId', { professorId })
+
+      const professorCourses = await query.getMany();
+      console.log("courses:",professorCourses)
+
+      if (professorCourses?.length > 0) {
+       professorCourses[0].professorCourses.flatMap((course)=>{
+        courses.push({
+          course_id:course.course.id,
+          course_code:course.course.course_code,
+         })
+        //    course.course.ratings.flatMap(((rating)=>{
+        //        tags.push(rating.tags)
+        // }))
+        })
       }
-  
+      // let uniqueTags = [...new Set(tags.flat().filter(tag => tag !== null))];
+      return {
+        id:professor.id,
+        first_name:professor.first_name,
+        last_name:professor.last_name,
+        image_url:professor.image_url,
+        department_name:professor.department_name,
+        institute:professor.institute.name,
+        courses,
+        // tags:uniqueTags
+      }
+    }catch (error) {
+      console.error(error);
+    return new Error('An error occurred while retrieving professor courses');
+    }
+  }
+
+  async getSavedProfessor(StudentId:any,professorId: number): Promise<any> {
+    try {
+      let saved=false;
+      console.log("professorid: ",professorId)
+      const student = await this.studentRepository.findOne({
+        where: { id: StudentId },
+      });
+      console.log("student: ",student)
+      console.log("student saved professor : ",student.saved_professors)
+      if(student.saved_professors){
+      student.saved_professors.map((professor) => {
+        // console.log("professor: ",professor)
+        if(professor== professorId) {
+          saved=true;
+        }
+      })
+    } 
+      console.log("saved: ",saved)
+      return {saved}
+
+    }catch (error) {
+      console.error(error);
+    return new Error('An error occurred while retrieving professor details');
+    }
+  }
+
+  async getProfessorDetails(StudentId:any,professorId: number,courseCode?: string): Promise<any> {
+    try {
+      console.log("in detail api ",StudentId)
+      let Course=[];
       const totalRatings = {
         course_difficulty: 0,
         clarity: 0,
@@ -241,34 +310,229 @@ export class ProfessorService {
   
       const starCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
       const tagCounts = new Map<string, number>();
+
+      console.log("course id :  ",courseCode )
+      const professor = await this.professorRepository.findOne({
+        where: { id: professorId },
+        relations: ['institute', 'ratings'],
+      });
+
+      if (!professor) {
+        return new NotFoundException(`Professor with ID ${professorId} not found`);
+      }
+
+     
+      const ratings = professor.ratings;
+      const ProfessortotalRatings = ratings.length;
+      const overallRating =
+      ProfessortotalRatings > 0
+          ? professor.ratings.reduce(
+              (acc, rating) =>
+                acc +
+                (rating.course_difficulty +
+                  rating.clarity +
+                  rating.collaboration +
+                  rating.knowledgeable +
+                  rating.helpful +
+                  rating.textbook_use +
+                  rating.exam_difficulty +
+                  rating.love_teaching_style) /
+                  8,
+              0
+            ) / ProfessortotalRatings
+          : 0;
+
+      if (ratings.length === 0) {
+        let responses = {
+          professor: {
+            id: professor.id,
+            first_name: professor.first_name,
+            last_name: professor.last_name,
+            image_url: professor.image_url,
+            department_name: professor.department_name,
+            institute_name: professor.institute.name,
+            overallRating,
+            star_distribution: starCounts,
+            criteria_averages:totalRatings,
+            top_tags: null,
+            Course:[],
+          },
+        };
+        return responses;
+      }
+
+      const query = this.professorRepository
+      .createQueryBuilder('professor')
+      .innerJoinAndSelect('professor.professorCourses', 'professorCourses')
+      .innerJoinAndSelect('professorCourses.course', 'course')
+      .innerJoinAndSelect('course.ratings', 'rating') 
+      .leftJoinAndSelect('rating.reactRatings','reactRatings') 
+      .leftJoinAndSelect('reactRatings.student','student')
+      .where('professorCourses.professor_id = :professorId', { professorId })
+      .andWhere('rating.professor_id = :professorId', { professorId })
+      // .andWhere('reactRatings.student_id = :StudentId', { StudentId })
+
+  //     const query = this.professorRepository
+  // .createQueryBuilder('professor')
+  // .innerJoinAndSelect('professor.professorCourses', 'professorCourses')
+  // .innerJoinAndSelect('professorCourses.course', 'course')
+  // .innerJoinAndSelect('course.ratings', 'rating')
+  // .leftJoinAndSelect('rating.student', 'student') 
+  // .leftJoinAndSelect('rating.reactRatings', 'reactRatings')  
+  // .where('professorCourses.professor_id = :professorId', { professorId })
+  // .andWhere('rating.professor_id = :professorId', { professorId });
+
+   
+   if (courseCode) {
+     query.andWhere('course.course_code = :courseCode', { courseCode });
+   }
+   
+   console.log(query.getSql());
   
+  //  console.log("studentid: ",StudentId)
+      const professorCourses = await query.getMany();
+      console.log("professor Course: ",professorCourses)  
+      if (professorCourses.length > 0) {
+      Course=professorCourses[0].professorCourses.flatMap((course)=>{
+        // console.log("ratings: ",course.course.ratings)
+        return course.course.ratings.flatMap(((rating)=>{
+      console.log(" Rating: ",rating);
+          let upVotes = 0;
+          let downVotes = 0;
+          let reported=0;
+          // let hasid=false;
+          let ReactRatings={upvote:false,downvote:false,reported:false};
+          rating.reactRatings.forEach((reactRating) => {
+            if(reactRating.student.id==StudentId){
+              // hasid=true;
+              ReactRatings.upvote=reactRating.upvote;
+              ReactRatings.downvote=reactRating.downvote;
+              ReactRatings.reported=reactRating.reported;
+            }
+            if (reactRating.upvote) {
+              upVotes++;
+            }
+            if (reactRating.downvote) {
+              downVotes++;
+            }
+            if (reactRating.reported) {
+              reported++;
+            }
+          });
+          // console.log("hasid: ",hasid)
+        //  return rating.reactRatings.map((reactRating)=>{
+        //   if(hasid==true){
+        //     if(reactRating.student.id==StudentId){
+              return {
+                course_name: course.course.course_code,
+                id:rating.id,
+                tags:rating.tags,
+                created_at:rating.created_at,
+                comment:rating.comment,
+                for_credit:rating.for_credit,
+                upVotes,
+                downVotes,
+                reports:reported,
+                attendance:rating. mandatory_attendance,
+                rating: (rating.course_difficulty +
+                  rating.clarity +
+                  rating.collaboration +
+                  rating.knowledgeable +
+                  rating.helpful +
+                  rating.textbook_use +
+                  rating.exam_difficulty +
+                  rating.love_teaching_style) /
+                  8,
+                  reactRatings:ReactRatings,
+              }
+          //   }
+          // } else {
+            //  return {
+            //   course_name: course.course.course_code,
+            //   id:rating.id,
+            //   tags:rating.tags,
+            //   created_at:rating.created_at,
+            //   comment:rating.comment,
+            //   for_credit:rating.for_credit,
+            //   upVotes,
+            //   downVotes,
+            //   reports:reported,
+            //   attendance:rating. mandatory_attendance,
+            //   rating: (rating.course_difficulty +
+            //     rating.clarity +
+            //     rating.collaboration +
+            //     rating.knowledgeable +
+            //     rating.helpful +
+            //     rating.textbook_use +
+            //     rating.exam_difficulty +
+            //     rating.love_teaching_style) /
+            //     8,
+            //     reactRatings:reactRating,
+            // }
+          // }
+           
+      // })
+      // .filter((result) => result !== undefined && result !== null);
+        }))
+      })
+    }
+
+      // ratings.forEach((rating) => {
+      //   Object.keys(totalRatings).forEach((key) => {
+      //     totalRatings[key] += rating[key];
+      //   });
+  
+      //   const starAverage = Math.round(
+      //     Object.values(totalRatings).reduce((acc, val) => acc + val, 0) / 8
+      //   );
+      //   starCounts[starAverage]++;
+  
+      //   rating.tags?.forEach((tag) => {
+      //     tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+      //   });
+      // });
+
       ratings.forEach((rating) => {
+        const starRating = Math.round(
+          (rating.course_difficulty +
+          rating.clarity +
+          rating.collaboration +
+          rating.knowledgeable +
+          rating.helpful +
+          rating.textbook_use +
+          rating.exam_difficulty +
+          rating.love_teaching_style) / 8
+        );
+        
+        if (starCounts[starRating] !== undefined) {
+          starCounts[starRating]++;
+        }
+ 
         Object.keys(totalRatings).forEach((key) => {
           totalRatings[key] += rating[key];
         });
-  
-        const starAverage = Math.round(
-          Object.values(totalRatings).reduce((acc, val) => acc + val, 0) / 8
-        );
-        starCounts[starAverage]++;
-  
+      
         rating.tags?.forEach((tag) => {
           tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
         });
       });
+      
   
       const ratingCount = ratings.length;
       const getPercentage = (count: number) => (count / ratingCount) * 100;
       const getCriteriaAverage = (total: number) => (total / ratingCount / 5) * 100;
-  
-      const response = {
-        professor: {
-          id: professor.id,
-          first_name: professor.first_name,
-          last_name: professor.last_name,
-          image_url: professor.image_url,
-          department_name: professor.department_name,
-          institute_name: professor.institute.name,
+
+
+      if (professorCourses.length === 0) {
+        let responses = {
+          professor: {
+            id: professor.id,
+            first_name: professor.first_name,
+            last_name: professor.last_name,
+            image_url: professor.image_url,
+            department_name: professor.department_name,
+            overallRating,
+            institute_name: professor.institute.name,
           star_distribution: {
             one_star: getPercentage(starCounts[1]),
             two_star: getPercentage(starCounts[2]),
@@ -290,13 +554,51 @@ export class ProfessorService {
             .sort((a, b) => b[1] - a[1])
             .slice(0, 5)
             .map(([tag]) => tag),
+            Course:[],
+          },
+        };
+        console.log("response: ",responses);
+        return responses;
+      }
+
+      const response = {
+        professor: {
+          id: professor.id,
+          first_name: professor.first_name,
+          last_name: professor.last_name,
+          image_url: professor.image_url,
+          department_name: professor.department_name,
+          institute_name: professor.institute.name,
+          overallRating,
+          star_distribution: {
+            one_star: getPercentage(starCounts[1]),
+            two_star: getPercentage(starCounts[2]),
+            three_star: getPercentage(starCounts[3]),
+            four_star: getPercentage(starCounts[4]),
+            five_star: getPercentage(starCounts[5]),
+          },
+          criteria_averages: {
+            course_difficulty: getCriteriaAverage(totalRatings.course_difficulty),
+            clarity: getCriteriaAverage(totalRatings.clarity),
+            collaboration: getCriteriaAverage(totalRatings.collaboration),
+            knowledgeable: getCriteriaAverage(totalRatings.knowledgeable),
+            helpful: getCriteriaAverage(totalRatings.helpful),
+            textbook_use: getCriteriaAverage(totalRatings.textbook_use),
+            exam_difficulty: getCriteriaAverage(totalRatings.exam_difficulty),
+            love_teaching_style: getCriteriaAverage(totalRatings.love_teaching_style),
+          },
+          top_tags: Array.from(tagCounts.entries())
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([tag]) => tag),
+          Course,
         },
       };
-  
       return response;
   
     } catch (error) {
-      
+      console.error(error);
+    return new Error('An error occurred while retrieving professor details');
     }
   }
 }

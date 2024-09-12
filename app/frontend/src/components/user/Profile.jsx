@@ -5,8 +5,8 @@ import * as Yup from 'yup';
 import { useEffect, useRef, useState } from 'react';
 import {BaseApi} from '../../app/(base)/BaseApi';
 import PopUp from '../PopUp';
-import { getToken, getUserInfo } from '../../services/JwtService';
-export default function Profile({userInfo}) {
+import { getToken, getUserInfo ,setUserInfo} from '../../services/JwtService';
+export default function Profile({userInfo,setUserProfileInfo}) {
   const [popup, setPopup] = useState({show:false,type:'',message:'',timeout:0});
   const validationUserInfo = Yup.object({
     firstName: Yup.string()
@@ -28,7 +28,7 @@ export default function Profile({userInfo}) {
       .required('Required'),
   });
   const [preview, setPreview] = useState(userInfo.image_url);
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(userInfo.image_url?userInfo.image_url:"/user/userImage.png");
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
   const handleSubmit = async (values) => {
@@ -40,17 +40,33 @@ export default function Profile({userInfo}) {
       // formData.append('email', values.email);
       // formData.append('institute_name', values.university);
       // formData.append('id', userInfo.id);
-      await BaseApi.updateProfile({first_name:values.firstName,last_name:values.lastName,email:values.email,institute_name:values.university}
+      await BaseApi.updateProfile({first_name:values.firstName,last_name:values.lastName,email:values.email,institute_name:values.university,image_url:image}
       //   , {
       //   headers: {
       //     'Content-Type': 'multipart/form-data',
       //   },
       // }
       ).then(() => {
-        setPopup({ show: true, type: 'success', message: 'Profile Updated Successfully', timeout: 3000 });
+  //       let userInfoCookie = getCookie('user-info');
+  // if (userInfoCookie) {
+  //   let user = JSON.parse(decodeURIComponent(userInfoCookie));
+  //   user.image_url = image;
+  //   console.log("institute: ",values.university)
+  //   user.institute=values.university;
+  //   const updatedUserInfo = JSON.stringify(user);
+  //   setCookie('user-info', encodeURIComponent(updatedUserInfo), 30);
+  //   userInfoCookie = getCookie('user-info');
+  //   user = JSON.parse(decodeURIComponent(userInfoCookie));
+  setUserProfileInfo({first_name:values.firstName,last_name:values.lastName,email:values.email,institute:{name:values.university},image_url:image})
+  setUserInfo(JSON.stringify({first_name:values.firstName,last_name:values.lastName,email:values.email,institute:{name:values.university},image_url:image}))
+    console.log('User image updated in cookie successfully!');
+  // } else {
+  //   console.log('User info cookie not found.');
+  // }
+  //       setPopup({ show: true, type: 'success', message: 'Profile Updated Successfully', timeout: 3000 });
       });
     }catch (e){
-      setPopup({show:true,type:'error',message:error.message,timeout:3000});
+      setPopup({show:true,type:'error',message:e.message,timeout:3000});
     }
   };
   const handleChangePassword = async (values) => {
@@ -68,18 +84,25 @@ export default function Profile({userInfo}) {
     }
 
   };
+
+  // function getCookie(name) {
+  //   const value = `; ${document.cookie}`;
+  //   const parts = value.split(`; ${name}=`);
+  //   if (parts.length === 2) return parts.pop().split(';').shift();
+  // }
+
+  function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000)); 
+      expires = `; expires=${date.toUTCString()}`;
+    }
+    document.cookie = `${name}=${value || ""}${expires}; path=/`;
+  }
+
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
-    if (file) {
-      if (!file.type.startsWith('image/')) {
-        setError('Please upload an image file.');
-        setPreview(null);
-        return;
-      }
-      setImage(file)
-      setError('');
-      setPreview(URL.createObjectURL(file));
-    }
   }
   return<>
     <div className='mt-30'>
@@ -87,7 +110,7 @@ export default function Profile({userInfo}) {
       <div className="flex mb-60 professor-profile-mobile-center">
         <div className="border-color-D9D9D9 border-radius-8 pa-40 mr-80 img-input-field-width-mr-0 full-width-mobile-responsive" style={{ width: '368px' }}>
           <div className="mb-20 position-relative">
-            <Image style={{width:'100%'}} height={280} width={280} src="/user/userImage.png" alt={'userInfo?.image_url'} />
+            <Image style={{width:'100%'}} height={280} width={280} src={image} alt={'userInfo?.image_url'} />
             <input  ref={fileInputRef} style={{visibility:'hidden', left:'0',bottom:'0',width:'0',height:'0'}} className="position-absolute" type="file" accept="image/*" onChange={handleImageUpload} />
             <div onClick={()=>{fileInputRef.current.click();}} className="position-absolute flex items-center justify-center cursor-pointer " style={{bottom:'0',left:'0',width:'100%',height:'48px',background:'rgba(0, 0, 0, 0.5)'}}>
               <Image width={24} height={24} src="/uploadIcon.svg" alt="uploadIcon"/>
@@ -100,7 +123,7 @@ export default function Profile({userInfo}) {
         </div>
         <div className="mobile-mt-28 flex-1">
           <Formik
-            initialValues={{ firstName:userInfo?.first_name, lastName: userInfo?.last_name, email: userInfo?.email,university:userInfo?.institute }}
+            initialValues={{ firstName:userInfo?.first_name, lastName: userInfo?.last_name, email: userInfo?.email,university:userInfo?.institute?.name }}
             validationSchema={validationUserInfo}
             onSubmit={handleSubmit}
           >
