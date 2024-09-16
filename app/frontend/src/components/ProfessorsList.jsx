@@ -32,7 +32,7 @@ export default function ProfessorsList({professors,updateProfessors}) {
     <div key={'professors-list-'+index} className="full-width" >
       <div className="border-color-D9D9D9 full-width border-radius-12 py-20 px-28 flex mb-20">
         <div>
-          <Image className="border-radius-100 professor-img cursor-pointer" height={74} width={74} src={false ?professor.image_url:'/professor.png'} alt={professor.image_url} onClick={()=>getDetails(professor)} />
+          <Image className="border-radius-100 professor-img cursor-pointer" height={74} width={74} src={professor?.image_url?professor?.image_url :'/student.png'} alt={professor.image_url} onClick={()=>getDetails(professor)} />
         </div>
         <div className="flex justify-between professor-mobile-flex-col full-width ">
         <div className="px-20 flex-1">

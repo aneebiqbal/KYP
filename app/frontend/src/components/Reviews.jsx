@@ -66,9 +66,9 @@ export default function Reviews({reviews,professorId,updateRatings}) {
     {reviews.map((review,index) => (
       <div key={'review'+index} className="flex mb-20">
         <div className="flex column items-center reviews">
-          <Image className="border-radius-100" height={48} width={48} src={false?review?.student_image_url:'/student.png'} alt={review?.image_url} />
+          <Image className="border-radius-100" height={48} width={48} src={review?.image_url ? review?.image_url : '/student.png'} alt={review?.image_url} />
           <p style={{width:"120px",textAlign:"center"}}>{review.reactRatings?.student?.first_name} {review.reactRatings?.student?.last_name}</p>
-          <p className="text-0378A6 text-26 text-weight-600">{(review?.rating)}</p>
+          <p className="text-0378A6 text-26 text-weight-600">{(review?.rating.toFixed(1))}</p>
         </div>
         <div className="flex-1 ml-12  border-radius-10 pa-20 bg-E6F1F6">
           <div className="flex justify-between mb-20">

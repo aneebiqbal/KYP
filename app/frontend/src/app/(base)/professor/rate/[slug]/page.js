@@ -9,9 +9,11 @@ import { useParams } from 'next/navigation';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import {getToken} from '../../../../../services/JwtService';
 import { useRouter } from 'next/navigation';
+import { getUserInfo } from '../../../../../services/JwtService';
 
 export default function page(string) {
   let token = getToken();
+  const router = useRouter();
   const [popup, setPopup] = useState({
     show: false,
     type: '',
@@ -19,6 +21,8 @@ export default function page(string) {
     timeout: 0,
   });
   const {slug} = useParams();
+  const userInfo = useState(JSON.parse(getUserInfo()));
+  console.log("userInfo: ",userInfo[0].id);
   const filter = new Filter();
   filter.addWords('some', 'bad', 'word')
   // const validationSchema = yup.object().shape({
@@ -46,12 +50,19 @@ export default function page(string) {
 
   const validationSchema = Yup.object({
     ratings: Yup.array()
-      .of(
-        Yup.object({
-          value: Yup.number().min(1, 'Rating is required').required('Rating is required'),
-        })
-      )
-      .required('Ratings are required'),
+    .of(
+      Yup.object({
+        label: Yup.string(),
+        value: Yup.number()
+          .min(1, function (param) {
+            console.log("params : ",param)
+            const index = param.path.split('[')[1].split(']')[0];
+            const label = ratings[index].label || 'Rating';
+            return `${label} is required`;
+          })
+      })
+    )
+    .required('Ratings are required'),
       review: Yup.string()
     .test('no-offensive-language', 'Please refrain from using offensive language.', (value) => {
       return !filter.isProfane(value); // Assuming `filter.isProfane` is a function that checks profanity
@@ -142,7 +153,10 @@ export default function page(string) {
     try{
       setLoading(true)
       let response =  await BaseApi.getProfessorCourses({id:slug});
-      console.log("response: ",response)
+      console.log("response----: ",response)
+      if (response?.data?.message?.includes("not found")) {
+        router.push(`/`);
+      }
       setProfessor(response.data)
       response.data?.courses?.map((course,index)=>{
         setOption((prev)=>[...prev,{
@@ -153,7 +167,7 @@ export default function page(string) {
       })
       setLoading(false)
     } catch(e){
-      console.log("error: ",)
+      console.log("error: ",e)
       setLoading(false)
     }
     
@@ -237,7 +251,10 @@ export default function page(string) {
     }
     try{
       setSubmitLoader(true);
-      let response =  await BaseApi.postRating({professorId:slug,
+      const professorID=Number(slug)
+      let response =  await BaseApi.postRating({
+        studentId: userInfo[0].id,
+        professorId:professorID,
         courseId:course.id,
         course_difficulty:ratings[0].value,
         clarity:ratings[1].value,
@@ -291,6 +308,20 @@ export default function page(string) {
      <Formik
      initialValues={{ ratings, review: '', selectedTags: [], course: null, gradeReceived: null }}
      validationSchema={validationSchema}
+    //  validate={(values) => {
+    //   // Pass the ratings as context
+    //   const schema = validationSchema;
+    //   try {
+    //     schema.validateSync(values, { context: { ratings } });
+    //   } catch (err) {
+    //     return err.inner.reduce((acc, curr) => {
+    //       acc[curr.path] = curr.message;
+    //       return acc;
+    //     }, {});
+    //   }
+    // }
+    context={{ ratings }}
+
      onSubmit={()=>submitRating()}
    >
      {({ values, setFieldValue }) => (

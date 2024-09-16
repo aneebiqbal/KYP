@@ -28,7 +28,7 @@ export class RatingController {
 
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
-  // @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   @Post('rate-Professor')
   async rateProfessor(@Body() rateProfessorDto: rateProfessorDto, @Request() req) {
     console.log("inside------")
