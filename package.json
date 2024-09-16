@@ -2,7 +2,9 @@
   "name": "@kyp/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start:api": "nx serve api"
+  },
   "private": true,
   "dependencies": {
     "@nestjs/common": "^10.0.2",
