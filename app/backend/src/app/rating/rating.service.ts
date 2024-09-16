@@ -131,24 +131,24 @@ export class RatingService {
         );
       }
 
-      const existingRating = await this.ratingRepository.findOne({
-        where: {
-          student: { id: studentId },
-          professor: { id: professorId },
-          course: { id: courseId },
-        },
-      });
+      // const existingRating = await this.ratingRepository.findOne({
+      //   where: {
+      //     student: { id: studentId },
+      //     professor: { id: professorId },
+      //     course: { id: courseId },
+      //   },
+      // });
   
-      console.log("Student ID: ",studentId);
-      console.log("Course ID: ",courseId);
-      console.log("Professor ID: ",professorId);
-      console.log("exiting rating: ",existingRating);
+      // console.log("Student ID: ",studentId);
+      // console.log("Course ID: ",courseId);
+      // console.log("Professor ID: ",professorId);
+      // console.log("exiting rating: ",existingRating);
 
-      if (existingRating) {
-        throw new BadRequestException(
-          'You have already rated this professor for this course.'
-        );
-      }
+      // if (existingRating) {
+      //   throw new BadRequestException(
+      //     'You have already rated this professor for this course.'
+      //   );
+      // }
   
 
       const rating = this.ratingRepository.create({

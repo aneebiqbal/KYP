@@ -40,6 +40,9 @@ export default function page(){
       setLoading(true)
       let response = await BaseApi.getProfessorDetail({ id: slug ,courseCode});
       console.log("response from api: ", response); 
+      if(response?.data?.message?.includes("not found")){
+        router.push(`/`);
+      }
       setProfessorDetails(response.data.professor)
       let savedprofessor = await BaseApi.getSavedProfessor({ id: Number(slug)});
       console.log("response from api: ", savedprofessor);
@@ -104,87 +107,88 @@ console.log(" course: ",courseCode);
     });
   };
 
-  const reviews = [
-    {
-      image:'/student.png',
-      rating:4.3,
-      courseCode:'ENG101',
-      date:'Aug 19, 2021',
-      review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-      tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-      credit:'Yes',
-      attendance:'Mandatory',
-      upVotes:5,
-      downVotes:5,
-      reports:3,
-    },
-    {
-      image:'/student.png',
-      rating:4.3,
-      courseCode:'ENG101',
-      date:'Aug 19, 2021',
-      review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-      tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-      credit:'Yes',
-      attendance:'Mandatory',
-      upVotes:5,
-      downVotes:5,
-      reports:3,
-    },
-    {
-      image:'/student.png',
-      rating:4.3,
-      courseCode:'ENG101',
-      date:'Aug 19, 2021',
-      review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-      tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-      credit:'Yes',
-      attendance:'Mandatory',
-      upVotes:5,
-      downVotes:5,
-      reports:3,
-    },
-    {
-      image:'/student.png',
-      rating:4.3,
-      courseCode:'ENG101',
-      date:'Aug 19, 2021',
-      review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-      tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-      credit:'Yes',
-      attendance:'Mandatory',
-      upVotes:5,
-      downVotes:5,
-      reports:3,
-    },
-    {
-      image:'/student.png',
-      rating:4.3,
-      courseCode:'ENG101',
-      date:'Aug 19, 2021',
-      review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-      tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-      credit:'Yes',
-      attendance:'Mandatory',
-      upVotes:5,
-      downVotes:5,
-      reports:3,
-    },
-    {
-      image:'/student.png',
-      rating:4.3,
-      courseCode:'ENG101',
-      date:'Aug 19, 2021',
-      review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-      tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-      credit:'Yes',
-      attendance:'Mandatory',
-      upVotes:5,
-      downVotes:5,
-      reports:3,
-    },
-  ]
+  // const reviews = [
+  //   {
+  //     image:'/student.png',
+  //     rating:4.3,
+  //     courseCode:'ENG101',
+  //     date:'Aug 19, 2021',
+  //     review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
+  //     tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
+  //     credit:'Yes',
+  //     attendance:'Mandatory',
+  //     upVotes:5,
+  //     downVotes:5,
+  //     reports:3,
+  //   },
+  //   {
+  //     image:'/student.png',
+  //     rating:4.3,
+  //     courseCode:'ENG101',
+  //     date:'Aug 19, 2021',
+  //     review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
+  //     tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
+  //     credit:'Yes',
+  //     attendance:'Mandatory',
+  //     upVotes:5,
+  //     downVotes:5,
+  //     reports:3,
+  //   },
+  //   {
+  //     image:'/student.png',
+  //     rating:4.3,
+  //     courseCode:'ENG101',
+  //     date:'Aug 19, 2021',
+  //     review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
+  //     tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
+  //     credit:'Yes',
+  //     attendance:'Mandatory',
+  //     upVotes:5,
+  //     downVotes:5,
+  //     reports:3,
+  //   },
+  //   {
+  //     image:'/student.png',
+  //     rating:4.3,
+  //     courseCode:'ENG101',
+  //     date:'Aug 19, 2021',
+  //     review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
+  //     tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
+  //     credit:'Yes',
+  //     attendance:'Mandatory',
+  //     upVotes:5,
+  //     downVotes:5,
+  //     reports:3,
+  //   },
+  //   {
+  //     image:'/student.png',
+  //     rating:4.3,
+  //     courseCode:'ENG101',
+  //     date:'Aug 19, 2021',
+  //     review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
+  //     tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
+  //     credit:'Yes',
+  //     attendance:'Mandatory',
+  //     upVotes:5,
+  //     downVotes:5,
+  //     reports:3,
+  //   },
+  //   {
+  //     image:'/student.png',
+  //     rating:4.3,
+  //     courseCode:'ENG101',
+  //     date:'Aug 19, 2021',
+  //     review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
+  //     tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
+  //     credit:'Yes',
+  //     attendance:'Mandatory',
+  //     upVotes:5,
+  //     downVotes:5,
+  //     reports:3,
+  //   },
+  // ]
   const tags = ['Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader',];
+  
   return<>
   { Loading || !professorDetails 
   ?
@@ -198,7 +202,7 @@ console.log(" course: ",courseCode);
 
       <div className="flex mb-60 professor-profile-mobile-center">
         <div>
-          <Image className="border-radius-100" height={114} width={114} src="/professor.png" alt="professor" />
+          <Image className="border-radius-100" height={114} width={114} src={professorDetails?.image_url? professorDetails?.image_url: '/student.png'} alt="professor" />
         </div>
         <div className="px-20 flex-1 flex column justify-center professor-name-mt-24">
           <h2 className="text-24 text-1F1F1F text-weight-600 mb-6">{professorDetails?.first_name} {professorDetails?.last_name}</h2>
@@ -234,17 +238,17 @@ console.log(" course: ",courseCode);
 
             <div className="bg-FFEBCC flex column items-center justify-center star-rating-full-width"
                  style={{ width: '180px', height: '180px' }}>
-              <p className="text-weight-600 text-40 text-1F1F1F">{professorDetails?.overallRating}</p>
+              <p className="text-weight-600 text-40 text-1F1F1F">{professorDetails?.overallRating.toFixed(1)}</p>
               <StarRating rating={4} />
               <p className="text-weight-500 text-14 text-1F1F1F">Quality Rating</p>
             </div>
 
             <div className="flex-1 ml-30 mobil-ml-none mobile-mt-28">
-              <RatingBar rating={5} reviews={100} reviewsGot={!professorDetails.star_distribution.five_star ? 0 : Math.floor(professorDetails.star_distribution.five_star)} text={'Awesome'} />
-              <RatingBar rating={4} reviews={100} reviewsGot={!professorDetails.star_distribution.four_star ? 0 :Math.floor(professorDetails.star_distribution.four_star)} text={'Great'} />
-              <RatingBar rating={3} reviews={100} reviewsGot={!professorDetails.star_distribution.three_star ? 0 :Math.floor(professorDetails.star_distribution.three_star)} text={'Good'} />
-              <RatingBar rating={2} reviews={100} reviewsGot={!professorDetails.star_distribution.two_star ? 0 :Math.floor(professorDetails.star_distribution.two_star)} text={'OK'} />
-              <RatingBar rating={1} reviews={100} reviewsGot={!professorDetails.star_distribution.one_star ? 0 :Math.floor(professorDetails.star_distribution.one_star)} text={'Awful'} />
+              <RatingBar rating={5} reviews={100} reviewsGot={!professorDetails.star_distribution.five_star ? 0 : professorDetails.star_distribution.five_star.toFixed(2)} text={'Awesome'} />
+              <RatingBar rating={4} reviews={100} reviewsGot={!professorDetails.star_distribution.four_star ? 0 :professorDetails.star_distribution.four_star.toFixed(2)} text={'Great'} />
+              <RatingBar rating={3} reviews={100} reviewsGot={!professorDetails.star_distribution.three_star ? 0 :professorDetails.star_distribution.three_star.toFixed(2)} text={'Good'} />
+              <RatingBar rating={2} reviews={100} reviewsGot={!professorDetails.star_distribution.two_star ? 0 :professorDetails.star_distribution.two_star.toFixed(2)} text={'OK'} />
+              <RatingBar rating={1} reviews={100} reviewsGot={!professorDetails.star_distribution.one_star ? 0 :professorDetails.star_distribution.one_star.toFixed(2)} text={'Awful'} />
             </div>
           </div>
           <div className="d-none d-xl-block">

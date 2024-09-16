@@ -39,7 +39,8 @@ export default function page() {
               <Image
                 width={200}
                 height={200}
-                src={userInfo?.image_url || "/user/userImage.png"}
+                // src={userInfo?.image_url || "/user/userImage.png"}
+                src={userInfo?.image_url || '/student.png'}
                 alt="userImage"
                 className="mb-3 img-fluid"
               />

@@ -387,94 +387,183 @@ export class ProfessorService {
      query.andWhere('course.course_code = :courseCode', { courseCode });
    }
    
-   console.log(query.getSql());
   
   //  console.log("studentid: ",StudentId)
       const professorCourses = await query.getMany();
       console.log("professor Course: ",professorCourses)  
       if (professorCourses.length > 0) {
-      Course=professorCourses[0].professorCourses.flatMap((course)=>{
-        // console.log("ratings: ",course.course.ratings)
-        return course.course.ratings.flatMap(((rating)=>{
-      console.log(" Rating: ",rating);
-          let upVotes = 0;
-          let downVotes = 0;
-          let reported=0;
-          // let hasid=false;
-          let ReactRatings={upvote:false,downvote:false,reported:false};
-          rating.reactRatings.forEach((reactRating) => {
-            if(reactRating.student.id==StudentId){
-              // hasid=true;
-              ReactRatings.upvote=reactRating.upvote;
-              ReactRatings.downvote=reactRating.downvote;
-              ReactRatings.reported=reactRating.reported;
-            }
-            if (reactRating.upvote) {
-              upVotes++;
-            }
-            if (reactRating.downvote) {
-              downVotes++;
-            }
-            if (reactRating.reported) {
-              reported++;
-            }
-          });
-          // console.log("hasid: ",hasid)
-        //  return rating.reactRatings.map((reactRating)=>{
-        //   if(hasid==true){
-        //     if(reactRating.student.id==StudentId){
+      // Course=  professorCourses[0].professorCourses.flatMap((course)=>{
+      //   // console.log("ratings: ",course.course.ratings)
+      //   return course.course.ratings.flatMap((async (rating)=>{
+
+      //     const id=rating.id;
+      //     console.log("id: ",id);
+      //     const query = this.ratingRepository.createQueryBuilder('ratings')
+      //     .innerJoinAndSelect('ratings.student', 'student')
+      //     .where('ratings.id = :id', {id})
+
+      //     const commentedStudent = await query.getMany();
+      //     console.log("commented Student: ",commentedStudent)
+      //     console.log(" Rating: ",rating);
+      //     let upVotes = 0;
+      //     let downVotes = 0;
+      //     let reported=0;
+      //     // let hasid=false;
+      //     let ReactRatings={upvote:false,downvote:false,reported:false};
+      //     rating.reactRatings.forEach((reactRating) => {
+      //       if(reactRating.student.id==StudentId){
+      //         // hasid=true;
+      //         ReactRatings.upvote=reactRating.upvote;
+      //         ReactRatings.downvote=reactRating.downvote;
+      //         ReactRatings.reported=reactRating.reported;
+      //       }
+      //       if (reactRating.upvote) {
+      //         upVotes++;
+      //       }
+      //       if (reactRating.downvote) {
+      //         downVotes++;
+      //       }
+      //       if (reactRating.reported) {
+      //         reported++;
+      //       }
+      //     });
+      //     // console.log("hasid: ",hasid)
+      //   //  return rating.reactRatings.map((reactRating)=>{
+      //   //   if(hasid==true){
+      //   //     if(reactRating.student.id==StudentId){
+      //         return {
+      //           course_name: course.course.course_code,
+      //           id:rating.id,
+      //           image_url:commentedStudent[0].student.image_url,
+      //           tags:rating.tags,
+      //           created_at:rating.created_at,
+      //           comment:rating.comment,
+      //           for_credit:rating.for_credit,
+      //           upVotes,
+      //           downVotes,
+      //           reports:reported,
+      //           attendance:rating. mandatory_attendance,
+      //           rating: (rating.course_difficulty +
+      //             rating.clarity +
+      //             rating.collaboration +
+      //             rating.knowledgeable +
+      //             rating.helpful +
+      //             rating.textbook_use +
+      //             rating.exam_difficulty +
+      //             rating.love_teaching_style) /
+      //             8,
+      //             reactRatings:ReactRatings,
+      //         }
+      //     //   }
+      //     // } else {
+      //       //  return {
+      //       //   course_name: course.course.course_code,
+      //       //   id:rating.id,
+      //       //   tags:rating.tags,
+      //       //   created_at:rating.created_at,
+      //       //   comment:rating.comment,
+      //       //   for_credit:rating.for_credit,
+      //       //   upVotes,
+      //       //   downVotes,
+      //       //   reports:reported,
+      //       //   attendance:rating. mandatory_attendance,
+      //       //   rating: (rating.course_difficulty +
+      //       //     rating.clarity +
+      //       //     rating.collaboration +
+      //       //     rating.knowledgeable +
+      //       //     rating.helpful +
+      //       //     rating.textbook_use +
+      //       //     rating.exam_difficulty +
+      //       //     rating.love_teaching_style) /
+      //       //     8,
+      //       //     reactRatings:reactRating,
+      //       // }
+      //     // }
+           
+      // // })
+      // // .filter((result) => result !== undefined && result !== null);
+      //   }))
+      // })
+
+        Course = await Promise.all(
+        professorCourses[0].professorCourses.map(async (course) => {
+          console.log("Course:", course); // Check the course data
+      
+          if (!course || !course.course || !course.course.ratings || course.course.ratings.length === 0) {
+            console.log("No ratings found for course:", course.course.course_code);
+            return []; // If no ratings, return an empty array for that course
+          }
+      
+          return Promise.all(
+            course.course.ratings.map(async (rating) => {
+              const id = rating.id;
+              console.log("Rating ID: ", id); // Check the rating id
+      
+              // Perform the query to get the commented student
+              const query = this.ratingRepository.createQueryBuilder('ratings')
+                .innerJoinAndSelect('ratings.student', 'student')
+                .where('ratings.id = :id', { id });
+      
+              const commentedStudent = await query.getMany();
+              console.log("Commented Student: ", commentedStudent);
+      
+              // Ensure commentedStudent is not empty
+              if (!commentedStudent || commentedStudent.length === 0) {
+                console.log("No commented student found for rating id: ", id);
+              }
+      
+              let upVotes = 0;
+              let downVotes = 0;
+              let reported = 0;
+              let ReactRatings = { upvote: false, downvote: false, reported: false };
+      
+              // Calculate votes and check ReactRatings
+              rating.reactRatings.forEach((reactRating) => {
+                if (reactRating.student.id === StudentId) {
+                  ReactRatings.upvote = reactRating.upvote;
+                  ReactRatings.downvote = reactRating.downvote;
+                  ReactRatings.reported = reactRating.reported;
+                }
+                if (reactRating.upvote) upVotes++;
+                if (reactRating.downvote) downVotes++;
+                if (reactRating.reported) reported++;
+              });
+      
+              // Return the final rating object with course and student info
               return {
                 course_name: course.course.course_code,
-                id:rating.id,
-                tags:rating.tags,
-                created_at:rating.created_at,
-                comment:rating.comment,
-                for_credit:rating.for_credit,
+                id: rating.id,
+                image_url: commentedStudent.length > 0 ? commentedStudent[0].student.image_url : null,
+                name:commentedStudent.length > 0 ? commentedStudent[0].student.first_name + commentedStudent[0].student.last_name : null,
+                tags: rating.tags,
+                created_at: rating.created_at,
+                comment: rating.comment,
+                for_credit: rating.for_credit,
                 upVotes,
                 downVotes,
-                reports:reported,
-                attendance:rating. mandatory_attendance,
-                rating: (rating.course_difficulty +
+                reports: reported,
+                attendance: rating.mandatory_attendance,
+                rating: (
+                  rating.course_difficulty +
                   rating.clarity +
                   rating.collaboration +
                   rating.knowledgeable +
                   rating.helpful +
                   rating.textbook_use +
                   rating.exam_difficulty +
-                  rating.love_teaching_style) /
-                  8,
-                  reactRatings:ReactRatings,
-              }
-          //   }
-          // } else {
-            //  return {
-            //   course_name: course.course.course_code,
-            //   id:rating.id,
-            //   tags:rating.tags,
-            //   created_at:rating.created_at,
-            //   comment:rating.comment,
-            //   for_credit:rating.for_credit,
-            //   upVotes,
-            //   downVotes,
-            //   reports:reported,
-            //   attendance:rating. mandatory_attendance,
-            //   rating: (rating.course_difficulty +
-            //     rating.clarity +
-            //     rating.collaboration +
-            //     rating.knowledgeable +
-            //     rating.helpful +
-            //     rating.textbook_use +
-            //     rating.exam_difficulty +
-            //     rating.love_teaching_style) /
-            //     8,
-            //     reactRatings:reactRating,
-            // }
-          // }
-           
-      // })
-      // .filter((result) => result !== undefined && result !== null);
-        }))
-      })
+                  rating.love_teaching_style
+                ) / 8,
+                reactRatings: ReactRatings,
+              };
+            })
+          );
+        })
+      );
+      
+      Course = Course.flatMap(course => course);
+
+      console.log("Flattened Course: ", Course);
+      
     }
 
       // ratings.forEach((rating) => {
