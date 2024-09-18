@@ -1,6 +1,4 @@
 // @ts-check
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { composePlugins, withNx } = require('@nx/next');
 
 /**
@@ -8,25 +6,15 @@ const { composePlugins, withNx } = require('@nx/next');
  **/
 const nextConfig = {
   nx: {
-    // Set this to true if you would like to use SVGR
-    // See: https://github.com/gregberge/svgr
     svgr: false,
   },
   images: {
     domains: ['reactkypprofilepics.s3.ap-south-1.amazonaws.com'],
+    unoptimized: true, // Ensure image optimization is disabled
   },
   reactStrictMode: false,
 };
 
-const plugins = [
-  // Add more Next.js plugins to this list if needed.
-  withNx,
-];
+const plugins = [withNx];
 
-module.exports = composePlugins(...plugins)({
-  ...nextConfig,
-  images: {
-    ...nextConfig.images, // Merge with the existing images config
-    unoptimized: true, // Add unoptimized flag
-  }
-});
+module.exports = composePlugins(...plugins)(nextConfig);
