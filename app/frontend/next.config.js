@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { composePlugins, withNx } = require('@nx/next');
@@ -26,6 +26,7 @@ const plugins = [
 module.exports = composePlugins(...plugins)({
   ...nextConfig,
   images: {
-    unoptimized: true,
+    ...nextConfig.images, // Merge with the existing images config
+    unoptimized: true, // Add unoptimized flag
   }
 });
