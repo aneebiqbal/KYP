@@ -9,7 +9,6 @@ const nextConfig = {
     svgr: false,
   },
   images: {
-    domains: ['reactkypprofilepics.s3.ap-south-1.amazonaws.com'],
     unoptimized: true, // Ensure image optimization is disabled
   },
   reactStrictMode: false,
