@@ -51,7 +51,7 @@ export default function Page() {
 
               </div>
               <div className="col-xl-6 col-lg-12 home-section-tablet-img">
-                <Image height={540} width={738} src="/index/indexSectionOneImage.png" alt=""  
+                <img height={540} width={738} src="/index/indexSectionOneImage.png" alt=""
                 // className="full-width"
                 />
               </div>
