@@ -1,5 +1,6 @@
 'use client';
 import Image from 'next/image';
+import AWS from 'aws-sdk';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useEffect, useRef, useState } from 'react';
@@ -95,7 +96,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
     let expires = "";
     if (days) {
       const date = new Date();
-      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000)); 
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
       expires = `; expires=${date.toUTCString()}`;
     }
     document.cookie = `${name}=${value || ""}${expires}; path=/`;
@@ -103,6 +104,22 @@ export default function Profile({userInfo,setUserProfileInfo}) {
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
+    console.log("file: ",file)
+    const s3 = new AWS.S3({
+      accessKeyId:"AKIA6ODU2336OH4TKAZM",
+      secretAccessKey:"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",
+      region: 'ap-south-1',
+    });
+    const params = {
+      Bucket: 'reactkypprofilepics',
+      Key: file.name,
+      Body: file,
+      ContentType: file.type,
+    };
+    const upload = s3.upload(params);
+    const data = await upload.promise();
+    console.log("DA?TA______",data)
+    setImage(data.Location.toString())
   }
   return<>
     <div className='mt-30'>
@@ -174,7 +191,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                   </div>
                     </div>
                   </div>
-                  
+
                 </div>
                 <div className="">
                   <button
