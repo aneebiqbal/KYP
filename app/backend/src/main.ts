@@ -7,7 +7,7 @@ async function bootstrap() {
 
   // Enable CORS
   app.enableCors({
-    origin: 'https://main.d2h9wy5e4bfti4.amplifyapp.com', // Replace with your Next.js app's URL
+    origin: 'http://3.85.127.217', // Replace with your Next.js app's URL
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',
   });
