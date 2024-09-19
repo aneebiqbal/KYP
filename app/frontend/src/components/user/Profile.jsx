@@ -6,7 +6,12 @@ import { useEffect, useRef, useState } from 'react';
 import {BaseApi} from '../../app/(base)/BaseApi';
 import PopUp from '../PopUp';
 import { getToken, getUserInfo ,setUserInfo} from '../../services/JwtService';
+import aws from 'aws-sdk'
+import { useRouter } from 'next/navigation';
+
 export default function Profile({userInfo,setUserProfileInfo}) {
+  let token = getToken();
+  const router = useRouter
   const [popup, setPopup] = useState({show:false,type:'',message:'',timeout:0});
   const validationUserInfo = Yup.object({
     firstName: Yup.string()
@@ -28,7 +33,14 @@ export default function Profile({userInfo,setUserProfileInfo}) {
       .required('Required'),
   });
   const [preview, setPreview] = useState(userInfo.image_url);
-  const [image, setImage] = useState(userInfo.image_url?userInfo.image_url:"/user/userImage.png");
+  '/student.png'
+  // const [image, setImage] = useState(userInfo.image_url?userInfo.image_url:"/user/userImage.png");
+  const [image, setImage] = useState(userInfo.image_url?userInfo.image_url:'/student.png');
+
+  const [saveprofileLoader,setSaveProfileLoader]=useState(false);
+  const [savePasswordLoader,setSavePasswordLoader]=useState(false);
+  const [imageLoader,setImageLoader] =useState(false);
+
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
   const handleSubmit = async (values) => {
@@ -40,6 +52,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
       // formData.append('email', values.email);
       // formData.append('institute_name', values.university);
       // formData.append('id', userInfo.id);
+      setSaveProfileLoader(true)
       await BaseApi.updateProfile({first_name:values.firstName,last_name:values.lastName,email:values.email,institute_name:values.university,image_url:image}
       //   , {
       //   headers: {
@@ -59,14 +72,20 @@ export default function Profile({userInfo,setUserProfileInfo}) {
   //   user = JSON.parse(decodeURIComponent(userInfoCookie));
   setUserProfileInfo({first_name:values.firstName,last_name:values.lastName,email:values.email,institute:{name:values.university},image_url:image})
   setUserInfo(JSON.stringify({first_name:values.firstName,last_name:values.lastName,email:values.email,institute:{name:values.university},image_url:image}))
-    console.log('User image updated in cookie successfully!');
+  setSaveProfileLoader(false)
+  setPopup({show:true,type:'success',message:'Saved Successfully',timeout:3000});
   // } else {
   //   console.log('User info cookie not found.');
   // }
   //       setPopup({ show: true, type: 'success', message: 'Profile Updated Successfully', timeout: 3000 });
       });
     }catch (e){
+      setSaveProfileLoader(false)
+      if(e?.message?.includes("Network")){
       setPopup({show:true,type:'error',message:e.message,timeout:3000});
+      } else {
+        setPopup({show:true,type:'error',message:e.response.data.message,timeout:3000});
+      }
     }
   };
   const handleChangePassword = async (values) => {
@@ -74,12 +93,20 @@ export default function Profile({userInfo,setUserProfileInfo}) {
       setPopup({show:true,type:'warning',message:'New Password and Confirm Password must be same',timeout:3000});
     }else{
       try{
+        setSavePasswordLoader(true)
         await BaseApi.updatePassword({oldPassword:values.currentPassword,newPassword:values.newPassword,confirmPassword:values.confirmPassword , id:userInfo.id})
           .then(()=>{
+            setSavePasswordLoader(false)
             setPopup({show:true,type:'success',message:'Password Updated Successfully',timeout:3000});
           })
       }catch (e){
-        setPopup({show:true,type:'error',message:error.message,timeout:3000});
+        console.log("error--------",e)
+        setSavePasswordLoader(false)
+        if(e?.message?.includes("Network")){
+          setPopup({show:true,type:'error',message:e.message,timeout:3000});
+          } else {
+            setPopup({show:true,type:'error',message:e.response.data.message,timeout:3000});
+          }
       }
     }
 
@@ -91,25 +118,90 @@ export default function Profile({userInfo,setUserProfileInfo}) {
   //   if (parts.length === 2) return parts.pop().split(';').shift();
   // }
 
-  function setCookie(name, value, days) {
-    let expires = "";
-    if (days) {
-      const date = new Date();
-      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000)); 
-      expires = `; expires=${date.toUTCString()}`;
+  // function setCookie(name, value, days) {
+  //   let expires = "";
+  //   if (days) {
+  //     const date = new Date();
+  //     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000)); 
+  //     expires = `; expires=${date.toUTCString()}`;
+  //   }
+  //   document.cookie = `${name}=${value || ""}${expires}; path=/`;
+  // }
+    const handleImageUpload = async (event) => {
+      setImageLoader(true)
+      const file = event.target.files[0];
+      // setFile(fileuploaded)
+      // console.log("file: ",file)
+      // if (file) {
+      //    const src = await convertFileToSrc(file);
+      //    console.log("file src : ",src);
+      //    setImage(src)
+      // }
+      const s3 =  new AWS.S3({
+        accessKeyId:"AKIA6ODU2336OH4TKAZM",
+        secretAccessKey:"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",
+        region: 'ap-south-1',
+    });
+  
+    const params = {
+        Bucket: 'reactkypprofilepics',
+        Key: file.name,
+        Body: file,
+        ContentType: file.type,
+    };
+  
+    const upload = s3.upload(params);
+    const data = await upload.promise();
+    console.log("DA?TA______",data)
+    setImage(data.Location)
+    setImageLoader(false)
+    // try{
+    //   await BaseApi.updateProfilePic({image_url:image}
+    //   ).then(() => {
+    //     setPopup({ show: true, type: 'success', message: 'Profile Pic Updated Successfully', timeout: 3000 });
+    //   });
+    // }catch (e){
+    //   setPopup({show:true,type:'error',message:error.message,timeout:3000});
+    // }
+    
     }
-    document.cookie = `${name}=${value || ""}${expires}; path=/`;
-  }
 
-  const handleImageUpload = async (event) => {
-    const file = event.target.files[0];
-  }
+    // async function convertFileToSrc(file) {
+    //   if (!file || !file.type.match('image/*')) {
+    //     throw new Error('Please select a valid image file.');
+    //   }
+    
+    //   const reader = new FileReader();
+    
+    //   return new Promise((resolve, reject) => {
+    //     reader.onload = () => resolve(reader.result);
+    //     reader.onerror = () => reject('Error reading file.');   
+    
+    //     reader.readAsDataURL(file);
+    //   });
+    // }
+
+    useEffect(()=>{
+      if(!token){
+        router.push('/')
+      }
+    },[])
+
+
   return<>
     <div className='mt-30'>
       <p className="text-weight-600 text-24 text-1F1F1F mb-32  ">Account settings</p>
       <div className="flex mb-60 professor-profile-mobile-center">
-        <div className="border-color-D9D9D9 border-radius-8 pa-40 mr-80 img-input-field-width-mr-0 full-width-mobile-responsive" style={{ width: '368px' }}>
-          <div className="mb-20 position-relative">
+        <div className="border-color-D9D9D9 border-radius-8 pa-40 mr-80 img-input-field-width-mr-0 full-width-mobile-responsive" style={{ width: '368px',height:'450px' }}>
+          {
+            imageLoader
+            ?
+            <div style={{width:'100%',height:'100%',display: 'flex',alignItems: 'center',justifyContent: 'center'}} height={380} width={380}> 
+            <span className="loader"></span>
+            </div> 
+            : 
+            <div>
+            <div className="mb-20 position-relative">
             <Image style={{width:'100%'}} height={280} width={280} src={image} alt={'userInfo?.image_url'} />
             <input  ref={fileInputRef} style={{visibility:'hidden', left:'0',bottom:'0',width:'0',height:'0'}} className="position-absolute" type="file" accept="image/*" onChange={handleImageUpload} />
             <div onClick={()=>{fileInputRef.current.click();}} className="position-absolute flex items-center justify-center cursor-pointer " style={{bottom:'0',left:'0',width:'100%',height:'48px',background:'rgba(0, 0, 0, 0.5)'}}>
@@ -119,7 +211,9 @@ export default function Profile({userInfo,setUserProfileInfo}) {
           </div>
           {error && <p style={{ color: 'red' }}>{error}</p>}
           <p className="text-center text-weight-400 text-14 text-434343 px-20">Image size should be under 1MB and image
-            ration needs to be 1:1</p>
+            ration needs to be 1:1</p> 
+          </div>
+          }
         </div>
         <div className="mobile-mt-28 flex-1">
           <Formik
@@ -177,11 +271,36 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                   
                 </div>
                 <div className="">
-                  <button
-                    style={{ height: '44px' }}
-                    className="px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 full-width-responsive"
-                    type="submit">Save changes
-                  </button>
+                  {
+                    saveprofileLoader 
+                    ?
+                    <button
+                      style={{ 
+                        height: '44px',
+                        width: '180px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: '#763FF9',
+                        color: '#ffffff',
+                        borderRadius: '4px',
+                        fontWeight: 500,
+                        fontSize: '16px',
+                        border: 'none',
+                        cursor: "not-allowed",
+                      }}
+                      disabled={true}
+                    >        
+                      <span className="submitloader"></span>
+                      <span className="ms-2">Saving Changes</span>
+                    </button>
+                    :         
+                    <button
+                      style={{ height: '44px', width: '180px' }}
+                      className="px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 full-width-responsive"
+                      type="submit">Save changes
+                    </button>
+                   }
                 </div>
               </Form>
             )}
@@ -224,11 +343,36 @@ export default function Profile({userInfo,setUserProfileInfo}) {
               </div>
             </div>
             <div className="">
+              {
+                savePasswordLoader
+                  ?
+                    <button
+                      style={{ 
+                        height: '44px',
+                        width: '180px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: '#763FF9',
+                        color: '#ffffff',
+                        borderRadius: '4px',
+                        fontWeight: 500,
+                        fontSize: '16px',
+                        border: 'none',
+                        cursor: "not-allowed",
+                      }}
+                      disabled={true}
+                    >        
+                      <span className="submitloader"></span>
+                      <span className="ms-2">Saving Changes</span>
+                    </button>
+                  : 
               <button
-                style={{ height: '44px' }}
+                style={{ height: '44px', width: '180px' }}
                 className="px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 full-width-responsive"
                 type="submit">Change Password
               </button>
+            } 
             </div>
           </Form>
         )}

@@ -44,7 +44,7 @@ export const BaseApi = {
         return response;
       })
     } catch (e) {
-      console.log('error', e.message);
+      console.log('error', e);
       throw e.message;
     }
   },
@@ -87,8 +87,8 @@ export const BaseApi = {
         return response;
       })
     } catch (e) {
-      console.log('error', e.message);
-      throw e.message;
+      console.log('error update profile', e);
+      throw e;
     }
   },
   // updateProfilePic:async (data) => {
@@ -110,8 +110,8 @@ export const BaseApi = {
         return response;
       })
     } catch (e) {
-      console.log('error', e.message);
-      throw e.message;
+      console.log('error', e);
+      throw e;
     }
   },
   reactRatings:async (data) => {

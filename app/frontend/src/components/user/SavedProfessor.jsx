@@ -9,6 +9,7 @@ export default function SavedProfessor() {
   const [searchCheck, setSearchCheck] = useState('');
   const [professors, setProfessors] = useState([]);
   const [professorsData, setProfessorsData] = useState({});
+  const [loading,setLoading] = useState(true);
 
   const updateProfessors = (professorId) => {
     console.log('professorId', professorId);
@@ -31,6 +32,7 @@ export default function SavedProfessor() {
   }
   const getProfessors = async (searchBy=type,text=search,seeMore= false,page=1)=>{
     try{
+      setLoading(true)
       await BaseApi.SavedProfessors({searchBy:searchBy,search:text,page:page})
         .then((response)=>{
           console.log('response----', response);
@@ -44,9 +46,13 @@ export default function SavedProfessor() {
             setProfessors(response.data.data);
           }
           setProfessorsData(response.data)
+          setLoading(false)
         })
     }catch(e){
       console.log(e)
+      setProfessors([])
+      setProfessorsData([])
+      setLoading(false)
     }
   }
 
@@ -54,6 +60,11 @@ export default function SavedProfessor() {
     getProfessors();
   }, []);
 return<>
+ { loading 
+    ? 
+    <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"15%", marginBottom:"30%"}}><span className="loader"></span> </div> 
+    :
+    <>
   <div>
     <div className="flex full-width justify-center mb-32 mt-60">
       <div className="flex items-center  border-radius-12 professor-mobile-flex-col  full-width-responsive ">
@@ -86,15 +97,25 @@ return<>
       <p className="text-weight-600 text-24 text-1F1F1F">Saved</p>
       <p className="text-weight-600 text-18 text-8C8C8C">{professorsData.total}</p>
     </div>
-    {professors.length>0 &&(<div>
+    {professors.length>0 ?
+    (<div>
       <ProfessorsList professors={professors} updateProfessors={updateProfessors} />
       {Number(professorsData.page) < professorsData.lastPage && (<div className="flex items-center justify-center mt-4">
         <p className="text-weight-600 text-763FF9 text-24 cursor-pointer" onClick={() => {
           getProfessors(type, search, true, Number(professorsData.page) + 1);
         }}>See more</p>
       </div>)}
-    </div>)}
+    </div>)
+    :
+    (<div className="full-width full-height flex items-center justify-center column">
+        <Image className="mb-20" width={112} height={112} src="/norecordfound.svg" alt="norecordfound" />
+        <p className="text-weight-600 text-18 text-1F1F1F mb-8">No records found</p>
+        <p className="text-weight-400 text-14 text-595959">The record that you tired to filter is not found</p>
+      </div>)
+    }
 
   </div>
+  </>
+}
 </>
 }

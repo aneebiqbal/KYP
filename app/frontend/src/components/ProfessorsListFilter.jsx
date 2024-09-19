@@ -6,9 +6,9 @@ import ProfessorsList from './ProfessorsList';
 import { BaseApi } from '../app/(base)/BaseApi';
 import CustomDropdown from './user/CustomDropdown.';
 
-
 export default function ProfessorsListFilter(){
-  const [professors, setProfessors] = useState(null);
+  const [loading,setLoading] = useState(true);
+  const [professors, setProfessors] = useState([]);
   const searchParams = useSearchParams();
   const [type, setType] = useState('0');
   const [sort, setSort] = useState('first_name');
@@ -17,7 +17,7 @@ export default function ProfessorsListFilter(){
   const [professorData, setProfessorData] = useState({});
   const [DropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const [loading,setLoading] = useState(false);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -61,10 +61,12 @@ export default function ProfessorsListFilter(){
       setLoading(false)
         })
     }catch(e){
-      console.log(e)
+      setProfessors([])
+      setProfessorData([])
       setLoading(false)
     }
   }
+  console.log("sortOrder: ",sortOrder)
   useEffect(() => {
     setSearch(searchParams.get('search')|| '')
     setType(searchParams.get('searchBy') || '0')
@@ -72,11 +74,16 @@ export default function ProfessorsListFilter(){
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ searchParams.get('search')]);
   useEffect(() => {
-    getProfessors(type,search,false,1)
+    // getProfessors(type,search,false,1)
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+    } else {
+      getProfessors(type, search, false, 1);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortOrder]);
   return <>
-  { !professors|| loading 
+  { loading 
     ? 
     <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"30%", margin:"30%"}}><span className="loader"></span> </div> 
     :
@@ -107,7 +114,7 @@ export default function ProfessorsListFilter(){
         <p className="ml-8 text-12 text-434343">{sortOrder?'ASC':'DESC'}</p>
       </div>
       <div className="flex items-center professor-mobile-results-selection  mobile-mt-20">
-        <p className="text-weight-600 text-8C8C8C text-18 mr-16">{professorData?.total} Results found</p>
+        <p className="text-weight-600 text-8C8C8C text-18 mr-16">{professorData?.total?professorData?.total:0} Results found</p>
         <div className="relative sort-dropdown" ref={dropdownRef}>
           <div
             onClick={() => setDropdownOpen(!DropdownOpen)}

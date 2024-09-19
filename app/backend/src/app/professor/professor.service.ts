@@ -533,7 +533,7 @@ export class ProfessorService {
               return {
                 course_name: course.course.course_code,
                 id: rating.id,
-                image_url: commentedStudent.length > 0 ? commentedStudent[0].student.image_url : null,
+                student_image_url: commentedStudent.length > 0 ? commentedStudent[0].student.image_url : null,
                 name:commentedStudent.length > 0 ? commentedStudent[0].student.first_name + commentedStudent[0].student.last_name : null,
                 tags: rating.tags,
                 created_at: rating.created_at,

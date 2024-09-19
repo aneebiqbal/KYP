@@ -10,6 +10,10 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import {getToken} from '../../../../../services/JwtService';
 import { useRouter } from 'next/navigation';
 import { getUserInfo } from '../../../../../services/JwtService';
+import ContentSafetyClient from "@azure-rest/ai-content-safety";
+import { isUnexpected } from "@azure-rest/ai-content-safety";
+import { AzureKeyCredential } from "@azure/core-auth" ;
+import {abusiveWords} from '../../../../../../../../constant'
 
 export default function page(string) {
   let token = getToken();
@@ -24,7 +28,7 @@ export default function page(string) {
   const userInfo = useState(JSON.parse(getUserInfo()));
   console.log("userInfo: ",userInfo[0].id);
   const filter = new Filter();
-  filter.addWords('some', 'bad', 'word')
+  filter.addWords(...abusiveWords)
   // const validationSchema = yup.object().shape({
   //   course: yup.string().required('Course is required'),
   //   courseDifficulty: yup.string().required('Course Difficulty is required'),
@@ -55,7 +59,6 @@ export default function page(string) {
         label: Yup.string(),
         value: Yup.number()
           .min(1, function (param) {
-            console.log("params : ",param)
             const index = param.path.split('[')[1].split(']')[0];
             const label = ratings[index].label || 'Rating';
             return `${label} is required`;
@@ -64,9 +67,9 @@ export default function page(string) {
     )
     .required('Ratings are required'),
       review: Yup.string()
-    .test('no-offensive-language', 'Please refrain from using offensive language.', (value) => {
-      return !filter.isProfane(value); // Assuming `filter.isProfane` is a function that checks profanity
-    })
+    // .test('no-offensive-language', 'Please refrain from using offensive language.', (value) => {
+    //   return !filter.isProfane(value); // Assuming `filter.isProfane` is a function that checks profanity
+    // })
     .required('Review is required'),
     selectedTags: Yup.array()
     .min(1, 'Please select at least one tag.')
@@ -85,6 +88,37 @@ export default function page(string) {
     .required('Grade must be selected'),
   });
 
+
+  const filterOffensiveText = async (text) => {
+    console.log("inside----")
+    try{
+    //   const key ="4f6a6840127f4c4d9e1bade8bac21654";
+    //   const endpoint = "https://kyptextfilter.cognitiveservices.azure.com/";
+
+    //   console.log("endpoint : ",endpoint);
+    //   console.log("key: ",key);
+      
+      // const credential = new AzureKeyCredential(key);
+      // const client = ContentSafetyClient(endpoint, credential);
+      
+      // const analyzeTextOption = { text: text };
+      // const analyzeTextParameters = { body: analyzeTextOption };
+      // const result = await client.path("/text:analyze").post(analyzeTextParameters);
+      console.log("result: ",result)
+
+      if (isUnexpected(result)) {
+        console.log("result----------",result)
+        setPopup({
+          show: true,
+          type: 'warning',
+          message: 'Please refrain from using offensive language.',
+          timeout: 3000,
+        });
+    }
+    } catch (error){
+      console.log("error: ",error)
+    }
+  }
   const [isOnline, setIsOnline] = useState(false);
   const [course, setCourse] = useState('');
   const [submitLoader,setSubmitLoader] =useState(false);
@@ -700,7 +734,7 @@ export default function page(string) {
                       key={tag + '-' + index}
                       className={`fit-content ${
                         values.selectedTags.includes(tag)
-                          ? 'bg-763FF9 text-ffffff'
+                          ? 'bg-D6C5FD text-49269C'
                           : 'bg-F0F0F0 text-595959'
                       } text-14 text-weight-400 pa-10 border-radius-6 mr-16 mb-16 cursor-pointer`}
                       onClick={() => {
@@ -776,6 +810,7 @@ export default function page(string) {
               value={values.review}
               onChange={(e) => {
                 let inputText = e.target.value;
+                // filterOffensiveText(inputText);
                 
                 if (filter.isProfane(inputText)) {
                   setPopup({
@@ -858,7 +893,6 @@ export default function page(string) {
                 Submit
               </button>
               }
-              
             </div>
           </div>
         </section>

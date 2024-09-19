@@ -13,7 +13,7 @@ const nextConfig = {
     svgr: false,
   },
   images: {
-    domains: ['reactkypprofilepics.s3.ap-south-1.amazonaws.com'],
+    domains: ['reactkypprofilepics.s3.ap-south-1.amazonaws.com','lh3.googleusercontent.com'],
   },
   reactStrictMode: false,
 };

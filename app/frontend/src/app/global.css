@@ -9,6 +9,9 @@ p {
 .pa-40 {
   padding: 40px;
 }
+.pa-80 {
+  padding: 80px;
+}
 .pa-20 {
   padding: 20px;
 }
@@ -325,6 +328,14 @@ p {
 }
 .bg-D6C5FD {
   background-color: #d6c5fd;
+}
+
+.bg-D6C5FD {
+  background-color: #D6C5FD;
+}
+
+.text-49269C {
+  color: #49269C;
 }
 
 /*borders */

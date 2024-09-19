@@ -12,8 +12,8 @@ export const AuthApi = {
         setToken(response.data.token);
       })
     } catch (e) {
-      console.log('error', e.response.data.message);
-      throw e.response.data;
+      console.log('error', e);
+      throw e ;
     }
   },
   signup: async(signUpData) => {
