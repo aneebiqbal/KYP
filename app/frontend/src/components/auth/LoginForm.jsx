@@ -6,12 +6,20 @@ import {AuthApi} from '../../app/(auth)/AuthApi';
 import { useRouter } from 'next/navigation';
 import { GoogleLogin } from '@react-oauth/google';
 import {jwtDecode} from 'jwt-decode';
+import { useState } from 'react';
+import PopUp from '../../components/PopUp';
 
 
 
 export default function LoginForm() {
-  const router = useRouter();
-
+  const router = useRouter(); 
+  const [loading,setLoading] = useState(false);
+  const [popup, setPopup] = useState({
+    show: false,
+    type: '',
+    message: '',
+    timeout: 0,
+  });
   const validationSchema = Yup.object({
     email: Yup.string()
       .email('Invalid email')
@@ -21,15 +29,28 @@ export default function LoginForm() {
   });
   const handleSubmit = async (values) => {
     try {
+      setLoading(true);
       await AuthApi.login({ email: values.email,password: values.password }).then(()=>{
+        setLoading(false)
         router.push('/')
       })
     } catch (error) {
       console.log("error: ",error)
+      setLoading(false)
       if(error?.response?.data?.message?.includes("Invalid")){
-      alert(error);
+        setPopup({
+          show: true,
+          type: 'error',
+          message: error?.response?.data?.message,
+          timeout: 3000,
+        });
       } else {
-      alert('Something went wrong. Please try again later.');
+        setPopup({
+          show: true,
+          type: 'error',
+          message: 'Something went wrong. Please try again later.',
+          timeout: 3000,
+        });
       }
     }
   };
@@ -84,10 +105,11 @@ export default function LoginForm() {
             </div>
             <div className="col-12">
               <button
-
+              disabled={loading}
                 style={{height:'44px'}}
-                className="full-width bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16"
-                type="submit">Login
+                className={`full-width bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 ${loading ? "cursor-not-allowed " : "cursor-pointer"}`}
+                type="submit">
+                  {loading ? <span className='submitloader'></span> : "Login" }
               </button>
             </div>
           </div>
@@ -99,16 +121,17 @@ export default function LoginForm() {
     <GoogleLogin
           onSuccess={handleGoogleLoginSuccess}
           onError={handleGoogleLoginError}
-          ux_mode="popup" 
+          ux_mode="popup"
         />
       <div className='d-flex flex-sm-row flex-column'>
-      <p className="  text-weight-400 text-14 text-262626 mr-6 ">Don't have an account? </p>  
-        <Link href="/sign-up" className="text-14 text-weight-400 text-0378A6 text-decoration-none text-center mobile-margin-top">
+      <p className="  text-weight-400 text-14 text-262626 mr-6 mt-3 ">Don't have an account? </p>
+        <Link href="/sign-up" className="text-14  mt-3 text-weight-400 text-0378A6 text-decoration-none text-center mobile-margin-top">
           Create Account
         </Link>
       </div>
-      
-      
+
+
     </div>
+    <PopUp props={popup} />
   </>
 }

@@ -13,12 +13,13 @@ import {getToken} from '../../../../services/JwtService';
 
 export default function page(){
   let token = getToken();
+  const [ Loading,setLoading ] = useState(true);
   const router = useRouter();
   const [course, setCourse] = useState('');
   const [courseCode, setCourseCode] = useState('');
   const [DropdownOpen, setDropdownOpen] = useState(false);
   const [professorDetails,setProfessorDetails] = useState(null)
-  const [ Loading,setLoading ] = useState(true);
+  const [ courseLoading,setCourseLoading ] = useState(false);
   const {slug} = useParams();
   const [saved,setSaved] = useState(false);
   const dropdownRef = useRef(null);
@@ -35,11 +36,11 @@ export default function page(){
     }
   }
   console.log("saved: ",saved)
-  const getData = async () =>{
+  const getData = async (courseLoad = false) =>{
     try {
-      setLoading(true)
+      courseLoad ? setCourseLoading(true) : setLoading(true)
       let response = await BaseApi.getProfessorDetail({ id: slug ,courseCode});
-      console.log("response from api: ", response); 
+      console.log("response from api: ", response);
       if(response?.data?.message?.includes("not found")){
         router.push(`/`);
       }
@@ -47,11 +48,11 @@ export default function page(){
       let savedprofessor = await BaseApi.getSavedProfessor({ id: Number(slug)});
       console.log("response from api: ", savedprofessor);
       setSaved(savedprofessor.data.saved)
-      setLoading(false)
-
+      courseLoad ? setCourseLoading(false) : setLoading(false)
     } catch (error) {
       console.error("Error fetching professor details:", error);
-      setLoading(false)
+      courseLoad ? setCourseLoading(false) : setLoading(false)
+
     }
   }
   console.log("loader : ",Loading)
@@ -62,12 +63,17 @@ export default function page(){
   }
 
   useEffect(() => {
-    getData()
+    // setCourseLoading(true)
+    getData(true)
+    // setCourseLoading(false)
   },[courseCode])
 
 console.log(" course: ",courseCode);
+console.log("course loading: ",courseLoading)
   useEffect(() => {
+    // setLoading(true)
      getData()
+    //  setLoading(false)
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
@@ -90,7 +96,7 @@ console.log(" course: ",courseCode);
       console.error("Professor details not found or ID mismatch");
       return;
     }
-  
+
     // Map through the Course to find the relevant rating and update it
     const updatedCourses = professorDetails.Course.map(course => ({
       ...course,
@@ -99,7 +105,7 @@ console.log(" course: ",courseCode);
         ? { ...course.reactRatings, ...updatedReview }
         : course.reactRatings
     }));
-  
+
     // Update professorDetails with the modified courses
     setProfessorDetails({
       ...professorDetails,
@@ -188,12 +194,12 @@ console.log(" course: ",courseCode);
   //   },
   // ]
   const tags = ['Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader',];
-  
+
   return<>
-  { Loading || !professorDetails 
+  { Loading || !professorDetails
   ?
-  <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"30%", margin:"30%"}}><span className="loader"></span> </div> 
-  : 
+  <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"30%", margin:"30%"}}><span className="loader"></span> </div>
+  :
   <>
     <div className="px-120 py-30 tablet-px-90 tablet-px-50 mobile-px-20">
 
@@ -211,8 +217,8 @@ console.log(" course: ",courseCode);
               className="line-break-2"><br />  </span>
             <span className="text-1F1F1F text-weight-600"> {professorDetails?.institute_name} </span></p>
         </div>
+        {token && (
         <div className="flex items-center mobile-mt-28">
-
           <div disabled={!token} onClick={saveProfessor} className={`${token? "cursor-pointer" : ""}`}>
             <svg width="25" height="31" viewBox="0 0 13 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
@@ -227,7 +233,7 @@ console.log(" course: ",courseCode);
             className={`ml-12 ${token? "cursor-pointer" : ""} px-12 flex items-center justify-between  text-18 flex justify-center items-center bg-763FF9 text-ffffff border-color-763FF9 border-radius-4`}>
             Write a Review
           </button>
-        </div>
+        </div>)}
       </div>
 
       <div className="row mb-60">
@@ -244,11 +250,11 @@ console.log(" course: ",courseCode);
             </div>
 
             <div className="flex-1 ml-30 mobil-ml-none mobile-mt-28">
-              <RatingBar rating={5} reviews={100} reviewsGot={!professorDetails.star_distribution.five_star ? 0 : professorDetails.star_distribution.five_star.toFixed(2)} text={'Awesome'} />
-              <RatingBar rating={4} reviews={100} reviewsGot={!professorDetails.star_distribution.four_star ? 0 :professorDetails.star_distribution.four_star.toFixed(2)} text={'Great'} />
-              <RatingBar rating={3} reviews={100} reviewsGot={!professorDetails.star_distribution.three_star ? 0 :professorDetails.star_distribution.three_star.toFixed(2)} text={'Good'} />
-              <RatingBar rating={2} reviews={100} reviewsGot={!professorDetails.star_distribution.two_star ? 0 :professorDetails.star_distribution.two_star.toFixed(2)} text={'OK'} />
-              <RatingBar rating={1} reviews={100} reviewsGot={!professorDetails.star_distribution.one_star ? 0 :professorDetails.star_distribution.one_star.toFixed(2)} text={'Awful'} />
+              <RatingBar rating={5} reviews={100} reviewsGot={!professorDetails.star_distribution.five_star ? 0.00 : professorDetails.star_distribution.five_star.toFixed(2)} text={'Awesome'} />
+              <RatingBar rating={4} reviews={100} reviewsGot={!professorDetails.star_distribution.four_star ? 0.00 :professorDetails.star_distribution.four_star.toFixed(2)} text={'Great'} />
+              <RatingBar rating={3} reviews={100} reviewsGot={!professorDetails.star_distribution.three_star ? 0.00 :professorDetails.star_distribution.three_star.toFixed(2)} text={'Good'} />
+              <RatingBar rating={2} reviews={100} reviewsGot={!professorDetails.star_distribution.two_star ? 0.00 :professorDetails.star_distribution.two_star.toFixed(2)} text={'OK'} />
+              <RatingBar rating={1} reviews={100} reviewsGot={!professorDetails.star_distribution.one_star ? 0.00 :professorDetails.star_distribution.one_star.toFixed(2)} text={'Awful'} />
             </div>
           </div>
           <div className="d-none d-xl-block">
@@ -303,9 +309,9 @@ console.log(" course: ",courseCode);
                 </div>
               </div>
               <div className="flex items-center">
-                <div className="border-radius-8 flex items-center justify-center bg-F0F0F0"
+                <div className="border-radius-8 flex items-center justify-center bg-F4F4F4"
                      style={{ width: '60px', height: '60px' }}>
-                  <Image width={32} height={32} src="/knowledgeable.svg" alt="courseDifficulty" />
+                  <Image width={32} height={32} src="/examdifficulty.svg" alt="courseDifficulty" />
                 </div>
                 <div className="flex column justify-between ml-24 professor-flex-review ml-mobile-30">
                   <p className="text-1F1F1F text-weight-400 text-24">{Math.floor(professorDetails.criteria_averages.exam_difficulty)}%</p>
@@ -345,9 +351,9 @@ console.log(" course: ",courseCode);
                 </div>
               </div>
               <div className="flex items-center">
-                <div className="border-radius-8 flex items-center justify-center bg-FFF5E5"
+                <div className="border-radius-8 flex items-center justify-center bg-E5F2F0"
                      style={{ width: '60px', height: '60px' }}>
-                  <Image width={32} height={32} src="/textBook.svg" alt="courseDifficulty" />
+                  <Image width={32} height={32} src="/loveteaachingstyle.svg" alt="courseDifficulty" />
                 </div>
                 <div className="flex column justify-between ml-24 professor-flex-review ml-mobile-30">
                   <p className="text-1F1F1F text-weight-400 text-24">{Math.floor(professorDetails.criteria_averages.love_teaching_style)}%</p>
@@ -373,14 +379,14 @@ console.log(" course: ",courseCode);
       </div>
 
       <div>
-        <p className="text-1D2026 text-weight-600 text-24 mb-20 ">Reviews (154)</p>
+        <p className="text-1D2026 text-weight-600 text-24 mb-20 ">Reviews ({professorDetails.Course.length}) </p>
         <div className="relative sort-dropdown my-28" ref={dropdownRef}>
                 <div
                   onClick={() => setDropdownOpen(!DropdownOpen)}
                   style={{
-                    
+
                     height: '72px',
-                    maxWidth: '341px',
+                    maxWidth: '300px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -404,7 +410,7 @@ console.log(" course: ",courseCode);
                     style={{
                       position: 'absolute',
                       marginTop:"4px",
-                      width: '200px',
+                      width: '300px',
                       borderRadius: '12px',
                       border: '1px solid #D9D9D9',
                       backgroundColor: '#ffffff',
@@ -433,6 +439,9 @@ console.log(" course: ",courseCode);
                 )}
               </div>
        {
+        courseLoading ?
+        <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"15%", marginBottom:"30%"}}><span className="loader"></span> </div>
+        :
         professorDetails.Course.length==0 ?
         (<div className="full-width full-height flex items-center justify-center column">
         <Image className="mb-20" width={112} height={112} src="/norecordfound.svg" alt="norecordfound" />
@@ -440,7 +449,7 @@ console.log(" course: ",courseCode);
         <p className="text-weight-400 text-14 text-595959">The record that you tired to filter is not found</p>
       </div>)
         :<Reviews reviews={professorDetails.Course} professorId={professorDetails.id} updateRatings={updateRatings} />
-       } 
+      }
       </div>
     </div>
     </>}

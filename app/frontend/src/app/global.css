@@ -329,7 +329,12 @@ p {
 .bg-D6C5FD {
   background-color: #d6c5fd;
 }
-
+.bg-E5F2F0{
+  background-color: #e5f2f0;
+}
+.bg-F4F4F4{
+  background-color: #f4f4f4;
+}
 .bg-D6C5FD {
   background-color: #D6C5FD;
 }
@@ -628,7 +633,7 @@ p {
 @media (max-width: 1500px) {
   .home-section-tablet-img img {
     width: 628px;
-   
+
   }
 }
 @media (max-width: 1300px) {
@@ -669,7 +674,7 @@ p {
 
   .home-section-tablet-img img {
     width: 100%;
- 
+
   }
   .line-break {
     display: inline;
@@ -850,7 +855,7 @@ p {
 }
 
 @media (max-width: 576px) {
-  .mobile-margin-top {  
+  .mobile-margin-top {
     margin-top: 8px;
   }
   .mobile-flex-col {
@@ -1023,4 +1028,4 @@ p {
   100% {
       transform: rotate(360deg);
   }
-  } 
+  }

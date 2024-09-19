@@ -2,8 +2,17 @@
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import {AuthApi} from '../../app/(auth)/AuthApi';
+import { useState } from 'react';
+import PopUp from '../PopUp';
 
 export default function ResetPasswordForm() {
+const [loading,setLoading] = useState(false);
+  const [popup, setPopup] = useState({
+    show: false,
+    type: '',
+    message: '',
+    timeout: 0,
+  });
   const validationSchema = Yup.object({
     password: Yup.string()
       .required('Required'),
@@ -12,9 +21,23 @@ export default function ResetPasswordForm() {
   });
   const handleSubmit = async (values) => {
     try {
+      setLoading(true);
       await AuthApi.resetPassword({password: values.password, confirmPassword: values.confirmPassword, slug: values.slug});
+      setLoading(false)
+      setPopup({
+        show: true,
+        type: 'success',
+        message: 'Password reset successfully.',
+        timeout: 3000,
+      });
     } catch (error) {
-      alert('Something went wrong. Please try again later.');
+      setLoading(false)
+      setPopup({
+        show: true,
+        type: 'error',
+        message: 'Something went wrong. Please try again later.',
+        timeout: 3000,
+      });
     }
   };
   return<>
@@ -50,12 +73,15 @@ export default function ResetPasswordForm() {
             </div>
             <div className="col-12">
               <button
+                disabled={loading}
                 style={{ height: '44px' }}
-                className="full-width bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16"
-                type="submit">Reset
+                className={`full-width bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 ${loading ? "cursor-not-allowed " : "cursor-pointer"}`}
+                type="submit">
+                   {loading ? <span className='submitloader'></span> : "Reset" }
               </button>
             </div>
           </div>
+          <PopUp props={popup} />
         </Form>
       )}
     </Formik>

@@ -293,7 +293,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                       disabled={true}
                     >        
                       <span className="submitloader"></span>
-                      <span className="ms-2">Saving Changes</span>
+                      {/* <span className="ms-2">Saving Changes</span> */}
                     </button>
                     :         
                     <button
@@ -365,7 +365,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                       disabled={true}
                     >        
                       <span className="submitloader"></span>
-                      <span className="ms-2">Saving Changes</span>
+                      {/* <span className="ms-2">Saving Changes</span> */}
                     </button>
                   : 
               <button

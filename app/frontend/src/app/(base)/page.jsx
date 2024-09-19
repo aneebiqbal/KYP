@@ -1,16 +1,29 @@
 'use client';
 import styles from '../page.module.css';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CustomDropdown from '../../components/user/CustomDropdown.';
+import { getUserInfo } from '../../services/JwtService';
+import { AuthApi } from '../(auth)/AuthApi';
 
 export default function Page() {
   const router = useRouter();
   const [type, setType] = useState('name');
   const [search, setSearch] = useState('');
-  const [searchCheck, setSearchCheck] = useState('');
+  const [searchCheck, setSearchCheck] = useState(' ');
+  const [userInfo, setUserInfo] = useState(null);
+  const [buttonText, setButtonText] = useState('Sign Up now');
 
+  useEffect(() => {
+    const userInfoData = getUserInfo();
+    if (userInfoData) {
+      setUserInfo(JSON.parse(userInfoData));
+      setButtonText('Rate your professor')
+    }else{
+      setButtonText('Sign Up now')
+    }
+  }, []);
 
   const searchProfessor= ()=>{
     if(search === ''){
@@ -18,6 +31,13 @@ export default function Page() {
     }else{
       setSearchCheck('')
       router.push('/professors-list?searchBy='+type+'&search='+search);
+    }
+  }
+  const buttonNavigate = ()=>{
+    if (userInfo && userInfo.email) {
+      router.push('/professors-list');
+    }else{
+      router.push('/sign-up');
     }
   }
 
@@ -29,44 +49,52 @@ export default function Page() {
               <div className="col-xl-6 col-lg-12">
                 <h1 className="text-70 text-ffffff text-weight-600 mb-32 ">Find Professors by Name and Institution</h1>
                 <p className="text-24 text-F1ECFE text-weight-400 mb-40 mobile-text-16">Evaluate Your Professors and Enhance the Academic Experience</p>
-                <div className="flex items-center" >
-                  <CustomDropdown
-                    selectedValue={type}
-                    onSelect={setType}
-                    placeholder="Select"
-                  />
-                  <input value={search} onChange={(event)=>{setSearch(event.target.value);if(searchCheck !== ''){setSearchCheck('')}}} className="px-20 search-input-field" placeholder={type === 'name'?'Search professor with name':'Search for professors by university.'}/>
+                  <div className="flex items-center">
+                    <CustomDropdown
+                      selectedValue={type}
+                      onSelect={setType}
+                      placeholder="Select"
+                    />
+                    <input value={search} onChange={(event) => {
+                      setSearch(event.target.value);
+                      if (searchCheck !== '') {
+                        setSearchCheck('');
+                      }
+                    }} className="px-20 search-input-field"
+                           placeholder={type === 'name' ? 'Search professor with name' : 'Search for professors by university.'} />
                     <div
                       onClick={searchProfessor}
                       style={{
-                      height: '72px',
-                      width: '72px',
-                      borderTopRightRadius: '12px',
-                      borderBottomRightRadius: '12px'
-                    }} className="bg-FFA337 flex items-center justify-center cursor-pointer search-icon-width-mobile">
+                        height: '72px',
+                        width: '72px',
+                        borderTopRightRadius: '12px',
+                        borderBottomRightRadius: '12px'
+                      }} className="bg-FFA337 flex items-center justify-center cursor-pointer search-icon-width-mobile">
                       <Image height={24} width={24} src="/searchIcon.svg" alt="searchIcon" />
                     </div>
-                </div>
-                {searchCheck !== '' &&(<span className="text-12 text-ffffff">{searchCheck}</span>)}
-
+                  </div>
+                  <div className="position-relative" >
+                    <span style={{top:'10px'}} className="text-12 position-absolute text-ffffff">{searchCheck} </span>
+                  </div>
               </div>
               <div className="col-xl-6 col-lg-12 home-section-tablet-img">
                 <Image height={540} width={738} src="/index/indexSectionOneImage.png" alt=""
-                // className="full-width"
+                  // className="full-width"
                 />
               </div>
             </div>
           </div>
         </section>
-        <section >
+        <section>
           <div className="px-120 py-150 tablet-px-90 tablet-px-50 tablet-py-100 mobile-px-20 mobile-py-40">
             <div className="flex justify-between items-center mb-80 tablet-flex-col tablet-align-start ">
-              <h2 className="text-1F1F1F text-70 text-weight-700 ">Join and Rate <br/> The KYP Family</h2>
+              <h2 className="text-1F1F1F text-70 text-weight-700 ">Join and Rate <br /> The KYP Family</h2>
               <div className="">
                 <p className="text-18 text-595959 text-weight-400 mb-2">Love KYP Family? Let's make it official.</p>
                 <button
+                  onClick={buttonNavigate}
                   className="cursor-pointer px-20 py-12 width-225  text-18 flex justify-center items-center bg-763FF9 text-ffffff border-color-763FF9 border-radius-4 full-width-responsive">
-                  Sign Up Now!
+                  {buttonText}
                 </button>
               </div>
             </div>

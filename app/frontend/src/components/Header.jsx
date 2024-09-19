@@ -49,10 +49,10 @@ export default function Header() {
         document.body.style.overflow = 'auto'
       }
     }
-   
-  
+
+
   }, [sidebarOpen])
-  
+
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -94,24 +94,24 @@ export default function Header() {
                       <div className="px-12">
                         <Link href={`/user/${userInfo.id}?active=0`} className="text-decoration-none" onClick={() => {closeDropDown('.profile-div');}}>
                           <div className="flex items-center mb-16 cursor-pointer">
-                            <Image height={10} width={11} src="/saveProfessorsIcon.svg" alt="savedProfessorIcon" />
+                            <Image height={14} width={15} src="/saveProfessorsIcon.svg" alt="savedProfessorIcon" />
                             <p className="text-weight-400 text-14 text-1F1F1F ml-12">Saved Professors</p>
                           </div>
                         </Link>
                         <Link href={`/user/${userInfo.id}?active=1`} className="text-decoration-none" onClick={() => {closeDropDown('.profile-div');}}>
                           <div className="flex items-center mb-16 cursor-pointer">
-                            <Image height={10} width={11} src="/ratingIcon.svg" alt="ratingIcon" />
+                            <Image height={14} width={15} src="/ratingIcon.svg" alt="ratingIcon" />
                             <p className="text-weight-400 text-14 text-1F1F1F ml-12">My Ratings</p>
                           </div>
                         </Link>
                         <Link href={`/user/${userInfo.id}?active=2`} className="text-decoration-none" onClick={() => {closeDropDown('.profile-div');}}>
                           <div className="flex items-center mb-16 cursor-pointer">
-                            <Image height={10} width={11} src="/profileBlackIcon.svg" alt="profileBlackIcon" />
+                            <Image height={14} width={15} src="/profileBlackIcon.svg" alt="profileBlackIcon" />
                             <p className="text-weight-400 text-14 text-1F1F1F ml-12">Profile Settings</p>
                           </div>
                         </Link>
                         <div className="flex items-center mb-16 cursor-pointer" onClick={logout}>
-                          <Image height={10} width={11} src="/logoutIcon.svg" alt="logoutIcon" />
+                          <Image height={10} width={15} src="/logoutIcon.svg" alt="logoutIcon" />
                           <p className="text-weight-400 text-14 text-1F1F1F ml-12">Logout</p>
                         </div>
                       </div>
@@ -202,7 +202,7 @@ export default function Header() {
              >
                Sign Up
              </div>
-           
+
              <div
                onClick={() => {
                  router.push('/login');
@@ -212,7 +212,7 @@ export default function Header() {
                Login
              </div>
            </div>
-           
+
           )}
 
 

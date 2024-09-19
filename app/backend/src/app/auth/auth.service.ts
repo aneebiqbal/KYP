@@ -64,6 +64,7 @@ export class AuthService {
       this.jwtSecret,
       { expiresIn: '1h' }
     );
+    console.log("student id: ",student.id)
     return {
       student: {
         id: student.id,
