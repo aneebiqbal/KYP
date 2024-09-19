@@ -25,7 +25,12 @@ export default function LoginForm() {
         router.push('/')
       })
     } catch (error) {
-      alert('Something went wrong. Please try again later.'+error);
+      console.log("error: ",error)
+      if(error?.response?.data?.message?.includes("Invalid")){
+      alert(error);
+      } else {
+      alert('Something went wrong. Please try again later.');
+      }
     }
   };
 

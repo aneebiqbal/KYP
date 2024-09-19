@@ -5,6 +5,7 @@ import { Institute, Professor, Rating, Student } from '@kyp/db';
 import { UpdateStudentProfileDto, UpdatePasswordDto } from './dto/update-profile.dto';
 import * as bcrypt from 'bcrypt';
 import { getPaginated, PaginatedResult } from '../utils/getPaginated';
+import * as AWS from 'aws-sdk';
 
 interface CustomRatingResponse {
   professor: {

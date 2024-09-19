@@ -6,7 +6,12 @@ import Profile from '../../../../components/user/Profile';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { getUserInfo } from '../../../../services/JwtService';
+import {getToken}  from '../../../../services/JwtService'
+import { useRouter } from 'next/navigation';
+
 export default function page() {
+  let token = getToken();
+  const router = useRouter()
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const searchParams = useSearchParams();
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -27,6 +32,9 @@ export default function page() {
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
+    if(!token){
+      router.push('/')
+    }
     setActiveTab(Number(searchParams.get('active')) || 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams.get('active')]);

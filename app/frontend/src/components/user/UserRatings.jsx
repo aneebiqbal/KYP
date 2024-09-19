@@ -9,6 +9,7 @@ export default function UserRatings() {
   const [searchCheck, setSearchCheck] = useState('');
   const [ratings, setRatings] = useState([]);
   const [ratingsData, setRatingsData] = useState({});
+  const [loading,setLoading] = useState(true);
   const searchProfessor= ()=>{
     if(search === ''){
       setSearchCheck('Search field can not be empty')
@@ -18,6 +19,7 @@ export default function UserRatings() {
   }
   const getRatings = async (searchBy=type,text=search,seeMore= false,page=1)=>{
     try{
+      setLoading(true)
       await BaseApi.getReviews({searchBy:searchBy,search:text,page:page})
         .then((response)=>{
           if(seeMore){
@@ -31,9 +33,13 @@ export default function UserRatings() {
             setRatings(response.data.data);
           }
           setRatingsData(response.data)
+          setLoading(false)
+
         })
     }catch(e){
       console.log(e)
+      setLoading(false)
+
     }
   }
   const updateRatings =  (updatedReview,professorId) => {
@@ -48,6 +54,11 @@ export default function UserRatings() {
     getRatings();
   }, []);
   return<>
+    { loading 
+    ? 
+    <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"15%", marginBottom:"30%"}}><span className="loader"></span> </div> 
+    :
+    <>
     <div>
       <div className="flex full-width justify-center mb-32 mt-60 ">
         <div className="flex items-center  border-radius-12 professor-mobile-flex-col  full-width-responsive ">
@@ -83,7 +94,7 @@ export default function UserRatings() {
         {ratings.map((rating, index) => (
           <div key={'myratings_' + index}>
             <div className="flex mb-60 position-relative">
-              <Image className="border-radius-100" height={48} width={48} src={false ?rating.professor.image_url:'/professor.png'} alt={rating.image_url} />
+              <Image className="border-radius-100" height={48} width={48} src={false ?rating.professor.image_url:'/student.png'} alt={rating.image_url} />
               <div className="ml-24">
                 <h2 className="text-20 text-000000 text-weight-600 mb-6">{rating.professor.name}</h2>
                 <p className="text-14 text-weight-400 text-595959">{rating.professor.department_name} . {rating.professor.institute_name}</p>
@@ -113,5 +124,7 @@ export default function UserRatings() {
       </div>
       )}
     </div>
+    </>
+}
   </>
 }
