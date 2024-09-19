@@ -56,7 +56,7 @@ export class ProfessorService {
       }else if(searchBy === 'institute'){
         query.andWhere(
           `institute.name ILIKE :name`,
-          { name }
+          { name:  `%${name}%` }
         );
       }
     }

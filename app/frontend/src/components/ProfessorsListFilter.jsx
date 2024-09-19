@@ -7,7 +7,7 @@ import { BaseApi } from '../app/(base)/BaseApi';
 import CustomDropdown from './user/CustomDropdown.';
 
 export default function ProfessorsListFilter(){
-  const [loading,setLoading] = useState(true);
+  const [loading,setLoading] = useState(false);
   const [professors, setProfessors] = useState([]);
   const searchParams = useSearchParams();
   const [type, setType] = useState('0');
@@ -46,24 +46,26 @@ export default function ProfessorsListFilter(){
     setProfessors(updatedProfessors);
   }
   const getProfessors = async (searchBy=type,text=search,concatCheck = false, page=1)=>{
-    try{
-      setLoading(true)
-      await BaseApi.getProfessors({sortField:sort,sortOrder:sortOrder?'ASC':'DESC',searchBy:searchBy,search:text,page:page})
-        .then((response)=>{
-          if(concatCheck){
-            let tempProfessors = professors;
-            tempProfessors = tempProfessors.concat(response.data)
-            setProfessors(tempProfessors)
-          }else{
-            setProfessors(response.data)
-          }
-          setProfessorData(response)
-      setLoading(false)
-        })
-    }catch(e){
-      setProfessors([])
-      setProfessorData([])
-      setLoading(false)
+    if(text){
+      try{
+        setLoading(true)
+        await BaseApi.getProfessors({sortField:sort,sortOrder:sortOrder?'ASC':'DESC',searchBy:searchBy,search:text,page:page})
+          .then((response)=>{
+            if(concatCheck){
+              let tempProfessors = professors;
+              tempProfessors = tempProfessors.concat(response.data)
+              setProfessors(tempProfessors)
+            }else{
+              setProfessors(response.data)
+            }
+            setProfessorData(response)
+        setLoading(false)
+          })
+      }catch(e){
+        setProfessors([])
+        setProfessorData([])
+        setLoading(false)
+      }
     }
   }
   console.log("sortOrder: ",sortOrder)
@@ -83,11 +85,6 @@ export default function ProfessorsListFilter(){
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortOrder]);
   return <>
-  { loading 
-    ? 
-    <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"30%", margin:"30%"}}><span className="loader"></span> </div> 
-    :
-    <>
     <div className="mb-60">
       <div className="flex flex-nowrap professor-mobile-flex-col ">
         <div className="flex items-center ">
@@ -169,12 +166,17 @@ export default function ProfessorsListFilter(){
         </div>
       </div>
     </div>
-    {professors.length > 0 ?
+    {
+    loading 
+    ? 
+    <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"15%", marginBottom:"15%"}}><span className="loader"></span> </div> 
+    :
+    professors.length > 0 ?
       (
         <div>
           <ProfessorsList professors={professors} updateProfessors={updateProfessors} />
           {Number(professorData.page) < professorData.lastPage &&(<div className="flex items-center justify-center mt-4">
-            <p className="text-weight-600 text-763FF9 text-24 cursor-pointer" onClick={()=>{getProfessors(type,search,true,Number(professorData.page)+1)}}>See more</p>
+            <p className="text-weight-600 text-763FF9 text-24 cursor-pointer" onClick={()=>{getProfessors(searchParams.get('searchBy'),searchParams.get('search'),true,Number(professorData.page)+1)}}>See more</p>
           </div>)}
         </div>
 
@@ -185,6 +187,5 @@ export default function ProfessorsListFilter(){
         <p className="text-weight-400 text-14 text-595959">The record that you tired to filter is not found</p>
       </div>)}
 
-</>}
-  </>
+</>
 }

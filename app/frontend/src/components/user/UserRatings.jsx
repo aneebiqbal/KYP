@@ -3,7 +3,12 @@ import Reviews from '../Reviews';
 import { useEffect, useState } from 'react';
 import CustomDropdown from './CustomDropdown.';
 import { BaseApi } from '../../app/(base)/BaseApi';
+import {getToken} from '../../services/JwtService';
+import { useRouter } from 'next/navigation';
+
 export default function UserRatings() {
+  const token = getToken();
+  const router = useRouter();
   const [type, setType] = useState('name');
   const [search, setSearch] = useState('');
   const [searchCheck, setSearchCheck] = useState('');
@@ -38,6 +43,8 @@ export default function UserRatings() {
         })
     }catch(e){
       console.log(e)
+      setRatings([])
+      setRatingsData({})
       setLoading(false)
 
     }
@@ -51,6 +58,9 @@ export default function UserRatings() {
     setRatings(tempRatings)
   }
   useEffect(() => {
+    if(!token){
+      router.push('/')
+    }
     getRatings();
   }, []);
   return<>
@@ -75,7 +85,10 @@ export default function UserRatings() {
                  placeholder={type === 'name' ? 'Search professor with name' : 'Search for professors by university.'} />
           </div>
           <div
-            onClick={searchProfessor}
+            onClick={()=>{
+              searchProfessor()
+              getRatings()
+            }}
             style={{
               height: '72px',
               width: '72px',
@@ -90,7 +103,7 @@ export default function UserRatings() {
         <p className="text-weight-600 text-24 text-1F1F1F">My Ratings</p>
         <p className="text-weight-600 text-18 text-8C8C8C">{ratingsData.total} ratings</p>
       </div>
-      {ratings.length>0 &&(<div>
+      {ratings.length>0 ?(<div>
         {ratings.map((rating, index) => (
           <div key={'myratings_' + index}>
             <div className="flex mb-60 position-relative">
@@ -121,8 +134,14 @@ export default function UserRatings() {
             <p className="text-weight-600 text-763FF9 text-24 cursor-pointer" onClick={() => {
               getRatings(type, search, true, Number(ratingsData.page) + 1);}}>See more</p>
           </div>)}
-      </div>
-      )}
+      </div>)
+       :
+       (<div className="full-width full-height flex items-center justify-center column">
+           <Image className="mb-20" width={112} height={112} src="/norecordfound.svg" alt="norecordfound" />
+           <p className="text-weight-600 text-18 text-1F1F1F mb-8">No records found</p>
+           <p className="text-weight-400 text-14 text-595959">The record that you tired to filter is not found</p>
+         </div>)
+      }
     </div>
     </>
 }

@@ -3,8 +3,13 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { BaseApi } from '../../app/(base)/BaseApi';
 import CustomDropdown from './CustomDropdown.';
+import {getToken}  from '../../services/JwtService'
+import { useRouter } from 'next/navigation';
+
 export default function SavedProfessor() {
-  const [type, setType] = useState('0');
+  const token = getToken();
+  const router = useRouter();
+  const [type, setType] = useState('name');
   const [search, setSearch] = useState('');
   const [searchCheck, setSearchCheck] = useState('');
   const [professors, setProfessors] = useState([]);
@@ -31,6 +36,7 @@ export default function SavedProfessor() {
     }
   }
   const getProfessors = async (searchBy=type,text=search,seeMore= false,page=1)=>{
+    console.log(" text: ",text," search by: ",searchBy)
     try{
       setLoading(true)
       await BaseApi.SavedProfessors({searchBy:searchBy,search:text,page:page})
@@ -57,7 +63,10 @@ export default function SavedProfessor() {
   }
 
   useEffect(() => {
-    getProfessors();
+    if(!token){
+      router.push('/')
+    }
+    getProfessors("");
   }, []);
 return<>
  { loading 

@@ -156,10 +156,10 @@ export class StudentService {
     if (searchBy === 'name') {
       query.andWhere(
         'professor.first_name ILIKE :text OR professor.last_name ILIKE :text',
-        { text }
+        { text : `%${text}%`}
       );
     } else if (searchBy === 'institute') {
-      query.andWhere('institute.name = :text', { text });
+      query.andWhere('institute.name = :text', { text :`%${text}%` });
     }
 
 
@@ -233,10 +233,10 @@ export class StudentService {
       if (searchBy === 'name') {
         query.andWhere(
           'professor.first_name ILIKE :text OR professor.last_name ILIKE :text',
-          { text }
+          { text :`%${text}%` }
         );
       } else if (searchBy === 'institute') {
-        query.andWhere('institute.name ILIKE :text', { text });
+        query.andWhere('institute.name ILIKE :text', { text : `%${text}%`});
       }
     }
 

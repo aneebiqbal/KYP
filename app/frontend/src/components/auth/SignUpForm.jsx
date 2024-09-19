@@ -11,6 +11,7 @@ import {jwtDecode} from 'jwt-decode';
 
 export default function SignUpForm() {
   const router = useRouter();
+  const [loading,setLoading] = useState(false);
   const [toggleCheck, setToggleCheck] = useState(false);
   const [popup, setPopup] = useState({show:false,type:'',message:'',timeout:0});
   const validationSchema = Yup.object({
@@ -34,6 +35,7 @@ export default function SignUpForm() {
   });
   const handleSubmit = async (values) => {
     try {
+      setLoading(true);
       await AuthApi.signup({
         first_name:values.firstName,
         last_name: values.lastName, 
@@ -43,10 +45,12 @@ export default function SignUpForm() {
         password: values.password
        })
         .then(()=>{
+        setLoading(false)
           setPopup({show:true,type:'success',message:'Congratulations! you are registered.',timeout:3000});
           router.push('/');
         })
     } catch (error) {
+      setLoading(false)
       setPopup({show:true,type:'error',message:error.message,timeout:3000});
     }
   };
@@ -160,10 +164,11 @@ export default function SignUpForm() {
             </div>
             <div className="col-12">
               <button
-                disabled={!toggleCheck}
+                disabled={!toggleCheck || loading}
                 style={{ height: '44px' }}
-                className={`full-width bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 ${toggleCheck ?'opacity-100':'opacity-75'}`}
-                type="submit">Sign up
+                className={`full-width bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 ${loading ? "cursor-not-allowed " : "cursor-pointer"} ${toggleCheck ?'opacity-100':'opacity-75'}`}
+                type="submit">
+              {loading ? <span className='submitloader'></span> : "Sign up" }
               </button>
             </div>
           </div>
@@ -179,7 +184,7 @@ export default function SignUpForm() {
 
       <p className="text-weight-400 text-14 text-262626 ">Already have an account? &nbsp;
         <Link href="/login" className="text-14 text-weight-400 text-0378A6 text-decoration-none">
-          Sign In
+         Sign In
         </Link>
       </p>
     </div>

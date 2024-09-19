@@ -16,7 +16,7 @@ export class MailService {
   }
 
   async sendPasswordResetEmail(to: string, token: string): Promise<void> {
-    const url = `http://your-frontend-url/reset-password?token=${token}`;
+    const url = `http://3.85.127.217:3001/reset-password/${token}`;
     await this.transporter.sendMail({
       from: '"KYP" <no-reply@example.com>',
       to,
