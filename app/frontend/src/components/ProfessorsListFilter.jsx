@@ -10,7 +10,7 @@ export default function ProfessorsListFilter(){
   const [loading,setLoading] = useState(false);
   const [professors, setProfessors] = useState([]);
   const searchParams = useSearchParams();
-  const [type, setType] = useState('0');
+  const [type, setType] = useState('name');
   const [sort, setSort] = useState('first_name');
   const [sortOrder, setSortOrder] = useState(true);
   const [search, setSearch] = useState('');
@@ -46,7 +46,6 @@ export default function ProfessorsListFilter(){
     setProfessors(updatedProfessors);
   }
   const getProfessors = async (searchBy=type,text=search,concatCheck = false, page=1)=>{
-    if(text){
       try{
         setLoading(true)
         await BaseApi.getProfessors({sortField:sort,sortOrder:sortOrder?'ASC':'DESC',searchBy:searchBy,search:text,page:page})
@@ -66,12 +65,11 @@ export default function ProfessorsListFilter(){
         setProfessorData([])
         setLoading(false)
       }
-    }
   }
   console.log("sortOrder: ",sortOrder)
   useEffect(() => {
     setSearch(searchParams.get('search')|| '')
-    setType(searchParams.get('searchBy') || '0')
+    setType(searchParams.get('searchBy') || 'name')
     getProfessors(searchParams.get('searchBy'),searchParams.get('search'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ searchParams.get('search')]);
@@ -167,9 +165,9 @@ export default function ProfessorsListFilter(){
       </div>
     </div>
     {
-    loading 
-    ? 
-    <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"15%", marginBottom:"15%"}}><span className="loader"></span> </div> 
+    loading
+    ?
+    <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"15%", marginBottom:"15%"}}><span className="loader"></span> </div>
     :
     professors.length > 0 ?
       (
