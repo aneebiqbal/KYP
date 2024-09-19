@@ -121,16 +121,16 @@ export default function LoginForm() {
     <GoogleLogin
           onSuccess={handleGoogleLoginSuccess}
           onError={handleGoogleLoginError}
-          ux_mode="popup" 
+          ux_mode="popup"
         />
       <div className='d-flex flex-sm-row flex-column'>
-      <p className="  text-weight-400 text-14 text-262626 mr-6 ">Don't have an account? </p>  
-        <Link href="/sign-up" className="text-14 text-weight-400 text-0378A6 text-decoration-none text-center mobile-margin-top">
+      <p className="  text-weight-400 text-14 text-262626 mr-6 mt-3 ">Don't have an account? </p>
+        <Link href="/sign-up" className="text-14  mt-3 text-weight-400 text-0378A6 text-decoration-none text-center mobile-margin-top">
           Create Account
         </Link>
       </div>
-      
-      
+
+
     </div>
     <PopUp props={popup} />
   </>

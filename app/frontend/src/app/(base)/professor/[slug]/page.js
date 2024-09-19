@@ -40,7 +40,7 @@ export default function page(){
     try {
       courseLoad ? setCourseLoading(true) : setLoading(true)
       let response = await BaseApi.getProfessorDetail({ id: slug ,courseCode});
-      console.log("response from api: ", response); 
+      console.log("response from api: ", response);
       if(response?.data?.message?.includes("not found")){
         router.push(`/`);
       }
@@ -96,7 +96,7 @@ console.log("course loading: ",courseLoading)
       console.error("Professor details not found or ID mismatch");
       return;
     }
-  
+
     // Map through the Course to find the relevant rating and update it
     const updatedCourses = professorDetails.Course.map(course => ({
       ...course,
@@ -105,7 +105,7 @@ console.log("course loading: ",courseLoading)
         ? { ...course.reactRatings, ...updatedReview }
         : course.reactRatings
     }));
-  
+
     // Update professorDetails with the modified courses
     setProfessorDetails({
       ...professorDetails,
@@ -194,12 +194,12 @@ console.log("course loading: ",courseLoading)
   //   },
   // ]
   const tags = ['Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader',];
-  
+
   return<>
-  { Loading || !professorDetails 
+  { Loading || !professorDetails
   ?
-  <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"30%", margin:"30%"}}><span className="loader"></span> </div> 
-  : 
+  <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"30%", margin:"30%"}}><span className="loader"></span> </div>
+  :
   <>
     <div className="px-120 py-30 tablet-px-90 tablet-px-50 mobile-px-20">
 
@@ -309,9 +309,9 @@ console.log("course loading: ",courseLoading)
                 </div>
               </div>
               <div className="flex items-center">
-                <div className="border-radius-8 flex items-center justify-center bg-F0F0F0"
+                <div className="border-radius-8 flex items-center justify-center bg-F4F4F4"
                      style={{ width: '60px', height: '60px' }}>
-                  <Image width={32} height={32} src="/knowledgeable.svg" alt="courseDifficulty" />
+                  <Image width={32} height={32} src="/examdifficulty.svg" alt="courseDifficulty" />
                 </div>
                 <div className="flex column justify-between ml-24 professor-flex-review ml-mobile-30">
                   <p className="text-1F1F1F text-weight-400 text-24">{Math.floor(professorDetails.criteria_averages.exam_difficulty)}%</p>
@@ -351,9 +351,9 @@ console.log("course loading: ",courseLoading)
                 </div>
               </div>
               <div className="flex items-center">
-                <div className="border-radius-8 flex items-center justify-center bg-FFF5E5"
+                <div className="border-radius-8 flex items-center justify-center bg-E5F2F0"
                      style={{ width: '60px', height: '60px' }}>
-                  <Image width={32} height={32} src="/textBook.svg" alt="courseDifficulty" />
+                  <Image width={32} height={32} src="/loveteaachingstyle.svg" alt="courseDifficulty" />
                 </div>
                 <div className="flex column justify-between ml-24 professor-flex-review ml-mobile-30">
                   <p className="text-1F1F1F text-weight-400 text-24">{Math.floor(professorDetails.criteria_averages.love_teaching_style)}%</p>
@@ -384,7 +384,7 @@ console.log("course loading: ",courseLoading)
                 <div
                   onClick={() => setDropdownOpen(!DropdownOpen)}
                   style={{
-                    
+
                     height: '72px',
                     maxWidth: '300px',
                     display: 'flex',
@@ -440,8 +440,8 @@ console.log("course loading: ",courseLoading)
               </div>
        {
         courseLoading ?
-        <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"15%", marginBottom:"30%"}}><span className="loader"></span> </div> 
-        : 
+        <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"15%", marginBottom:"30%"}}><span className="loader"></span> </div>
+        :
         professorDetails.Course.length==0 ?
         (<div className="full-width full-height flex items-center justify-center column">
         <Image className="mb-20" width={112} height={112} src="/norecordfound.svg" alt="norecordfound" />
@@ -449,7 +449,7 @@ console.log("course loading: ",courseLoading)
         <p className="text-weight-400 text-14 text-595959">The record that you tired to filter is not found</p>
       </div>)
         :<Reviews reviews={professorDetails.Course} professorId={professorDetails.id} updateRatings={updateRatings} />
-      } 
+      }
       </div>
     </div>
     </>}
