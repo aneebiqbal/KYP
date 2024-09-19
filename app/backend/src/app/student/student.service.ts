@@ -153,15 +153,16 @@ export class StudentService {
       .where('professor.id IN (:...savedProfessorIds)', { savedProfessorIds })
       .andWhere('ratings.deleted_at IS NULL');
 
-    if (searchBy === 'name') {
-      query.andWhere(
-        'professor.first_name ILIKE :text OR professor.last_name ILIKE :text',
-        { text : `%${text}%`}
-      );
-    } else if (searchBy === 'institute') {
-      query.andWhere('institute.name = :text', { text :`%${text}%` });
-    }
-
+      if (searchBy === 'name') {
+        query.andWhere(
+          'professor.first_name ILIKE :text OR professor.last_name ILIKE :text AND professor.id IN (:...savedProfessorIds) ',
+          { text : `%${text}%`,savedProfessorIds}
+        );
+      } else if (searchBy === 'institute') {
+        console.log("inside----- ",text)
+        query.andWhere('institute.name ILIKE :text', { text :`%${text}%`});
+      }
+  
 
 
     const professors = await query.getMany();
@@ -229,16 +230,16 @@ export class StudentService {
       .addSelect('reactRatingStudent.id') // Explicitly select only the 'id' of reactRatingStudent
       .where('student.id = :studentId', { studentId });
 
-    if (text) {
-      if (searchBy === 'name') {
-        query.andWhere(
-          'professor.first_name ILIKE :text OR professor.last_name ILIKE :text',
-          { text :`%${text}%` }
-        );
-      } else if (searchBy === 'institute') {
-        query.andWhere('institute.name ILIKE :text', { text : `%${text}%`});
+      if (text) {
+        if (searchBy === 'name') {
+          query.andWhere(
+            'professor.first_name ILIKE :text OR professor.last_name ILIKE :text AND student.id = :studentId ',
+            { text :`%${text}%` ,studentId }
+          );
+        } else if (searchBy === 'institute') {
+          query.andWhere('institute.name ILIKE :text', { text : `%${text}%`});
+        }
       }
-    }
 
     const ratings = await query.getMany();
 
