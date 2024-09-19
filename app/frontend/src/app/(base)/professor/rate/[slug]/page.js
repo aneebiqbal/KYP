@@ -20,8 +20,8 @@ import OpenAI from 'openai';
 export default function page(string) {
 
   const client = new OpenAI({
-    apiKey: process.env.REACT_APP_GPT_SECRET_KEY, // This is the default and can be omitted
-    dangerouslyAllowBrowser: true 
+    apiKey: "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", // This is the default and can be omitted
+    dangerouslyAllowBrowser: true
   });
   async function checkAusiveWord(text) {
     console.log("text: ",text)
@@ -53,7 +53,7 @@ export default function page(string) {
       console.log("error: ",e)
       return false;
     }
-   
+
   }
   let token = getToken();
   const router = useRouter();
@@ -136,10 +136,10 @@ export default function page(string) {
 
     //   console.log("endpoint : ",endpoint);
     //   console.log("key: ",key);
-      
+
       // const credential = new AzureKeyCredential(key);
       // const client = ContentSafetyClient(endpoint, credential);
-      
+
       // const analyzeTextOption = { text: text };
       // const analyzeTextParameters = { body: analyzeTextOption };
       // const result = await client.path("/text:analyze").post(analyzeTextParameters);
@@ -243,7 +243,7 @@ export default function page(string) {
       console.log("error: ",e)
       setLoading(false)
     }
-    
+
     // setTags(response.data?.tags)
 
 
@@ -374,13 +374,13 @@ export default function page(string) {
       }else {
         console.error('Error', e.message);
       }
-  }  
+  }
 
   }
   return (
-  <>{ Loading 
+  <>{ Loading
      ?
-     <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"30%", margin:"30%"}}><span className="loader"></span> </div> 
+     <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"30%", margin:"30%"}}><span className="loader"></span> </div>
      :
      <Formik
      initialValues={{ ratings, review: '', selectedTags: [], course: null, gradeReceived: null }}
@@ -411,7 +411,7 @@ export default function page(string) {
               <span className="text-1F1F1F">Write a review</span>
             </p>
             <h1 className="text-1F1F1F text-weight-600 text-24 mb-8">
-              Rate {professor?.first_name} {professor?.last_name} 
+              Rate {professor?.first_name} {professor?.last_name}
             </h1>
             <p className="text-14 text-weight-400 text-434343 mb-32">
               Professor in the{' '}
@@ -521,7 +521,7 @@ export default function page(string) {
             />
               </div>
 
-    
+
 
               <label className="flex items-center rating-is-online-checkbox">
                 <input
@@ -866,9 +866,9 @@ export default function page(string) {
                     .join(' ')
                     .trim();
                 }
-                
+
                 if (inputText.length <= maxChars) {
-                  setFieldValue('review', inputText); 
+                  setFieldValue('review', inputText);
                   setReview(inputText)
                 }
               }}
@@ -905,7 +905,7 @@ export default function page(string) {
               {
                 submitLoader ?
                 <button
-                style={{ 
+                style={{
                   height: '44px',
                   width: '180px',
                   display: 'flex',
