@@ -14,8 +14,47 @@ import ContentSafetyClient from "@azure-rest/ai-content-safety";
 import { isUnexpected } from "@azure-rest/ai-content-safety";
 import { AzureKeyCredential } from "@azure/core-auth" ;
 import {abusiveWords} from '../../../../../../../../constant'
+import OpenAI from 'openai';
+
 
 export default function page(string) {
+
+  const client = new OpenAI({
+    apiKey: process.env.REACT_APP_GPT_SECRET_KEY, // This is the default and can be omitted
+    dangerouslyAllowBrowser: true 
+  });
+  async function checkAusiveWord(text) {
+    console.log("text: ",text)
+    try {
+      let chatCompletion = await client.chat.completions.create({
+        messages: [{ role: 'user', content: `Determine whether the following text contains any abusive, offensive, or inappropriate language. Respond only with 'Yes' if it is abusive and 'No' if it is not.  Text: ${text}` }],
+        model: 'gpt-3.5-turbo',
+      });
+      if(chatCompletion.choices[0].message.content.length>3){
+       chatCompletion = await client.chat.completions.create({
+          messages: [{ role: 'user', content: `Is the following text abusive, offensive, or inappropriate in any way? Respond only with 'Yes' or 'No'—no explanations or additional information.Text: ${text}` }],
+          model: 'gpt-3.5-turbo',
+        });
+      }
+      const response = chatCompletion.choices[0].message.content.trim().toLowerCase();
+      console.log("inside-------",response);
+      if(response=="yes"){
+        setPopup({
+          show: true,
+          type: 'warning',
+          message: 'Please refrain from using offensive language.',
+          timeout: 3000,
+        });
+        return true;
+      } else {
+        return false;
+      }
+    } catch(e){
+      console.log("error: ",e)
+      return false;
+    }
+   
+  }
   let token = getToken();
   const router = useRouter();
   const [popup, setPopup] = useState({
@@ -284,10 +323,14 @@ export default function page(string) {
       router.push(`/`);
     }
     try{
+      let checkAusiveWords= await checkAusiveWord(review);
+      console.log("ofensive ",checkAusiveWords)
+      if(!checkAusiveWords){
       setSubmitLoader(true);
       const professorID=Number(slug)
+      const studentId=Number(userInfo[0].id)
       let response =  await BaseApi.postRating({
-        studentId: userInfo[0].id,
+        studentId: studentId,
         professorId:professorID,
         courseId:course.id,
         course_difficulty:ratings[0].value,
@@ -306,15 +349,17 @@ export default function page(string) {
         tags:selectedTags});
       console.log("response------: ",response)
       setSubmitLoader(false);
-      if (response?.data?.message=="Rating created successfully") {
+      if (response?.data?.message=="Rating created successfully")  {
         setPopup({
           show: true,
           type: 'info',
           message: 'Rating created successfully',
           timeout: 3000,
         });
+        router.push(`/professor/${slug}`)
       }
-    } catch (e) {
+    }
+   } catch (e) {
       setSubmitLoader(false);
       if (e.response?.data?.message=="You have already rated this professor for this course.") {
         //   console.error('Error message:', e.response.data.message);
@@ -329,10 +374,8 @@ export default function page(string) {
       }else {
         console.error('Error', e.message);
       }
-      
-    }
-    
-   
+  }  
+
   }
   return (
   <>{ Loading 
@@ -388,7 +431,7 @@ export default function page(string) {
                   }
                   style={{
                     height: '48px',
-                    width: '430px',
+                    width: '200px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -629,7 +672,7 @@ export default function page(string) {
                     onClick={() => setDropdownOpenGrade(!DropdownOpenGrade)}
                     style={{
                       height: '36px',
-                      width: '234px',
+                      width: '200px',
                       borderRadius: '4px',
 
                       backgroundColor: '#ffffff',
@@ -810,8 +853,6 @@ export default function page(string) {
               value={values.review}
               onChange={(e) => {
                 let inputText = e.target.value;
-                // filterOffensiveText(inputText);
-                
                 if (filter.isProfane(inputText)) {
                   setPopup({
                     show: true,
@@ -881,14 +922,14 @@ export default function page(string) {
                 disabled={true}
               >
                 <span className="submitloader"></span>
-                <span className="ms-2">Submitting</span>
+                {/* <span className="ms-2">Submitting</span> */}
               </button>
                 :
                 <button
                 style={{ height: '44px' ,width:"180px"}}
                 className="px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 full-width-responsive"
                 type="submit"
-                // onClick={submitRating}
+                // onClick={()=>checkAusiveWord(review)}
               >
                 Submit
               </button>
