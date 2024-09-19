@@ -29,6 +29,7 @@ export default function SavedProfessor() {
 
   const searchProfessor = ()=>{
     if(search === ''){
+      getProfessors("");
       setSearchCheck('Search field can not be empty')
     }else{
       getProfessors();
