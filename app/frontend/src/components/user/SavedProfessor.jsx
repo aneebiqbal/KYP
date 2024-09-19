@@ -20,6 +20,9 @@ export default function SavedProfessor() {
       getProfessors(type, search, false,  1);
     }
     setProfessors(updatedProfessors);
+    let tempProfessorData = professorsData;
+    tempProfessorData.total = tempProfessorData.total -1;
+    setProfessorsData(tempProfessorData);
   }
 
   const searchProfessor = ()=>{
@@ -60,9 +63,9 @@ export default function SavedProfessor() {
     getProfessors();
   }, []);
 return<>
- { loading 
-    ? 
-    <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"15%", marginBottom:"30%"}}><span className="loader"></span> </div> 
+ { loading
+    ?
+    <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"15%", marginBottom:"30%"}}><span className="loader"></span> </div>
     :
     <>
   <div>
@@ -95,7 +98,7 @@ return<>
     {searchCheck !== '' && (<span className="text-12 text-ffffff">{searchCheck}</span>)}
     <div className="flex justify-between mb-32">
       <p className="text-weight-600 text-24 text-1F1F1F">Saved</p>
-      <p className="text-weight-600 text-18 text-8C8C8C">{professorsData.total}</p>
+      <p className="text-weight-600 text-18 text-8C8C8C">{professorsData.total?professorsData.total:0}</p>
     </div>
     {professors.length>0 ?
     (<div>

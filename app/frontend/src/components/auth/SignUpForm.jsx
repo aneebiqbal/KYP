@@ -36,10 +36,10 @@ export default function SignUpForm() {
     try {
       await AuthApi.signup({
         first_name:values.firstName,
-        last_name: values.lastName, 
-        instituteName: values.school, 
+        last_name: values.lastName,
+        instituteName: values.school,
         department:values.field,
-        email: values.email, 
+        email: values.email,
         password: values.password
        })
         .then(()=>{
@@ -177,8 +177,8 @@ export default function SignUpForm() {
           onError={handleGoogleLoginError}
         />
 
-      <p className="text-weight-400 text-14 text-262626 ">Already have an account? &nbsp;
-        <Link href="/login" className="text-14 text-weight-400 text-0378A6 text-decoration-none">
+      <p className="text-weight-400 text-14 text-262626 mt-3">Already have an account? &nbsp;
+        <Link href="/login" className="mt-3 text-14 text-weight-400 text-0378A6 text-decoration-none">
           Sign In
         </Link>
       </p>

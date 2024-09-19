@@ -50,10 +50,10 @@ export default function page() {
                 // src={userInfo?.image_url || "/user/userImage.png"}
                 src={userInfo?.image_url || '/student.png'}
                 alt="userImage"
-                className="mb-3 img-fluid"
+                className="mb-3 img-fluid border-radius-100"
               />
               <h1 className="text-weight-700 text-1F1F1F text-48 text-capitalize text-center">
-              {userInfo?.first_name + " " + userInfo?.last_name || "Name here"} 
+              {userInfo?.first_name + " " + userInfo?.last_name || "Name here"}
               </h1>
               <p className="text-434343 text-weight-400 text-24 mb-60">
                 {userInfo?.institute?.name ||'School Name here'}

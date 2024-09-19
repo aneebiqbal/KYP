@@ -96,7 +96,7 @@ export default function Reviews({reviews,professorId,updateRatings}) {
               <Image className={`${token? "cursor-pointer" : ""}`} width={13} height={16} src={review.reactRatings.reported?'/reportTrue.png':'/report.png'} alt="like" onClick={()=>{updateReactRating(3,review)}}/>
               <p className="text-14 text-434343 text-weight-400" style={{marginLeft:'4px'}}>{review?.reports}</p>
             </div>
-            <Image width={15} height={16} src="/share.svg" alt="like"/>
+            {/*<Image width={15} height={16} src="/share.svg" alt="like"/>*/}
           </div>
         </div>
       </div>
