@@ -57,6 +57,9 @@ export default function UserRatings() {
     );
     setRatings(tempRatings)
   }
+  const getDetails = (id) =>{
+    router.push(`/professor/${id}`);
+  }
   useEffect(() => {
     if(!token){
       router.push('/')
@@ -64,9 +67,9 @@ export default function UserRatings() {
     getRatings();
   }, []);
   return<>
-    { loading 
-    ? 
-    <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"15%", marginBottom:"30%"}}><span className="loader"></span> </div> 
+    { loading
+    ?
+    <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"15%", marginBottom:"30%"}}><span className="loader"></span> </div>
     :
     <>
     <div>
@@ -107,9 +110,9 @@ export default function UserRatings() {
         {ratings.map((rating, index) => (
           <div key={'myratings_' + index}>
             <div className="flex mb-60 position-relative">
-              <Image className="border-radius-100" height={48} width={48} src={false ?rating.professor.image_url:'/student.png'} alt={rating.image_url} />
+              <Image onClick={()=>{getDetails(rating.professor.id)}} className="cursor-pointer border-radius-100" height={48} width={48} src={false ?rating.professor.image_url:'/student.png'} alt={rating.image_url} />
               <div className="ml-24">
-                <h2 className="text-20 text-000000 text-weight-600 mb-6">{rating.professor.name}</h2>
+                <h2 onClick={()=>{getDetails(rating.professor.id)}} className="cursor-pointer text-20 text-000000 text-weight-600 mb-6">{rating.professor.name}</h2>
                 <p className="text-14 text-weight-400 text-595959">{rating.professor.department_name} . {rating.professor.institute_name}</p>
                 <p className="text-14 text-weight-400 text-595959 mb-18">
                   <span className="text-1F1F1F text-weight-600">{rating.professor.percentage_take_again}&nbsp;</span> Take
