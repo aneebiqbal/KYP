@@ -155,6 +155,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
     console.log("DA?TA______",data)
     setImage(data.Location)
     setImageLoader(false)
+  }
     // try{
     //   await BaseApi.updateProfilePic({image_url:image}
     //   ).then(() => {
@@ -164,7 +165,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
     //   setPopup({show:true,type:'error',message:error.message,timeout:3000});
     // }
     
-    }
+
 
     // async function convertFileToSrc(file) {
     //   if (!file || !file.type.match('image/*')) {
@@ -268,7 +269,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                   </div>
                     </div>
                   </div>
-                  
+
                 </div>
                 <div className="">
                   {
