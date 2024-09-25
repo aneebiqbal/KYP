@@ -19,7 +19,9 @@
     "@nestjs/typeorm": "^10.0.2",
     "@nx/nest": "^19.5.3",
     "@react-oauth/google": "^0.12.1",
+    "aws-lambda": "^1.0.7",
     "aws-sdk": "^2.1691.0",
+    "aws-serverless-express": "^3.4.0",
     "axios": "^1.6.0",
     "bad-words": "^4.0.0",
     "bcrypt": "^5.1.1",
@@ -48,6 +50,8 @@
   "devDependencies": {
     "@nestjs/schematics": "^10.0.1",
     "@nestjs/testing": "^10.0.2",
+    "@nrwl/linter": "^19.8.0",
+    "@nrwl/nest": "^19.8.0",
     "@nx/cypress": "19.5.1",
     "@nx/eslint": "19.5.1",
     "@nx/eslint-plugin": "19.5.1",
