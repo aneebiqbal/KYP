@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "start:api": "nx serve api",
-    "start:dev": "PORT=3001 nx run app:dev"
+    "start:dev": "PORT=3001 nx run app:dev",
+    "vercel-build": "nx build api"
   },
   "private": true,
   "dependencies": {
