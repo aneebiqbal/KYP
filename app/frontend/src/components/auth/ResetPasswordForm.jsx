@@ -55,7 +55,7 @@ const [loading,setLoading] = useState(false);
                      style={{ height: '46px' }}
                      className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
               />
-              <ErrorMessage name="password" component="div" />
+              <ErrorMessage className="error-message" name="password" component="div" />
             </div>
             <div className="mb-2">
               <ul style={{paddingLeft:'16px',marginBottom:'0'}}>
@@ -69,7 +69,7 @@ const [loading,setLoading] = useState(false);
                      style={{ height: '46px' }}
                      className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
               />
-              <ErrorMessage name="confirmPassword" component="div" />
+              <ErrorMessage className="error-message" name="confirmPassword" component="div" />
             </div>
             <div className="col-12">
               <button

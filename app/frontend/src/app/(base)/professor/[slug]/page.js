@@ -250,11 +250,11 @@ console.log("course loading: ",courseLoading)
             </div>
 
             <div className="flex-1 ml-30 mobil-ml-none mobile-mt-28">
-              <RatingBar rating={5} reviews={100} reviewsGot={!professorDetails.star_distribution.five_star ? 0.00 : professorDetails.star_distribution.five_star.toFixed(2)} text={'Awesome'} />
-              <RatingBar rating={4} reviews={100} reviewsGot={!professorDetails.star_distribution.four_star ? 0.00 :professorDetails.star_distribution.four_star.toFixed(2)} text={'Great'} />
-              <RatingBar rating={3} reviews={100} reviewsGot={!professorDetails.star_distribution.three_star ? 0.00 :professorDetails.star_distribution.three_star.toFixed(2)} text={'Good'} />
-              <RatingBar rating={2} reviews={100} reviewsGot={!professorDetails.star_distribution.two_star ? 0.00 :professorDetails.star_distribution.two_star.toFixed(2)} text={'OK'} />
-              <RatingBar rating={1} reviews={100} reviewsGot={!professorDetails.star_distribution.one_star ? 0.00 :professorDetails.star_distribution.one_star.toFixed(2)} text={'Awful'} />
+              <RatingBar rating={5} reviews={100} reviewsGot={!professorDetails.star_distribution.five_star ? 0.00 : Math.floor(Number(professorDetails.star_distribution.five_star))} text={'Awesome'} />
+              <RatingBar rating={4} reviews={100} reviewsGot={!professorDetails.star_distribution.four_star ? 0.00 :Math.floor(Number(professorDetails.star_distribution.four_star))} text={'Great'} />
+              <RatingBar rating={3} reviews={100} reviewsGot={!professorDetails.star_distribution.three_star ? 0.00 :Math.floor(Number(professorDetails.star_distribution.three_star))} text={'Good'} />
+              <RatingBar rating={2} reviews={100} reviewsGot={!professorDetails.star_distribution.two_star ? 0.00 :Math.floor(Number(professorDetails.star_distribution.two_star))} text={'OK'} />
+              <RatingBar rating={1} reviews={100} reviewsGot={!professorDetails.star_distribution.one_star ? 0.00 :Math.floor(Number(professorDetails.star_distribution.one_star))} text={'Awful'} />
             </div>
           </div>
           <div className="d-none d-xl-block">
@@ -446,7 +446,7 @@ console.log("course loading: ",courseLoading)
         (<div className="full-width full-height flex items-center justify-center column">
         <Image className="mb-20" width={112} height={112} src="/norecordfound.svg" alt="norecordfound" />
         <p className="text-weight-600 text-18 text-1F1F1F mb-8">No records found</p>
-        <p className="text-weight-400 text-14 text-595959">The record that you tired to filter is not found</p>
+        <p className="text-weight-400 text-14 text-595959">The record you tried to filter was not found.</p>
       </div>)
         :<Reviews reviews={professorDetails.Course} professorId={professorDetails.id} updateRatings={updateRatings} />
       }

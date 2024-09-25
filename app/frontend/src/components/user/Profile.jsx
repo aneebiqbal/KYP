@@ -122,7 +122,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
   //   let expires = "";
   //   if (days) {
   //     const date = new Date();
-  //     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000)); 
+  //     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
   //     expires = `; expires=${date.toUTCString()}`;
   //   }
   //   document.cookie = `${name}=${value || ""}${expires}; path=/`;
@@ -142,14 +142,14 @@ export default function Profile({userInfo,setUserProfileInfo}) {
         secretAccessKey:"YOUZV6aBatvhwKJUUgyWaiWb3nJrM5+tnMouWQgk",
         region: 'ap-south-1',
     });
-  
+
     const params = {
         Bucket: 'reactkypprofilepics',
         Key: file.name,
         Body: file,
         ContentType: file.type,
     };
-  
+
     const upload = s3.upload(params);
     const data = await upload.promise();
     console.log("DA?TA______",data)
@@ -164,20 +164,20 @@ export default function Profile({userInfo,setUserProfileInfo}) {
     // }catch (e){
     //   setPopup({show:true,type:'error',message:error.message,timeout:3000});
     // }
-    
+
 
 
     // async function convertFileToSrc(file) {
     //   if (!file || !file.type.match('image/*')) {
     //     throw new Error('Please select a valid image file.');
     //   }
-    
+
     //   const reader = new FileReader();
-    
+
     //   return new Promise((resolve, reject) => {
     //     reader.onload = () => resolve(reader.result);
-    //     reader.onerror = () => reject('Error reading file.');   
-    
+    //     reader.onerror = () => reject('Error reading file.');  
+
     //     reader.readAsDataURL(file);
     //   });
     // }
@@ -197,10 +197,10 @@ export default function Profile({userInfo,setUserProfileInfo}) {
           {
             imageLoader
             ?
-            <div style={{width:'100%',height:'100%',display: 'flex',alignItems: 'center',justifyContent: 'center'}} height={380} width={380}> 
+            <div style={{width:'100%',height:'100%',display: 'flex',alignItems: 'center',justifyContent: 'center'}} height={380} width={380}>
             <span className="loader"></span>
-            </div> 
-            : 
+            </div>
+            :
             <div>
             <div className="mb-20 position-relative">
             <Image style={{width:'100%'}} height={280} width={280} src={image} alt={'userInfo?.image_url'} />
@@ -212,7 +212,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
           </div>
           {error && <p style={{ color: 'red' }}>{error}</p>}
           <p className="text-center text-weight-400 text-14 text-434343 px-20">Image size should be under 1MB and image
-            ration needs to be 1:1</p> 
+            ration needs to be 1:1</p>
           </div>
           }
         </div>
@@ -234,7 +234,9 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                                className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-8 first-name-mb-12"
                                placeholder="Enter First Name"
                         />
-                        <ErrorMessage name="firstName" component="div" />
+                        <div style={{height:'24px'}}>
+                          <ErrorMessage className="error-message" name="firstName" component="div" />
+                        </div>
                       </div>
                       <div className="col-md-12 col-lg-6 mt-md-2 mt-lg-0 mobile-padding-right-0 ">
                         <Field type="text" name="lastName"
@@ -256,7 +258,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                            placeholder="Enter Email"
                     >
                     </Field>
-                    <ErrorMessage name="email" component="div" />
+                    <ErrorMessage className="error-message" name="email" component="div" />
                   </div>
                   <div className="col-12 mb-20 mobile-padding-right-0 ">
                     <label className="text-141414 text-weight-400 text-14 mb-2">University</label>
@@ -265,7 +267,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                            placeholder="Enter University"
                     >
                     </Field>
-                    <ErrorMessage name="university" component="div" />
+                    <ErrorMessage className="error-message" name="university" component="div" />
                   </div>
                     </div>
                   </div>
@@ -273,10 +275,10 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                 </div>
                 <div className="">
                   {
-                    saveprofileLoader 
+                    saveprofileLoader
                     ?
                     <button
-                      style={{ 
+                      style={{
                         height: '44px',
                         width: '180px',
                         display: 'flex',
@@ -291,11 +293,11 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                         cursor: "not-allowed",
                       }}
                       disabled={true}
-                    >        
+                    >
                       <span className="submitloader"></span>
                       {/* <span className="ms-2">Saving Changes</span> */}
                     </button>
-                    :         
+                    :
                     <button
                       style={{ height: '44px', width: '180px' }}
                       className="px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 full-width-responsive"
@@ -324,7 +326,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                        style={{ height: '46px' }}
                        className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-8"
                 />
-                <ErrorMessage name="currentPassword" component="div" />
+                  <ErrorMessage className="error-message" name="currentPassword" component="div" />
               </div>
               <div className="full-width mb-20">
                 <label className="text-141414 text-weight-400 text-14 mb-2">New Password</label>
@@ -332,7 +334,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                        className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-8"
                 >
                 </Field>
-                <ErrorMessage name="newPassword" component="div" />
+                <ErrorMessage className="error-message" name="newPassword" component="div" />
               </div>
               <div className="full-width mb-20">
                 <label className="text-141414 text-weight-400 text-14 mb-2">Confirm Password</label>
@@ -340,7 +342,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                        className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-8"
                 >
                 </Field>
-                <ErrorMessage name="confirmPassword" component="div" />
+                <ErrorMessage className="error-message" name="confirmPassword" component="div" />
               </div>
             </div>
             <div className="">
@@ -348,7 +350,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                 savePasswordLoader
                   ?
                     <button
-                      style={{ 
+                      style={{
                         height: '44px',
                         width: '180px',
                         display: 'flex',
@@ -363,17 +365,17 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                         cursor: "not-allowed",
                       }}
                       disabled={true}
-                    >        
+                    >
                       <span className="submitloader"></span>
                       {/* <span className="ms-2">Saving Changes</span> */}
                     </button>
-                  : 
+                  :
               <button
                 style={{ height: '44px', width: '180px' }}
                 className="px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 full-width-responsive"
                 type="submit">Change Password
               </button>
-            } 
+            }
             </div>
           </Form>
         )}

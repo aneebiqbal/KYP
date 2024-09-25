@@ -113,7 +113,7 @@ export default function SignUpForm() {
                      style={{ height: '46px' }}
                      className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
               />
-              <ErrorMessage name="firstName" component="div" />
+              <ErrorMessage className="error-message" name="firstName" component="div" />
             </div>
             <div className="col-md-6 col-12 pl-15 mb-32">
               <label className="text-141414 text-weight-400 text-14 mb-2">Last Name</label>
@@ -121,7 +121,7 @@ export default function SignUpForm() {
                      style={{ height: '46px' }}
                      className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
               />
-              <ErrorMessage name="lastName" component="div" />
+              <ErrorMessage className="error-message" name="lastName" component="div" />
             </div>
             <div className="col-md-6 col-12 pl-15 mb-32">
               <label className="text-141414 text-weight-400 text-14 mb-2">Institute</label>
@@ -129,7 +129,7 @@ export default function SignUpForm() {
                      style={{ height: '46px' }}
                      className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
               />
-              <ErrorMessage name="school" component="div" />
+              <ErrorMessage className="error-message" name="school" component="div" />
             </div>
             <div className="col-md-6 col-12 pl-15 mb-32">
               <label className="text-141414 text-weight-400 text-14 mb-2">Field of study</label>
@@ -137,7 +137,7 @@ export default function SignUpForm() {
                      style={{ height: '46px' }}
                      className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
               />
-              <ErrorMessage name="field" component="div" />
+              <ErrorMessage className="error-message" name="field" component="div" />
             </div>
             <div className="col-md-6 col-12 pl-15 mb-32">
               <label className="text-141414 text-weight-400 text-14 mb-2">Email</label>
@@ -145,7 +145,7 @@ export default function SignUpForm() {
                      style={{ height: '46px' }}
                      className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
               />
-              <ErrorMessage name="email" component="div" />
+              <ErrorMessage className="error-message" name="email" component="div" />
             </div>
             <div className="col-md-6 col-12 pl-15 mb-32">
               <label className="text-141414 text-weight-400 text-14 mb-2">Password</label>
@@ -153,7 +153,7 @@ export default function SignUpForm() {
                      className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
               >
               </Field>
-              <ErrorMessage name="password" component="div" />
+              <ErrorMessage className="error-message" name="password" component="div" />
             </div>
 
             <div className="flex col-12 mb-32">

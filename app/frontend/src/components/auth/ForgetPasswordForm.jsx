@@ -54,7 +54,7 @@ export default function ForgetPasswordForm() {
                       style={{height: '46px'}}
                       className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
               />
-              <ErrorMessage name="email" component="div"/>
+              <ErrorMessage className="error-message" name="email" component="div"/>
             </div>
             <div className="col-12">
               <button

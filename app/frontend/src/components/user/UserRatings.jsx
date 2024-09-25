@@ -142,7 +142,7 @@ export default function UserRatings() {
        (<div className="full-width full-height flex items-center justify-center column">
            <Image className="mb-20" width={112} height={112} src="/norecordfound.svg" alt="norecordfound" />
            <p className="text-weight-600 text-18 text-1F1F1F mb-8">No records found</p>
-           <p className="text-weight-400 text-14 text-595959">The record that you tired to filter is not found</p>
+           <p className="text-weight-400 text-14 text-595959">The record you tried to filter was not found.</p>
          </div>)
       }
     </div>

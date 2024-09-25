@@ -12,7 +12,7 @@ import PopUp from '../../components/PopUp';
 
 
 export default function LoginForm() {
-  const router = useRouter(); 
+  const router = useRouter();
   const [loading,setLoading] = useState(false);
   const [popup, setPopup] = useState({
     show: false,
@@ -90,7 +90,7 @@ export default function LoginForm() {
                       style={{height: '46px'}}
                       className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
               />
-              <ErrorMessage name="email" component="div"/>
+              <ErrorMessage className="error-message" name="email" component="div"/>
             </div>
             <div className="col-12 pl-15 mb-32">
               <label className="text-141414 text-weight-400 text-14 mb-2">Password</label>
@@ -98,7 +98,7 @@ export default function LoginForm() {
                      className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
               >
               </Field>
-              <ErrorMessage name="password" component="div" />
+              <ErrorMessage className="error-message" name="password" component="div" />
             </div>
             <div className="col-12 pl-15 mb-4 flex justify-end">
               <Link href="/forget-password" className="text-14 text-weight-400 text-0378A6 text-decoration-none">Forgot password?</Link>

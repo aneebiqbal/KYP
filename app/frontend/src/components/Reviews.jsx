@@ -89,12 +89,12 @@ export default function Reviews({reviews,professorId,updateRatings}) {
           </div>
           <div className="flex justify-between items-center">
             <div className="flex items-center">
-              <Image className={`${token? "cursor-pointer" : ""}`} width={16} height={16} src={review.reactRatings.upvote?'/likeTrue.png':'/like.png'} alt="like" onClick={()=>{updateReactRating(1,review)}}/>
-              <p className="text-14 text-434343 text-weight-400 " style={{marginLeft:'4px',marginRight:'8px'}}>{review?.upVotes}</p>
-              <Image className={`${token? "cursor-pointer" : ""}`} width={16} height={16} src={review.reactRatings.downvote?'/dislikeTrue.png':'/dislike.png'}alt="like" onClick={()=>{updateReactRating(2,review)}}/>
-              <p className="text-14 text-434343 text-weight-400" style={{marginLeft:'4px',marginRight:'8px'}}>{review?.downVotes}</p>
-              <Image className={`${token? "cursor-pointer" : ""}`} width={13} height={16} src={review.reactRatings.reported?'/reportTrue.png':'/report.png'} alt="like" onClick={()=>{updateReactRating(3,review)}}/>
-              <p className="text-14 text-434343 text-weight-400" style={{marginLeft:'4px'}}>{review?.reports}</p>
+              <Image data-toggle="tooltip" data-placement="bottom" title="Like" className={`${token? "cursor-pointer" : ""}`} width={16} height={16} src={review.reactRatings.upvote?'/likeTrue.png':'/like.png'} alt="like" onClick={()=>{updateReactRating(1,review)}}/>
+              <p className="text-14 text-434343 text-weight-400 " style={{marginLeft:'4px',marginRight:'8px', width:'20px'}}>{review?.upVotes}</p>
+              <Image data-toggle="tooltip" data-placement="bottom" title="Dislike" className={`${token? "cursor-pointer" : ""}`} width={16} height={16} src={review.reactRatings.downvote?'/dislikeTrue.png':'/dislike.png'}alt="like" onClick={()=>{updateReactRating(2,review)}}/>
+              <p className="text-14 text-434343 text-weight-400" style={{marginLeft:'4px',marginRight:'8px',width:'20px'}}>{review?.downVotes}</p>
+              <Image data-toggle="tooltip" data-placement="bottom" title="Report" className={`${token? "cursor-pointer" : ""}`} width={13} height={16} src={review.reactRatings.reported?'/reportTrue.png':'/report.png'} alt="like" onClick={()=>{updateReactRating(3,review)}}/>
+              <p className="text-14 text-434343 text-weight-400" style={{marginLeft:'4px',width:'20px'}}>{review?.reports}</p>
             </div>
             {/*<Image width={15} height={16} src="/share.svg" alt="like"/>*/}
           </div>
