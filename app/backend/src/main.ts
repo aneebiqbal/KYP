@@ -1,13 +1,18 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
+import { Handler, Context, Callback } from 'aws-lambda';
+import { Server } from 'http';
+import { createServer, proxy } from 'aws-serverless-express';
 
-async function bootstrap() {
+let cachedServer: Server;
+
+async function bootstrapServer(): Promise<Server> {
   const app = await NestFactory.create(AppModule);
 
   // Enable CORS
   app.enableCors({
-    origin: 'http://3.85.127.217:3001', // Replace with your Next.js app's URL
+    origin: 'https://66f3eb690afc0229beed9394--kyp-frontend.netlify.app',
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',
   });
@@ -15,11 +20,15 @@ async function bootstrap() {
   app.enableShutdownHooks();
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3000;
-  await app.listen(port, '0.0.0.0');
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
-  );
+
+  await app.init();
+  return createServer(app.getHttpAdapter().getInstance());
 }
 
-bootstrap();
+// Lambda handler for Vercel
+export const handler: Handler = async (event: any, context: Context, callback: Callback) => {
+  if (!cachedServer) {
+    cachedServer = await bootstrapServer();
+  }
+  return proxy(cachedServer, event, context, 'PROMISE').promise;
+};

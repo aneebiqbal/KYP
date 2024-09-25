@@ -56,12 +56,24 @@
         "componentTestingTargetName": "component-test",
         "ciTargetName": "e2e-ci"
       }
+    },
+    {
+      "plugin": "@nx/nest/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "serveTargetName": "serve"
+      }
     }
   ],
   "generators": {
     "@nx/next": {
       "application": {
         "style": "css",
+        "linter": "eslint"
+      }
+    },
+    "@nx/nest": {
+      "application": {
         "linter": "eslint"
       }
     }
