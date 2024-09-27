@@ -188,6 +188,17 @@ export const BaseApi = {
       console.log('error from getProfessorSaved', e);
       throw e.message;
     }
+  },
+  getReview: async(data) =>{
+    try {
+      return await BaseApiService.getReview(`${data.id}`)
+        .then((response)=>{
+          return response;
+        })
+    } catch (e) {
+      console.log('error from getReview', e);
+      throw e.message;
+    }
   }
 
 };
