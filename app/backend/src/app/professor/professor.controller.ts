@@ -13,7 +13,7 @@ import {
   Param
 } from '@nestjs/common';
 import { ProfessorService } from './professor.service';
-import { SearchProfessorDto } from './dto/search-professor.dto';
+import { SearchProfessorDto,RecommendationProfessorDto } from './dto/search-professor.dto';
 import { JwtAuthGuard } from '../utils/auth.guard';
 import { SaveProfessorDto } from './dto/saved-professor.dto';
 import { OptionalJwtAuthGuard } from '../utils/OptionalJwtAuth.guard';
@@ -31,6 +31,15 @@ export class ProfessorController {
     return this.professorService.searchProfessors(search, searchBy,  sortField, sortOrder, studentId, page);
   }
 
+  @UseGuards(OptionalJwtAuthGuard)
+  @Get('getRecommendations')
+  @HttpCode(HttpStatus.OK)
+  async getRecommendations(@Query() query: RecommendationProfessorDto, @Request() req) {
+    const { search, searchBy} = query;
+    console.log("inside-----",search)
+    const studentId = req.user?.id;
+    return this.professorService.getRecommendations(search, searchBy,studentId);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Post('saved')
@@ -64,14 +73,27 @@ export class ProfessorController {
 
 
   @UseGuards(OptionalJwtAuthGuard)
-  @Get('details/:id/:courseCode?')
-  async getProfessorDetails(@Request() req: any,@Param('id') professorid: number,@Param('courseCode') courseCode?: string) {
+  @Get('details/:id')
+  async getProfessorDetails(@Request() req: any,@Param('id') professorid: number) {
     const studentId = req.user?.id;
     console.log(" request user : ",req.user);
     console.log("student id ",studentId)
-    return this.professorService.getProfessorDetails(studentId,professorid,courseCode)
+    return this.professorService.getProfessorDetails(studentId,professorid)
   }
 
+  @UseGuards(OptionalJwtAuthGuard)
+  @Get('coursedetails/:id/:courseCode?')
+  async getProfessorCourseDetails(@Request() req: any,@Param('id') professorid: number,@Param('courseCode') courseCode?: string,@Query() query?:any) {
+    const {page,limit} = query;
+    const studentId = req.user?.id;
+    console.log(" request user : ",req.user);
+    console.log("student id ",studentId)
+    console.log("course id: ",courseCode);
+    console.log("page number: ",page);
+    console.log("page limit: ",limit)
+    return this.professorService.getProfessorCourseDetails(studentId,professorid,page,limit,courseCode)
+  }
+ 
   @Get('course/:professorid')
   async getProfessorCourse(@Param('professorid') professorid: number) {
       console.log("Inside ------- professor id:", professorid);

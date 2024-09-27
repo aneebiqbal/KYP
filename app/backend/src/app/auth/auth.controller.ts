@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   HttpCode,
   HttpStatus,
@@ -35,6 +36,12 @@ export class AuthController {
     }
   }
 
+  @Get('get_all_institute')
+  @HttpCode(HttpStatus.OK)
+  async getAllInstitute() {
+    return this.authService.GetAllInstitute();
+  }
+
   @Post('Signin')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
@@ -65,6 +72,7 @@ export class AuthController {
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    // console.log('insside-------',resetPasswordDto)
     if (!resetPasswordDto.newPassword) {
       throw new BadRequestException('Password is required');
     }

@@ -24,6 +24,16 @@ export const BaseApi = {
       throw e.message;
     }
   },
+  getRecommendations:async (data) => {
+    let search = '?searchBy='+data.searchBy+'&search='+data.search;
+    try {
+      let response = await BaseApiService.getRecommendations(search)
+        return response;
+    } catch (e) {
+      console.log('error', e);
+      throw e;
+    }
+  },
   saveProfessor:async (data) => {
     console.log(data);
     try {
@@ -127,11 +137,25 @@ export const BaseApi = {
   },
   getProfessorDetail: async(data) =>{
     try {
-      const{id,courseCode} = data
+      const{id} = data
+      console.log("id: ",id)
+      let params= `${id}`
+      return await BaseApiService.getProfessorDetails(params)
+      .then((response)=>{
+        return response;
+      })
+    } catch (e) {
+      console.log('error from getProfessorDetails', e);
+      throw e.message;
+    }
+  },
+  getProfessorCourseDetail: async(data) =>{
+    try {
+      const{id,courseCode,page,limit} = data
       console.log("id: ",id)
       console.log("courseCode: ",courseCode);
-      let params= courseCode? `${id}/${courseCode}` : `${id}`
-      return await BaseApiService.getProfessorDetails(params)
+      let params= courseCode? `${id}/${courseCode}/?page=${page}&limit=${limit}` : `${id}/?page=${page}&limit=${limit}`
+      return await BaseApiService.getProfessorCoursesDetails(params)
       .then((response)=>{
         return response;
       })

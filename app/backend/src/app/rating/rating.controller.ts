@@ -35,6 +35,7 @@ export class RatingController {
     const studentId = req.user?.id;
     // const StudentIdNumber = Number(studentId);
     console.log("student id: ",typeof(studentId))
+    console.log("rate professor: ",rateProfessorDto)
     return this.ratingService.rateProfessor(studentId, rateProfessorDto)
   }
 }

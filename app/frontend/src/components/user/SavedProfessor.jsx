@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 export default function SavedProfessor() {
   const token = getToken();
   const router = useRouter();
+  const [showmoreLoader,setShowMoreLoader] = useState(false);
   const [type, setType] = useState('name');
   const [search, setSearch] = useState('');
   const [searchCheck, setSearchCheck] = useState('');
@@ -39,10 +40,10 @@ export default function SavedProfessor() {
       setSearchCheck('')
     }
   }
-  const getProfessors = async (searchBy=type,text=search,seeMore= false,page=1)=>{
+  const getProfessors = async (searchBy=type,text=search,seeMore= false,page=1,showMore=false)=>{
     console.log(" text: ",text," search by: ",searchBy)
     try{
-      setLoading(true)
+      showMore? setShowMoreLoader(true): setLoading(true)
       await BaseApi.SavedProfessors({searchBy:searchBy,search:text,page:page})
         .then((response)=>{
           console.log('response----', response);
@@ -56,13 +57,13 @@ export default function SavedProfessor() {
             setProfessors(response.data.data);
           }
           setProfessorsData(response.data)
-          setLoading(false)
+          showMore? setShowMoreLoader(false):  setLoading(false)
         })
     }catch(e){
       console.log(e)
       setProfessors([])
       setProfessorsData([])
-      setLoading(false)
+      showMore? setShowMoreLoader(false):  setLoading(false)
     }
   }
 
@@ -91,7 +92,13 @@ return<>
               setSearchCheck('')
             }
           }} className="px-20 search-input-field rating-input mobile-border-right"
-                 placeholder={type === 'name' ? 'Search professor with name' : 'Search for professors by university.'} />
+                 placeholder={type === 'name' ? 'Search professor with name' : 'Search for professors by university.'} 
+                 onKeyDown={(event)=>{
+                  if (event.key === 'Enter') {
+                    searchProfessor()
+                  }
+                }}
+                 />
         </div>
         <div
           onClick={searchProfessor}
@@ -115,8 +122,10 @@ return<>
       <ProfessorsList professors={professors} updateProfessors={updateProfessors} />
       {Number(professorsData.page) < professorsData.lastPage && (<div className="flex items-center justify-center mt-4">
         <p className="text-weight-600 text-763FF9 text-24 cursor-pointer" onClick={() => {
-          getProfessors(type, search, true, Number(professorsData.page) + 1);
-        }}>See more</p>
+          getProfessors(type, search, true, Number(professorsData.page) + 1,true);
+        }}>
+              { showmoreLoader ?<div className="seeMoreLoader"></div> :  <div>See more</div>}
+        </p>
       </div>)}
     </div>)
     :

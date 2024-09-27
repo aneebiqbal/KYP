@@ -10,7 +10,7 @@ import { Course } from './cources.entity';
 @Check(`"collaboration" BETWEEN 1 AND 5`)
 @Check(`"knowledgeable" BETWEEN 1 AND 5`)
 @Check(`"helpful" BETWEEN 1 AND 5`)
-@Check(`"textbook_use" BETWEEN 1 AND 5`)
+// @Check(`"textbook_use" BETWEEN 1 AND 5`)
 @Check(`"exam_difficulty" BETWEEN 1 AND 5`)
 @Check(`"love_teaching_style" BETWEEN 1 AND 5`)
 
@@ -46,10 +46,10 @@ export class Rating {
   knowledgeable!: number;
 
   @Column({ type: 'int', width: 1 })
-  helpful!: number;
+  overallRating!: number;
 
-  @Column({ type: 'int', width: 1 })
-  textbook_use!: number;
+  @Column({ type: 'boolean',nullable: true})
+  textbook_use!: boolean;
 
   @Column({ type: 'int', width: 1 })
   exam_difficulty!: number;
