@@ -60,6 +60,10 @@ p {
   padding-left: 12px;
   padding-right: 12px;
 }
+.py-80{
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
 .py-200 {
   padding-top: 200px;
   padding-bottom: 200px;
@@ -190,6 +194,9 @@ p {
 }
 
 /*text-color*/
+.text-9165FA{
+  color: #9165FA;
+}
 .text-ffffff {
   color: #ffffff;
 }
@@ -1056,7 +1063,6 @@ p {
   }
   }
 
-  }
 
   /* HTML: <div class="loader"></div> */
 .seeMoreLoader {
