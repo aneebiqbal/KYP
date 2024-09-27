@@ -4,12 +4,59 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CustomDropdown from '../../components/user/CustomDropdown.';
+import { AutoComplete, Flex, Input } from 'antd';
+import { BaseApi } from  './BaseApi';
+
 
 export default function Page() {
   const router = useRouter();
   const [type, setType] = useState('name');
   const [search, setSearch] = useState('');
   const [searchCheck, setSearchCheck] = useState('');
+  const [recommendation,setRecommendation]=useState([])
+
+  const getRecommendations = async (text) => {
+    console.log("TEXT: ",text);
+    console.log("TYPE: ",type);
+      if(text){
+        try{
+         let response =  await BaseApi.getRecommendations({searchBy:type,search:text})
+             console.log("response on recommendation: ",response)
+             setRecommendation(response.data)
+        }catch(e){
+          console.log("error on recommendation: ",e)
+          // setRecommendation([])
+        }
+      } 
+  }
+
+  console.log("search:",search)
+
+  const renderItem = (name, ratings, institute,id) => ({
+    value: name,
+    label: (
+      <div style={{display:"flex"}}>
+        <div className='circle-recomendation'>
+          {ratings}
+        </div>
+      
+      <div style={{ display: 'flex', flexDirection: 'column',margin:" 3px 10px 2px 20px"  }}>
+        {/* { console.log("department: ",department)} */}
+        <span style={{ fontSize:"17px" }}>{name}</span> 
+        <div style={{fontSize:"13px" }}>
+        {/* <span style={{ fontSize: 'small', color: 'gray' }}>{department}</span> . */}
+        Professor at  <span style={{marginLeft:"3px",fontWeight:"bold"}}>{institute}</span>
+        </div>
+      </div>
+      </div>
+    ),
+  });
+  
+  const options = recommendation
+    ? recommendation.map((recommend) =>
+        renderItem(recommend.name, recommend.ratings, recommend.institute_name,recommend.id)
+      )
+    : [];
 
 
   const searchProfessor= ()=>{
@@ -35,7 +82,38 @@ export default function Page() {
                     onSelect={setType}
                     placeholder="Select"
                   />
-                  <input value={search} onChange={(event)=>{setSearch(event.target.value);if(searchCheck !== ''){setSearchCheck('')}}} className="px-20 search-input-field" placeholder={type === 'name'?'Search professor with name':'Search for professors by university.'}/>
+                    <AutoComplete
+                      autoFocus={true}
+                      popupClassName="certain-category-search-dropdown"
+                      // popupMatchSelectWidth={500}
+                      onSelect={function(value, option){
+                        console.log("option: ",option);
+                        setSearch(value);
+                        useRouter()
+                      }}
+                      style={{
+                        width: "446px",
+                        height:"72px",
+                        // marginTop:"-40px" 
+                      }}
+                      options={options}
+                      // size="large"
+                    >
+                  <input value={search} onChange={(event)=>{
+                    setSearch(event.target.value);
+                    if(searchCheck !== ''){
+                      setSearchCheck('')
+                    }
+                    getRecommendations(event.target.value)
+                    // setTimeout(()=>getRecommendations(event.target.value),2000);
+                    }} className="px-20 search-input-field" placeholder={type === 'name'?'Search professor with name':'Search for professors by university.'}
+                    onKeyDown={(event)=>{
+                      if (event.key === 'Enter') {
+                        searchProfessor()
+                      }
+                    }}
+                  />
+                  </AutoComplete >
                     <div
                       onClick={searchProfessor}
                       style={{

@@ -4,9 +4,12 @@ import * as Yup from 'yup';
 import {AuthApi} from '../../app/(auth)/AuthApi';
 import { useState } from 'react';
 import PopUp from '../PopUp';
+import { useParams } from 'next/navigation';
 
 export default function ResetPasswordForm() {
 const [loading,setLoading] = useState(false);
+ const {slug} = useParams();
+//  console.log("slug : ",slug)
   const [popup, setPopup] = useState({
     show: false,
     type: '',
@@ -20,17 +23,31 @@ const [loading,setLoading] = useState(false);
       .required('Required'),
   });
   const handleSubmit = async (values) => {
+    // console.log("-----------INSIDE------------")
+    // console.log("Values: ",values)
+
     try {
       setLoading(true);
-      await AuthApi.resetPassword({password: values.password, confirmPassword: values.confirmPassword, slug: values.slug});
-      setLoading(false)
+      if(values.password==values.confirmPassword){
+      await AuthApi.resetPassword({newPassword: values.confirmPassword, token: slug});
       setPopup({
         show: true,
         type: 'success',
         message: 'Password reset successfully.',
         timeout: 3000,
       });
+      } else {
+        setPopup({
+          show: true,
+          type: 'error',
+          message: 'Passwords do not match.',
+          timeout: 3000,
+        });
+      }
+      setLoading(false)
+    
     } catch (error) {
+      console.log("error: ",error)
       setLoading(false)
       setPopup({
         show: true,

@@ -2,18 +2,22 @@
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect,useRef } from 'react';
 import {AuthApi} from '../../app/(auth)/AuthApi';
 import PopUp from '../PopUp';
 import { useRouter } from 'next/navigation';
 import {  GoogleLogin } from '@react-oauth/google';
 import {jwtDecode} from 'jwt-decode';
 
-export default function SignUpForm() {
+export default function SignUpForm(props) {
   const router = useRouter();
   const [loading,setLoading] = useState(false);
+  const [institute,setInstitute] = useState(props.institute);
+  const [selectedInstitute,setSelectedInstitute] = useState({});
+  const [DropdownOpen, setDropdownOpen] = useState(false);
   const [toggleCheck, setToggleCheck] = useState(false);
   const [popup, setPopup] = useState({show:false,type:'',message:'',timeout:0});
+  const dropdownRef = useRef(null);
   const validationSchema = Yup.object({
     firstName: Yup.string()
       .min(2, 'Too Short!')
@@ -33,7 +37,22 @@ export default function SignUpForm() {
     password: Yup.string()
       .required('Required'),
   });
+
+  console.log("institute ---- : ",institute)
+  useEffect(()=>{
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  },[])
   const handleSubmit = async (values) => {
+    console.log("values: ",values)
     try {
       setLoading(true);
       await AuthApi.signup({
@@ -104,7 +123,7 @@ export default function SignUpForm() {
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
-      {({ errors, touched }) => (
+      {({ errors, touched,setFieldValue }) => (
         <Form>
           <div className="row  ">
             <div className="col-md-6 col-12 pl-15 mb-32">
@@ -125,10 +144,67 @@ export default function SignUpForm() {
             </div>
             <div className="col-md-6 col-12 pl-15 mb-32">
               <label className="text-141414 text-weight-400 text-14 mb-2">Institute</label>
-              <Field type="text" name="school"
+              {/* <Field type="text" name="school"
                      style={{ height: '46px' }}
                      className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
-              />
+              /> */}
+                <div
+                  onClick={() => setDropdownOpen(!DropdownOpen)
+                  }
+                  style={{
+                    height: '46px',
+                    width: '270px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                  className="px-20 border-radius-4 bg-transparent text-394560 border-color-D9D9D9 full-width-responsive"
+                >
+                  <p className="text-14">
+                    {institute.find((option) => option === selectedInstitute)?.label||
+                      'Select Institute'}
+                  </p>
+                  {/* <Image
+                    style={{ marginLeft: '24px' }}
+                    height={10}
+                    width={10}
+                    src="/arrowicon.svg"
+                    alt="searchIcon"
+                  /> */}
+                </div>
+                {DropdownOpen && (
+              <div
+                style={{
+                  position: 'absolute',
+                  marginTop: '4px',
+                  width: '270px',
+                  borderRadius: '12px',
+                  border: '1px solid #D9D9D9',
+                  backgroundColor: '#ffffff',
+                  zIndex: 10,
+                  maxHeight: '200px',
+                  overflow:"auto",
+                }}
+                className="px-10 text-14 border-color-D9D9D9"
+              >
+                {institute.map((option) => (
+                  <div
+                    key={option.value}
+                    onClick={() => {
+                      setFieldValue('school', option.label);
+                      setSelectedInstitute(option);
+                      setDropdownOpen(false);
+                    }}
+                    style={{
+                      cursor: 'pointer',
+                    }}
+                    className="px-10 py-12"
+                  >
+                    {option.label}
+                  </div>
+                ))}
+              </div>
+            )}
               <ErrorMessage name="school" component="div" />
             </div>
             <div className="col-md-6 col-12 pl-15 mb-32">
@@ -166,7 +242,7 @@ export default function SignUpForm() {
               <button
                 disabled={!toggleCheck || loading}
                 style={{ height: '44px' }}
-                className={`full-width bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 ${loading ? "cursor-not-allowed " : "cursor-pointer"} ${toggleCheck ?'opacity-100':'opacity-75'}`}
+                className={`full-width bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 ${loading ? "cursor-not-allowed " : "cursor-pointer"} ${toggleCheck ?'opacity-100 ':'opacity-75 cursor-not-allowed'}`}
                 type="submit">
               {loading ? <span className='submitloader'></span> : "Sign up" }
               </button>
@@ -189,5 +265,5 @@ export default function SignUpForm() {
       </p>
     </div>
     <PopUp props={popup}/>
-  </>
+    </>
 }

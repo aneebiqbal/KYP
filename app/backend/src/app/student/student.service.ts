@@ -178,16 +178,7 @@ export class StudentService {
         totalRatings > 0
           ? professor.ratings.reduce(
             (acc, rating) =>
-              acc +
-              (rating.course_difficulty +
-                rating.clarity +
-                rating.collaboration +
-                rating.knowledgeable +
-                rating.helpful +
-                rating.textbook_use +
-                rating.exam_difficulty +
-                rating.love_teaching_style) /
-              8,
+              acc + rating.overallRating,
             0
           ) / totalRatings
           : 0;
@@ -281,15 +272,7 @@ export class StudentService {
       if (rating.take_again) professorTakeAgainCount[professorId] += 1;
       if (rating.love_teaching_style >= 4)
         professorLoveTeachingStyleCount[professorId] += 1;
-      const reviewRating = parseFloat(((rating.course_difficulty +
-          rating.clarity +
-          rating.collaboration +
-          rating.knowledgeable +
-          rating.helpful +
-          rating.textbook_use +
-          rating.exam_difficulty +
-          rating.love_teaching_style) /
-        8).toFixed(2));
+      const reviewRating = parseFloat((rating.overallRating).toFixed(2));
       professorTotalRating[professorId] += reviewRating;
       professorRatingCount[professorId] += 1;
 

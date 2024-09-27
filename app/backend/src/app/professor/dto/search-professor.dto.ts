@@ -26,3 +26,18 @@ export class SearchProfessorDto {
   @IsNumber()
   page?: number;
 }
+
+
+export class RecommendationProfessorDto {
+  @IsOptional()
+  @IsNumber()
+  studentId?: number;
+
+  @IsString()
+  @IsOptional()
+  search: string;
+
+  @IsString()
+  @IsOptional()
+  searchBy: 'professor' | 'institute';
+}

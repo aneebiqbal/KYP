@@ -10,6 +10,7 @@ export default function UserRatings() {
   const token = getToken();
   const router = useRouter();
   const [type, setType] = useState('name');
+  const [showmoreLoader,setShowMoreLoader] = useState(false);
   const [search, setSearch] = useState('');
   const [searchCheck, setSearchCheck] = useState('');
   const [ratings, setRatings] = useState([]);
@@ -22,9 +23,9 @@ export default function UserRatings() {
       setSearchCheck('')
     }
   }
-  const getRatings = async (searchBy=type,text=search,seeMore= false,page=1)=>{
+  const getRatings = async (searchBy=type,text=search,seeMore= false,page=1,showMore=false)=>{
     try{
-      setLoading(true)
+      showMore? setShowMoreLoader(true): setLoading(true)
       await BaseApi.getReviews({searchBy:searchBy,search:text,page:page})
         .then((response)=>{
           if(seeMore){
@@ -38,14 +39,13 @@ export default function UserRatings() {
             setRatings(response.data.data);
           }
           setRatingsData(response.data)
-          setLoading(false)
-
+          showMore? setShowMoreLoader(false):  setLoading(false)
         })
     }catch(e){
       console.log(e)
       setRatings([])
       setRatingsData({})
-      setLoading(false)
+      showMore? setShowMoreLoader(false):  setLoading(false)
 
     }
   }
@@ -82,7 +82,14 @@ export default function UserRatings() {
               setSearchCheck('')
             }
           }} className="px-20 search-input-field rating-input mobile-border-right "
-                 placeholder={type === 'name' ? 'Search professor with name' : 'Search for professors by university.'} />
+                 placeholder={type === 'name' ? 'Search professor with name' : 'Search for professors by university.'}
+                 onKeyDown={(event)=>{
+                  if (event.key === 'Enter') {
+                    searchProfessor()
+                    getRatings()
+                  }
+                }}
+                />
           </div>
           <div
             onClick={()=>{
@@ -107,7 +114,10 @@ export default function UserRatings() {
         {ratings.map((rating, index) => (
           <div key={'myratings_' + index}>
             <div className="flex mb-60 position-relative">
-              <Image className="border-radius-100" height={48} width={48} src={false ?rating.professor.image_url:'/student.png'} alt={rating.image_url} />
+            <div className={`circle-rating  circle${index%4}`}>
+              {rating.professor.name.split(" ")[0].charAt(0).toUpperCase()}{rating.professor.name.split(" ")[1].charAt(0).toUpperCase()}
+            </div>
+              {/* <Image className="border-radius-100" height={48} width={48} src={false ?rating.professor.image_url:'/student.png'} alt={rating.image_url} /> */}
               <div className="ml-24">
                 <h2 className="text-20 text-000000 text-weight-600 mb-6">{rating.professor.name}</h2>
                 <p className="text-14 text-weight-400 text-595959">{rating.professor.department_name} . {rating.professor.institute_name}</p>
@@ -132,7 +142,9 @@ export default function UserRatings() {
         ))}
           {Number(ratingsData.page) < ratingsData.lastPage && (<div className="flex items-center justify-center mt-4">
             <p className="text-weight-600 text-763FF9 text-24 cursor-pointer" onClick={() => {
-              getRatings(type, search, true, Number(ratingsData.page) + 1);}}>See more</p>
+              getRatings(type, search, true, Number(ratingsData.page) + 1,true);}}>
+            { showmoreLoader ?<div className="seeMoreLoader"></div> :  <div>See more</div>} </p>
+
           </div>)}
       </div>)
        :

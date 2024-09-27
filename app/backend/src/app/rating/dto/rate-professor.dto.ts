@@ -33,12 +33,11 @@ export class rateProfessorDto {
   @IsInt()
   @Min(1)
   @Max(5)
-  helpful: number;
+  overallRating: number;
 
-  @IsInt()
-  @Min(1)
-  @Max(5)
-  textbook_use: number;
+  @IsOptional()
+  @IsBoolean()
+  textbook_use?: boolean;
 
   @IsInt()
   @Min(1)

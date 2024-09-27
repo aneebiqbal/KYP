@@ -19,11 +19,13 @@ export default function page(){
   const [courseCode, setCourseCode] = useState('');
   const [DropdownOpen, setDropdownOpen] = useState(false);
   const [professorDetails,setProfessorDetails] = useState(null)
+  const [professorCourse,setProfessorCourse] = useState(null);
+  const [showmoreLoader,setShowMoreLoader] = useState(false);
+  const [options, setOptions] = useState([])
   const [ courseLoading,setCourseLoading ] = useState(false);
   const {slug} = useParams();
   const [saved,setSaved] = useState(false);
   const dropdownRef = useRef(null);
-  console.log("Token: ",token);
   const saveProfessor = async () => {
     try{
       setSaved((prev)=>!prev)
@@ -35,19 +37,19 @@ export default function page(){
       setSaved((prev)=>!prev)
     }
   }
-  console.log("saved: ",saved)
+
   const getData = async (courseLoad = false) =>{
     try {
       courseLoad ? setCourseLoading(true) : setLoading(true)
-      let response = await BaseApi.getProfessorDetail({ id: slug ,courseCode});
-      console.log("response from api: ", response); 
+      let response = await BaseApi.getProfessorDetail({ id: slug});
       if(response?.data?.message?.includes("not found")){
         router.push(`/`);
       }
       setProfessorDetails(response.data.professor)
-      let savedprofessor = await BaseApi.getSavedProfessor({ id: Number(slug)});
-      console.log("response from api: ", savedprofessor);
-      setSaved(savedprofessor.data.saved)
+      // let savedprofessor = await BaseApi.getSavedProfessor({ id: Number(slug)});
+      setSaved(response.data.saved)
+      setOptions(response.data.courses)
+       getCourses(true)
       courseLoad ? setCourseLoading(false) : setLoading(false)
     } catch (error) {
       console.error("Error fetching professor details:", error);
@@ -55,25 +57,43 @@ export default function page(){
 
     }
   }
-  console.log("loader : ",Loading)
-  console.log("Details: ", professorDetails)
+
+  console.log("Loader: ",Loading);
+  const getCourses = async (courseLoad = false,page=1,limit=3,concatCheck=false,seeMore=false) =>{
+    try {
+      seeMore ? setShowMoreLoader(true) : courseLoad ? setCourseLoading(true) : setLoading(true) 
+      let professorCourseDetails = await BaseApi.getProfessorCourseDetail({ id: slug ,courseCode,page,limit});
+      console.log("professorCourseDetails: ", professorCourseDetails); 
+      console.log("professorCourseDetails review:  ", professorCourseDetails.data); 
+      // setOptions(professorCourseDetails.data.Course)
+      if(concatCheck){
+        let tempProfessors = professorCourse;
+        tempProfessors.page=professorCourseDetails.data.page
+        tempProfessors.data = tempProfessors.data.concat(professorCourseDetails.data.data)
+        setProfessorCourse(tempProfessors)
+      }else{
+        setProfessorCourse(professorCourseDetails.data)
+      }
+      // getCourses(courseLoad)
+      seeMore ? setShowMoreLoader(false) : courseLoad ? setCourseLoading(false) : setLoading(false)
+     
+    } catch (error) {
+      console.error("Error fetching professor details:", error);
+      seeMore ? setShowMoreLoader(false) : courseLoad ? setCourseLoading(false) : setLoading(false)
+    }
+  }
 
   const goToReviewPage = () => {
     router.push(`/professor/rate/${slug}`);
   }
+  console.log("Courses-----: ",professorCourse)
 
   useEffect(() => {
-    // setCourseLoading(true)
     getData(true)
-    // setCourseLoading(false)
   },[courseCode])
 
-console.log(" course: ",courseCode);
-console.log("course loading: ",courseLoading)
   useEffect(() => {
-    // setLoading(true)
      getData()
-    //  setLoading(false)
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
@@ -86,10 +106,10 @@ console.log("course loading: ",courseLoading)
     };
   }, []);
 
-  const options = [
-    { value: '0', label: 'CS101' },
-    { value: '1', label: 'MATH101' },
-  ];
+  // const options = [
+  //   { value: '0', label: 'CS101' },
+  //   { value: '1', label: 'MATH101' },
+  // ];
 
   const updateRatings = (updatedReview, professorId) => {
     if (!professorDetails || professorDetails.id !== professorId) {
@@ -98,7 +118,7 @@ console.log("course loading: ",courseLoading)
     }
   
     // Map through the Course to find the relevant rating and update it
-    const updatedCourses = professorDetails.Course.map(course => ({
+    const updatedCourses = professorCourse.data.map(course => ({
       ...course,
       // Update the reactRatings within each course
       reactRatings: course.id === updatedReview.id
@@ -107,92 +127,12 @@ console.log("course loading: ",courseLoading)
     }));
   
     // Update professorDetails with the modified courses
-    setProfessorDetails({
-      ...professorDetails,
-      Course: updatedCourses
+    setProfessorCourse({
+      ...professorCourse,
+      data: updatedCourses
     });
   };
 
-  // const reviews = [
-  //   {
-  //     image:'/student.png',
-  //     rating:4.3,
-  //     courseCode:'ENG101',
-  //     date:'Aug 19, 2021',
-  //     review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-  //     tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-  //     credit:'Yes',
-  //     attendance:'Mandatory',
-  //     upVotes:5,
-  //     downVotes:5,
-  //     reports:3,
-  //   },
-  //   {
-  //     image:'/student.png',
-  //     rating:4.3,
-  //     courseCode:'ENG101',
-  //     date:'Aug 19, 2021',
-  //     review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-  //     tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-  //     credit:'Yes',
-  //     attendance:'Mandatory',
-  //     upVotes:5,
-  //     downVotes:5,
-  //     reports:3,
-  //   },
-  //   {
-  //     image:'/student.png',
-  //     rating:4.3,
-  //     courseCode:'ENG101',
-  //     date:'Aug 19, 2021',
-  //     review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-  //     tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-  //     credit:'Yes',
-  //     attendance:'Mandatory',
-  //     upVotes:5,
-  //     downVotes:5,
-  //     reports:3,
-  //   },
-  //   {
-  //     image:'/student.png',
-  //     rating:4.3,
-  //     courseCode:'ENG101',
-  //     date:'Aug 19, 2021',
-  //     review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-  //     tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-  //     credit:'Yes',
-  //     attendance:'Mandatory',
-  //     upVotes:5,
-  //     downVotes:5,
-  //     reports:3,
-  //   },
-  //   {
-  //     image:'/student.png',
-  //     rating:4.3,
-  //     courseCode:'ENG101',
-  //     date:'Aug 19, 2021',
-  //     review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-  //     tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-  //     credit:'Yes',
-  //     attendance:'Mandatory',
-  //     upVotes:5,
-  //     downVotes:5,
-  //     reports:3,
-  //   },
-  //   {
-  //     image:'/student.png',
-  //     rating:4.3,
-  //     courseCode:'ENG101',
-  //     date:'Aug 19, 2021',
-  //     review:'In mauris porttitor tincidunt mauris massa sit lorem sed scelerisque. Fringilla pharetra vel massa enim sollicitudin cras. At pulvinar eget sociis adipiscing eget donec ultricies nibh tristique.',
-  //     tags:['Tough Grader','Porttitor tincidunt','Tough Grader'],
-  //     credit:'Yes',
-  //     attendance:'Mandatory',
-  //     upVotes:5,
-  //     downVotes:5,
-  //     reports:3,
-  //   },
-  // ]
   const tags = ['Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader','Porttitor tincidunt','Tough Grader',];
   
   return<>
@@ -207,10 +147,10 @@ console.log("course loading: ",courseLoading)
         className="text-1F1F1F"> {professorDetails.first_name} {professorDetails.last_name}</span></p>
 
       <div className="flex mb-60 professor-profile-mobile-center">
-        <div>
+        {/* <div>
           <Image className="border-radius-100" height={114} width={114} src={professorDetails?.image_url? professorDetails?.image_url: '/student.png'} alt="professor" />
-        </div>
-        <div className="px-20 flex-1 flex column justify-center professor-name-mt-24">
+        </div> */}
+        <div className="flex-1 flex column justify-center professor-name-mt-24">
           <h2 className="text-24 text-1F1F1F text-weight-600 mb-6">{professorDetails?.first_name} {professorDetails?.last_name}</h2>
           <p className="text-14 text-weight-400 text-434343">Professor in the
             <span className="text-1F1F1F text-weight-600"> {professorDetails?.department_name} </span> at <span
@@ -276,32 +216,32 @@ console.log("course loading: ",courseLoading)
         {/*d-none d-sm-block*/}
         "
         >
-          <div className="row  ml-60  ml-mobile-30 mobile-width-ml-none-2 tablet-margin-left-12" style={{ height: 504 }}  >
-            <div className="col-sm-12 col-md-6 flex column justify-between full-width-responsive">
-              <div className="flex items-center professor-flex-review ">
-                <div className="border-radius-8 flex items-center justify-center bg-E4D9FE"
-                     style={{ width: '60px', height: '60px' }}>
-                  <Image width={32} height={32} src="/courseDifficulty.svg" alt="courseDifficulty" />
+          <div className="row ml-60 ml-mobile-30 mobile-width-ml-none-2 tablet-margin-left-12" style={{ height: 504 }}>
+            <div className="col-sm-12 col-md-6 flex column justify-around full-width-responsive">
+              <div className="flex items-center">
+                <div className="border-radius-8 flex items-center justify-center bg-FFF5E5" style={{ width: '60px', height: '60px' }}>
+                  <Image width={32} height={32} src="/textBook.svg" alt="Love Teaching Style" />
                 </div>
                 <div className="flex column justify-between ml-24 professor-flex-review ml-mobile-30">
-                  <p className="text-1F1F1F text-weight-400 text-24 ">{Math.floor(professorDetails.criteria_averages.course_difficulty)}%</p>
-                  <p className="text-434343 text-weight-400 text-14 ml-mobile-30">Course Difficulty</p>
-                </div>
-              </div>
-              <div className="flex items-center ">
-                <div className="border-radius-8 flex items-center justify-center bg-FEE9E8"
-                     style={{ width: '60px', height: '60px' }}>
-                  <Image width={32} height={32} src="/collaboration.svg" alt="courseDifficulty" />
-                </div>
-                <div className="flex column justify-between ml-24 professor-flex-review ml-mobile-30">
-                  <p className="text-1F1F1F text-weight-400 text-24">{Math.floor(professorDetails.criteria_averages.collaboration)}%</p>
-                  <p className="text-434343 text-weight-400 text-14 ml-mobile-30">Collaboration</p>
+                  <p className="text-1F1F1F text-weight-400 text-24">{Math.floor(professorDetails.criteria_averages.love_teaching_style)}%</p>
+                  <p className="text-434343 text-weight-400 text-14 ml-mobile-30">Love Teaching Style</p>
                 </div>
               </div>
               <div className="flex items-center">
-                <div className="border-radius-8 flex items-center justify-center bg-F0F0F0"
-                     style={{ width: '60px', height: '60px' }}>
-                  <Image width={32} height={32} src="/knowledgeable.svg" alt="courseDifficulty" />
+                <div className="border-radius-8 flex items-center justify-center bg-E6F1F6" style={{ width: '60px', height: '60px' }}>
+                  <Image width={32} height={32} src="/clarity.svg" alt="Clarity" />
+                </div>
+                <div className="flex column justify-between ml-24 professor-flex-review ml-mobile-30">
+                  <p className="text-1F1F1F text-weight-400 text-24">{Math.floor(professorDetails.criteria_averages.clarity)}%</p>
+                  <p className="text-434343 text-weight-400 text-14 ml-mobile-30">Clarity</p>
+                </div>
+              </div>
+            </div>
+          
+            <div className="col-sm-12 col-md-6 flex column justify-around full-width-responsive">
+              <div className="flex items-center">
+                <div className="border-radius-8 flex items-center justify-center bg-F0F0F0" style={{ width: '60px', height: '60px' }}>
+                  <Image width={32} height={32} src="/knowledgeable.svg" alt="Knowledgeable" />
                 </div>
                 <div className="flex column justify-between ml-24 professor-flex-review ml-mobile-30">
                   <p className="text-1F1F1F text-weight-400 text-24">{Math.floor(professorDetails.criteria_averages.knowledgeable)}%</p>
@@ -309,55 +249,36 @@ console.log("course loading: ",courseLoading)
                 </div>
               </div>
               <div className="flex items-center">
-                <div className="border-radius-8 flex items-center justify-center bg-F0F0F0"
-                     style={{ width: '60px', height: '60px' }}>
-                  <Image width={32} height={32} src="/knowledgeable.svg" alt="courseDifficulty" />
+                <div className="border-radius-8 flex items-center justify-center bg-FEE9E8" style={{ width: '60px', height: '60px' }}>
+                  <Image width={32} height={32} src="/collaboration.svg" alt="Collaboration" />
+                </div>
+                <div className="flex column justify-between ml-24 professor-flex-review ml-mobile-30">
+                  <p className="text-1F1F1F text-weight-400 text-24">{Math.floor(professorDetails.criteria_averages.collaboration)}%</p>
+                  <p className="text-434343 text-weight-400 text-14 ml-mobile-30">Collaboration</p>
+                </div>
+              </div>
+            </div>
+            {/* <div className="separator-x" style={{ margin: '20px 0' }}></div> */}
+            <div className="col-sm-12 col-md-6 flex column justify-around full-width-responsive">
+              <div className="flex items-center">
+                <div className="border-radius-8 flex items-center justify-center bg-E4D9FE" style={{ width: '60px', height: '60px' }}>
+                  <Image width={32} height={32} src="/courseDifficulty.svg" alt="Course Difficulty" />
+
+                </div>
+                <div className="flex column justify-between ml-24 professor-flex-review ml-mobile-30">
+                  <p className="text-1F1F1F text-weight-400 text-24">{Math.floor(professorDetails.criteria_averages.course_difficulty)}%</p>
+                  <p className="text-434343 text-weight-400 text-14 ml-mobile-30">Course Difficulty</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-sm-12 col-md-6 flex column justify-around full-width-responsive">
+              <div className="flex items-center">
+                <div className="border-radius-8 flex items-center justify-center bg-F0F0F0" style={{ width: '60px', height: '60px' }}>
+                <Image width={32} height={32} src="/knowledgeable.svg" alt="Exam Difficulty" />
                 </div>
                 <div className="flex column justify-between ml-24 professor-flex-review ml-mobile-30">
                   <p className="text-1F1F1F text-weight-400 text-24">{Math.floor(professorDetails.criteria_averages.exam_difficulty)}%</p>
                   <p className="text-434343 text-weight-400 text-14 ml-mobile-30">Exam Difficulty</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-sm-12 col-md-6 mobile-mt-24 flex column justify-between full-width-responsive">
-              <div className="flex items-center">
-                <div className="border-radius-8 flex items-center justify-center bg-E6F1F6"
-                     style={{ width: '60px', height: '60px' }}>
-                  <Image width={32} height={32} src="/clarity.svg" alt="courseDifficulty" />
-                </div>
-                <div className="flex column justify-between ml-24 professor-flex-review ml-mobile-30 ">
-                  <p className="text-1F1F1F text-weight-400 text-24 ">{Math.floor(professorDetails.criteria_averages.clarity)}%</p>
-                  <p className="text-434343 text-weight-400 text-14 ml-mobile-30">Clarity</p>
-                </div>
-              </div>
-              <div className="flex items-center">
-                <div className="border-radius-8 flex items-center justify-center bg-E8F6F1"
-                     style={{ width: '60px', height: '60px' }}>
-                  <Image width={32} height={32} src="/helpful.svg" alt="courseDifficulty" />
-                </div>
-                <div className="flex column justify-between ml-24 professor-flex-review ml-mobile-30">
-                  <p className="text-1F1F1F text-weight-400 text-24">{Math.floor(professorDetails.criteria_averages.helpful)}%</p>
-                  <p className="text-434343 text-weight-400 text-14 ml-mobile-30">Helpful</p>
-                </div>
-              </div>
-              <div className="flex items-center">
-                <div className="border-radius-8 flex items-center justify-center bg-FFF5E5"
-                     style={{ width: '60px', height: '60px' }}>
-                  <Image width={32} height={32} src="/textBook.svg" alt="courseDifficulty" />
-                </div>
-                <div className="flex column justify-between ml-24 professor-flex-review ml-mobile-30">
-                  <p className="text-1F1F1F text-weight-400 text-24">{Math.floor(professorDetails.criteria_averages.textbook_use)}%</p>
-                  <p className="text-434343 text-weight-400 text-14 ml-mobile-30">TextBook Use</p>
-                </div>
-              </div>
-              <div className="flex items-center">
-                <div className="border-radius-8 flex items-center justify-center bg-FFF5E5"
-                     style={{ width: '60px', height: '60px' }}>
-                  <Image width={32} height={32} src="/textBook.svg" alt="courseDifficulty" />
-                </div>
-                <div className="flex column justify-between ml-24 professor-flex-review ml-mobile-30">
-                  <p className="text-1F1F1F text-weight-400 text-24">{Math.floor(professorDetails.criteria_averages.love_teaching_style)}%</p>
-                  <p className="text-434343 text-weight-400 text-14 ml-mobile-30">Love Teaching Style</p>
                 </div>
               </div>
             </div>
@@ -379,7 +300,7 @@ console.log("course loading: ",courseLoading)
       </div>
 
       <div>
-        <p className="text-1D2026 text-weight-600 text-24 mb-20 ">Reviews ({professorDetails.Course.length}) </p>
+        <p className="text-1D2026 text-weight-600 text-24 mb-20 ">Reviews ({professorCourse?.total}) </p>
         <div className="relative sort-dropdown my-28" ref={dropdownRef}>
                 <div
                   onClick={() => setDropdownOpen(!DropdownOpen)}
@@ -394,7 +315,7 @@ console.log("course loading: ",courseLoading)
                   className="px-28 border-radius-12 border-color-D9D9D9"
                 >
                   <p className="text-18">
-                    {options.find((option) => option.value === course)?.label ||
+                    {options?.find((option) => option.value === course)?.label ||
                       'Select Course'}
                   </p>
                   <Image
@@ -419,7 +340,7 @@ console.log("course loading: ",courseLoading)
                     }}
                     className="px-10 border-color-D9D9D9"
                   >
-                    {options.map((option) => (
+                    {options?.map((option) => (
                       <div
                         key={option.value}
                         onClick={() => {
@@ -442,13 +363,19 @@ console.log("course loading: ",courseLoading)
         courseLoading ?
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"15%", marginBottom:"30%"}}><span className="loader"></span> </div> 
         : 
-        professorDetails.Course.length==0 ?
+        professorCourse?.data?.length==0 ?
         (<div className="full-width full-height flex items-center justify-center column">
         <Image className="mb-20" width={112} height={112} src="/norecordfound.svg" alt="norecordfound" />
         <p className="text-weight-600 text-18 text-1F1F1F mb-8">No records found</p>
         <p className="text-weight-400 text-14 text-595959">The record that you tired to filter is not found</p>
       </div>)
-        :<Reviews reviews={professorDetails.Course} professorId={professorDetails.id} updateRatings={updateRatings} />
+        :(<>
+        <Reviews reviews={professorCourse?.data} professorId={professorDetails.id} updateRatings={updateRatings} />
+        {Number(professorCourse?.page) < professorCourse?.lastPage && <div className="flex items-center justify-center mt-4">
+        <div className="text-weight-600 text-763FF9 text-24 cursor-pointer" onClick={()=>{getCourses(false,Number(professorCourse?.page)+1,3,true,true)}}>
+              { showmoreLoader ?<div className="seeMoreLoader"></div> :  <div>See more</div>} </div>
+       </div> }
+        </>)
       } 
       </div>
     </div>

@@ -79,6 +79,12 @@ export class AuthService {
     };
   }
 
+  async GetAllInstitute(): Promise<any> {
+    const institute = await this.instituteRepository.find()
+    console.log("institute",institute);
+    return { institute };
+  }
+
   async signUpWithGoogle(
     signUpDto: SignUpDto
   ): Promise<{ student: Partial<Student>; token: string }> {
@@ -213,7 +219,7 @@ export class AuthService {
     resetPasswordDto: ResetPasswordDto
   ): Promise<{ message: string }> {
     const { newPassword } = resetPasswordDto;
-
+console.log("inside funct-------",newPassword)
     try {
       const decoded = jwt.verify(token, this.jwtSecret) as {
         id: number;
@@ -232,6 +238,7 @@ export class AuthService {
       student.password = hashedPassword;
 
       await this.studentRepository.save(student);
+      console.log(" sucessfully password change")
       return { message: 'Password Reset Successfully' };
     } catch (error) {
       throw new BadRequestException('Invalid or expired token');
