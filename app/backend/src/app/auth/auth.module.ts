@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Student } from '@kyp/db';
+import { Professor, Student } from '@kyp/db';
 import { Institute } from '@kyp/db';
 import { UtilsModule } from '../utils/utils.modules';
 import { PassportModule } from '@nestjs/passport';
@@ -22,7 +22,7 @@ import { JwtStrategy } from '../utils/jwt.strategy';
       inject: [ConfigService],
     }),
     ConfigModule,
-    TypeOrmModule.forFeature([Student, Institute]),
+    TypeOrmModule.forFeature([Student, Institute,Professor]),
     UtilsModule,
   ],
   controllers: [AuthController],

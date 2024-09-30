@@ -4,9 +4,10 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CustomDropdown from '../../components/user/CustomDropdown.';
-import { AutoComplete, Flex, Input } from 'antd';
+import { AutoComplete } from 'antd';
 import { BaseApi } from  './BaseApi';
-
+import { debounce } from 'lodash';
+import { useCallback } from 'react';
 
 export default function Page() {
   const router = useRouter();
@@ -15,9 +16,14 @@ export default function Page() {
   const [searchCheck, setSearchCheck] = useState('');
   const [recommendation,setRecommendation]=useState([])
 
+  const debouncedGetRecommendations = useCallback(
+    debounce(async (text) => {
+      await getRecommendations(text);
+    }, 1000), [] 
+  );
+  
   const getRecommendations = async (text) => {
-    console.log("TEXT: ",text);
-    console.log("TYPE: ",type);
+      console.log("----inside-----")
       if(text){
         try{
          let response =  await BaseApi.getRecommendations({searchBy:type,search:text})
@@ -25,12 +31,11 @@ export default function Page() {
              setRecommendation(response.data)
         }catch(e){
           console.log("error on recommendation: ",e)
-          // setRecommendation([])
+          setRecommendation([])
         }
       } 
   }
 
-  console.log("search:",search)
 
   const renderItem = (name, ratings, institute,id) => ({
     value: name,
@@ -84,27 +89,29 @@ export default function Page() {
                   />
                     <AutoComplete
                       autoFocus={true}
-                      popupClassName="certain-category-search-dropdown"
+                      popupClassName=""
                       // popupMatchSelectWidth={500}
-                      onSelect={function(value, option){
-                        console.log("option: ",option);
-                        setSearch(value);
-                        useRouter()
+                      onSelect={function(value){
+                        if(value){
+                          let selectedOption = recommendation.filter((recomend)=>recomend.name == value)
+                          router.push(`/professor/${selectedOption[0].id}`)
+                        }
+                        // router.push(`/professor/${value}`)
                       }}
                       style={{
                         width: "446px",
                         height:"72px",
-                        // marginTop:"-40px" 
                       }}
                       options={options}
-                      // size="large"
                     >
                   <input value={search} onChange={(event)=>{
                     setSearch(event.target.value);
                     if(searchCheck !== ''){
                       setSearchCheck('')
                     }
-                    getRecommendations(event.target.value)
+                    // getRecommendations(event.target.value)
+                    debouncedGetRecommendations(event.target.value)
+                    // debouncedGetRecommendations(getRecommendations(event.target.value),2000)
                     // setTimeout(()=>getRecommendations(event.target.value),2000);
                     }} className="px-20 search-input-field" placeholder={type === 'name'?'Search professor with name':'Search for professors by university.'}
                     onKeyDown={(event)=>{

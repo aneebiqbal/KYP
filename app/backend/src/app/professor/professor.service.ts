@@ -229,8 +229,6 @@ export class ProfessorService {
     //   return response;
     // }), 1, limit);
   }
-
-
   async addSavedProfessor(
     studentId: number,
     professorId: number

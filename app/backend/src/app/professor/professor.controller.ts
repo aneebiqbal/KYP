@@ -70,8 +70,7 @@ export class ProfessorController {
    console.log("professorID_____ ",professorid)
    return this.professorService.getSavedProfessor(studentId,professorid)
  }
-
-
+ 
   @UseGuards(OptionalJwtAuthGuard)
   @Get('details/:id')
   async getProfessorDetails(@Request() req: any,@Param('id') professorid: number) {
@@ -99,4 +98,5 @@ export class ProfessorController {
       console.log("Inside ------- professor id:", professorid);
       return this.professorService.getProfessorCourse(professorid);
   }
+
 }

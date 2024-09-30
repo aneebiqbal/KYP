@@ -12,6 +12,7 @@ import { Repository } from 'typeorm';
 import { Student } from '@kyp/db';
 import { Institute } from '@kyp/db';
 import { SignUpDto } from './dto/signup.dto';
+import { Professor } from '@kyp/db';
 import { SignInDto } from './dto/signin.dto';
 import { MailService } from '../utils/mail-service';
 import { ForgetPasswordDto, ResetPasswordDto } from './dto/forget-password.dto';
@@ -22,6 +23,8 @@ export class AuthService {
   constructor(
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
+    @InjectRepository(Professor)
+    private readonly professorRepository: Repository<Professor>,
     @InjectRepository(Institute)
     private readonly instituteRepository: Repository<Institute>,
     private readonly mailService: MailService
@@ -83,6 +86,36 @@ export class AuthService {
     const institute = await this.instituteRepository.find()
     console.log("institute",institute);
     return { institute };
+  }
+    async getDepartments( institute_name: string): Promise<any> {
+    try{
+
+      console.log("--------", institute_name)
+      const institutequery = this.instituteRepository
+      .createQueryBuilder('institute')
+      .where('institute.name ILIKE :institute_name', { institute_name })
+      const institute = await institutequery.getMany();
+      const id= institute[0].id;
+      console.log("id: ",id)
+
+      const query = this.professorRepository
+      .createQueryBuilder('professor')
+      .select('DISTINCT professor.department_name', 'department_name')
+      .where('professor.institute_id= :id', { id })
+      const departments = await query.getRawMany();
+      console.log("departments: ",departments)
+      const departmentoptions= departments.map((department,index)=>{
+        return {
+          label: department.department_name,
+          value: index
+        }
+      })
+      return departmentoptions;
+    } catch(error) {
+      console.error(error);
+    return new Error('An error occurred while retrieving professor details');
+    }
+
   }
 
   async signUpWithGoogle(
