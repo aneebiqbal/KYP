@@ -81,6 +81,68 @@ export class RatingService {
     }
   }
 
+  async getReview( ratingId: number, professorId: number, studentId:number): Promise<any> {
+    try{
+      let upVotes = 0;
+      let downVotes = 0;
+      let reported = 0;
+      let ReactRatings = { upvote: false, downvote: false, reported: false };
+
+      let professor = await this.professorRepository.findOne({
+        where: { id: professorId, },
+        relations: ['institute'],
+      });
+
+       console.log(professor)
+
+      let query = this.ratingRepository
+      .createQueryBuilder('rating')
+      .leftJoinAndSelect('rating.course','course')
+      .leftJoinAndSelect('rating.reactRatings','reactRatings')
+      .where("rating.id = :ratingId",{ratingId})
+
+      if(studentId){
+        query.leftJoinAndSelect('reactRatings.student','student')
+      }
+       const rating = await query.getMany()
+       console.log(rating)
+
+       if (rating?.length > 0) {
+        rating[0].reactRatings.map((reactRating)=>{
+          if (studentId && reactRating?.student.id === studentId) {
+            ReactRatings.upvote = reactRating.upvote;
+            ReactRatings.downvote = reactRating.downvote;
+            ReactRatings.reported = reactRating.reported;
+          }
+          if (reactRating.upvote) upVotes++;
+          if (reactRating.downvote) downVotes++;
+          if (reactRating.reported) reported++;
+        })
+       }
+       return {
+        id:professor.id,
+        name: professor.first_name+ " " + professor.last_name,
+        department: professor.department_name,
+        institute_name:professor.institute.name,
+        rating_id:rating[0].id,
+        comment:rating[0].comment,
+        course_code:rating[0].course.course_code,
+        tags:rating[0].tags,
+        for_credit: rating[0].for_credit,
+        textbook_use:rating[0].textbook_use,
+        attendance: rating[0].mandatory_attendance,
+        reactRatings: ReactRatings,
+        upVotes,
+        downVotes,
+        reports: reported,
+       }
+
+    }  catch (error) {
+      console.error(error);
+    return new Error('An error occurred while retrieving professor details');
+    }
+  }
+
   async rateProfessor(studentId: number, rateProfessorDto: any): Promise<any> {
     try {
       const {

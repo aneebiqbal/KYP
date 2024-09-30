@@ -25,6 +25,15 @@ export const AuthApi = {
       throw e ;
     }
   },
+  getDepartment : async (data) => {
+    try {
+       let response = await AuthApiService.getDepartment(data)
+       return response;
+    } catch (e) {
+      console.log('error', e);
+      throw e ;
+    }
+  },
   signup: async(signUpData) => {
     try {
       return await AuthApiService.signup(signUpData)

@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   UseGuards,
   Request,
@@ -8,11 +9,13 @@ import {
   HttpCode,
   HttpStatus,
   ValidationPipe,
+  Param,
 } from '@nestjs/common';
 import { RatingService } from './rating.service';
 import { JwtAuthGuard } from '../utils/auth.guard';
 import { ReactRatingDto } from './dto/react-rating.dto';
 import { rateProfessorDto } from './dto/rate-professor.dto';
+import { OptionalJwtAuthGuard } from '../utils/OptionalJwtAuth.guard';
 
 @Controller('rating')
 export class RatingController {
@@ -24,6 +27,15 @@ export class RatingController {
   async reactToRating(@Body() reactRatingDto: ReactRatingDto, @Request() req) {
     const studentId = req.user?.id;
     return this.ratingService.reactToRating(studentId, reactRatingDto);
+  }
+
+  @UseGuards(OptionalJwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @Get('review/:professorId/:ratingId')
+  async getReview(@Request() req: any,@Param('professorId') professorId:number,@Param('ratingId') ratingId:number) {
+    console.log("inside------")
+    const studentId = req.user?.id;
+    return this.ratingService.getReview(ratingId,professorId,studentId)
   }
 
   @UseGuards(JwtAuthGuard)

@@ -8,6 +8,7 @@ import {
   BadRequestException,
   UsePipes,
   ValidationPipe,
+  Param
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup.dto';
@@ -40,6 +41,13 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async getAllInstitute() {
     return this.authService.GetAllInstitute();
+  }
+
+  @Get('department/:institute')
+  @HttpCode(HttpStatus.OK)
+  async getDepartment(@Param('institute') institute: string) {
+      console.log("Inside ------- institute:", institute);
+      return this.authService.getDepartments(institute);
   }
 
   @Post('Signin')
