@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { getToken, getUserInfo } from '../services/JwtService';
 import { AuthApi } from '../app/(auth)/AuthApi';
 import { useRouter } from 'next/navigation';
@@ -20,14 +21,14 @@ import { LuSearch } from "react-icons/lu";
 
 
 export default function Header() {
-
+  const searchParams = useSearchParams();
   const pathname = usePathname()
   const router = useRouter();
   const [token, setToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [type, setType] = useState('name');
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(searchParams.get('search')|| '');
   const [searchCheck, setSearchCheck] = useState('');
   const [recommendation,setRecommendation]=useState([])
   const getPanelValue = (searchText) =>
@@ -75,13 +76,18 @@ export default function Header() {
     : [];
 
 
-  const searchProfessor= ()=>{
+  const searchProfessor= (clear=false)=>{
+
     if(search === ''){
-      setSearchCheck('Search field can not be empty')
-    }else{
+        setSearchCheck('Search field can not be empty')
+    } else{
       setSearchCheck('')
       // setSearch('')
+      if(clear){
+        router.push('/professors-list');
+      }else{
       router.push('/professors-list?searchBy='+type+'&search='+search);
+    }
     }
   }
 
@@ -93,6 +99,14 @@ export default function Header() {
       setUserInfo(JSON.parse(userInfoData));
     }
   }, []);
+
+  useEffect(()=>{
+    console.log("Pathname-----",pathname)
+    if(pathname.includes("search=")){
+      console.log("search---------",pathname.split("search=").index[1])
+    }
+
+  },[pathname])
 
   const logout = () => {
     if (userInfo && userInfo.email) {
@@ -159,9 +173,9 @@ export default function Header() {
               {/* <span style={{position: "absolute", top: "30px"}} className="text-12">search</span> */}
 
                 <AutoComplete
-                className="custom-auto-complete"
                   autoFocus={true}
                   popupClassName=""
+                  defaultValue={searchParams.get('search')|| ''}
                   onSelect={function(value){
                     if(value){
                       let selectedOption = recommendation.filter((recomend)=>recomend.name == value)
@@ -171,8 +185,8 @@ export default function Header() {
                   style={{
                     width: "446px",
                     height:"50px",
-                    // paddingLeft:"40px" 
                   }}
+                  className={searchCheck !== '' &&  "emptysearch" } 
                   options={options}
                     onSearch={(text) => {
                       getPanelValue(text); 
@@ -192,9 +206,10 @@ export default function Header() {
                       }
                     }}
                     allowClear={true}
+                    onClear={()=>searchProfessor(true)}
                 >
               </AutoComplete >
-              {searchCheck !== '' &&(<span style={{color:"brown", position: "absolute", top: "48px"}} className="text-12">{searchCheck}</span>)}
+              {/* {searchCheck !== '' &&(<span style={{color:"brown", position: "absolute", top: "48px"}} className="text-12">{searchCheck}</span>)} */}
             </div>
         </div>
         }
@@ -349,7 +364,7 @@ export default function Header() {
         </div>)
       }
 
-      {sidebarOpen && <div className="overlay" onClick={closeSidebar}></div>}
+      {/* {sidebarOpen && <div className="overlay" onClick={closeSidebar}></div>} */}
       </div>
     </nav>
   );

@@ -8,46 +8,13 @@ export default function page(){
   const {slug} = useParams();
   const router = useRouter();
   const [ Loading,setLoading ] = useState(false);
-  const [reviewDetails,setReviewDetails] = useState({
-    id:4,
-    first_name:'Ali',
-    last_name:'Hasan',
-    department_name:'Mathematics',
-    institute_name:'PUCIT',
-    reviews:[
-      {
-        course_name: "CS101",
-        id: 48,
-        student_id: 74,
-        student_image_url: "https://reactkypprofilepics.s3.ap-south-1.amazonaws.com/pic1.avif",
-        student_name: "Nimra Noor",
-        tags: [
-          "detailed explanations"
-        ],
-        created_at: "2024-09-25T21:03:49.442Z",
-        comment: "abc",
-        for_credit: false,
-        textbook_use: true,
-        upVotes: 1,
-        downVotes: 0,
-        reports: 0,
-        attendance: false,
-        rating: 4,
-        reactRatings: {
-          upvote: false,
-          downvote: false,
-          reported: false
-        }
-      }
-    ]
-
-  })
+  const [reviewDetails,setReviewDetails] = useState({})
   const updateRatings = (updatedReview, professorId) => {
     if (!reviewDetails || reviewDetails.id !== professorId) {
       console.error("Professor details not found or ID mismatch");
       return;
     }
-    const updatedCourses = reviewDetails.reviews.data.map(course => ({
+    const updatedCourses = reviewDetails.review.map(course => ({
       ...course,
       reactRatings: course.id === updatedReview.id
         ? { ...course.reactRatings, ...updatedReview }
@@ -55,7 +22,7 @@ export default function page(){
     }));
     setReviewDetails({
       ...reviewDetails,
-      reviews: updatedCourses
+      review: updatedCourses
     });
   };
   const getDetails = (id) =>{
@@ -66,6 +33,10 @@ export default function page(){
       setLoading(true)
       await BaseApi.getReview({id:slug})
         .then((response)=>{
+          console.log("response: ",response)
+          if(response.data=={}){
+            router.push("/")
+          }
           setReviewDetails(response.data)
           setLoading(false)
         })
@@ -78,7 +49,7 @@ export default function page(){
     getReview();
   },[])
   return<>
-    { Loading || !reviewDetails
+    { Loading 
       ?
       <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"30%", margin:"30%"}}><span className="loader"></span> </div>
       :
@@ -102,7 +73,7 @@ export default function page(){
               View Full profile
             </button>
             <div className="mt-60">
-              <Reviews reviews={reviewDetails?.reviews} professorId={reviewDetails.id} updateRatings={updateRatings} />
+              <Reviews reviews={reviewDetails?.review} professorId={reviewDetails.id} updateRatings={updateRatings} />
             </div>
 
           </div>

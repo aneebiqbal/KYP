@@ -28,7 +28,7 @@ export default function Reviews({reviews,professorId,updateRatings}) {
     </div>
   );
   const convertDate = (date)=>{
-    return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric',}).format(new Date(date))
+    // return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric',}).format(new Date(date))
   }
   const updateReactRating = async (check,review)=>{
     if (token) {
@@ -85,19 +85,29 @@ export default function Reviews({reviews,professorId,updateRatings}) {
     setShowModel({show:true,id:review.id,type: check==1?"upvote" :check==2 ? "downvote" : "report"});
     // setTimeout(()=>setShowModel(()=>setShowModel({show:false,id:0,type:""})),2000)
   }
-  const closeModal = () => {
-    setShowModel(false);
-  };
   }
-  console.log("show model = ",showModel)
+
+  const copyToClipboard = (id) => {
+    console.log("----inside-----")
+    navigator.clipboard.writeText(`http://localhost:3000/professor/review/${id}`).then(
+      () => {
+        console.log('Copied!');
+      },
+      (err) => {
+        console.error('Error copying to clipboard: ', err);
+      }
+    );
+  }
+
+
   return<>
     {reviews?.map((review,index) => (
       <div key={'review'+index} className="flex mb-20">
         <div className="flex column items-center reviews">
-          <div className={`circle  circle${index%4} circle-margin`}>{review.student_name.split(" ")[0].charAt(0).toUpperCase()}{review.student_name.split(" ")[1].charAt(0).toUpperCase()} {review.reactRatings?.student?.last_name}</div>
+          <div className={`circle  circle${index%4} circle-margin`}>{review?.student_name?.split(" ")[0]?.charAt(0)?.toUpperCase()}{review?.student_name?.split(" ")[1]?.charAt(0)?.toUpperCase()}</div>
           {/* <Image className="border-radius-100" height={48} width={48} src={review?.student_image_url ? review?.student_image_url : '/student.png'} alt={review?.image_url} /> */}
-          <p style={{width:"120px",textAlign:"center"}}>{review.reactRatings?.student?.first_name} {review.reactRatings?.student?.last_name}</p>
-          <p className="text-0378A6 text-26 text-weight-600">{(review?.rating.toFixed(1))}</p>
+          {/* <p style={{width:"120px",textAlign:"center"}}>{review?.reactRatings?.student?.first_name} {review.reactRatings?.student?.last_name}</p> */}
+          <p className="text-0378A6 text-26 text-weight-600">{(review?.rating?.toFixed(1))}</p>
         </div>
         <div className="flex-1 ml-12  border-radius-10 pa-20 bg-E6F1F6">
           <div className="flex justify-between mb-20">
@@ -113,26 +123,26 @@ export default function Reviews({reviews,professorId,updateRatings}) {
             ))}
           </div>
           <div className="flex mb-10 professor-mobile-flex-col credit-attendence">
-            <p className="text-434343 text-14 text-weight-400">For Credit: <span className="text-weight-600 text-141414">{review.for_credit?'Yes':'No'}</span></p>
-            <p className=" ml-12 text-434343 text-14 text-weight-400">Attendance: <span className="text-weight-600 text-141414">{review.attendance?'Mandatory':'optional'}</span></p>
-            <p className=" ml-12 text-434343 text-14 text-weight-400">TextBook Use: <span className="text-weight-600 text-141414">{review.textbook_use?'Yes':'No'}</span></p>
+            <p className="text-434343 text-14 text-weight-400">For Credit: <span className="text-weight-600 text-141414">{review?.for_credit?'Yes':'No'}</span></p>
+            <p className=" ml-12 text-434343 text-14 text-weight-400">Attendance: <span className="text-weight-600 text-141414">{review?.attendance?'Mandatory':'optional'}</span></p>
+            <p className=" ml-12 text-434343 text-14 text-weight-400">TextBook Use: <span className="text-weight-600 text-141414">{review?.textbook_use?'Yes':'No'}</span></p>
           </div>
           <div className="flex justify-between items-center">
             <div className="flex items-center">
             <Popover content={content} open={showModel.show==true && showModel.id==review.id && showModel.type=="upvote"}>
-              <Image data-toggle="tooltip" data-placement="bottom" title="Like" className={`${token? "cursor-pointer" : ""}`} width={16} height={16} src={review.reactRatings.upvote?'/likeTrue.png':'/like.png'} alt="like" onClick={()=>{updateReactRating(1,review)}}/>
+              <Image data-toggle="tooltip" data-placement="bottom" title="Like" className={`${token? "cursor-pointer" : ""}`} width={16} height={16} src={review?.reactRatings?.upvote?'/likeTrue.png':'/like.png'} alt="like" onClick={()=>{updateReactRating(1,review)}}/>
               </Popover>
               <p className="text-14 text-434343 text-weight-400 " style={{marginLeft:'4px',marginRight:'8px'}}>{review?.upVotes}</p>
             <Popover content={content} open={showModel.show==true && showModel.id==review.id && showModel.type=="downvote"}>
-              <Image data-toggle="tooltip" data-placement="bottom" title="Dislike" className={`${token? "cursor-pointer" : ""}`} width={16} height={16} src={review.reactRatings.downvote?'/dislikeTrue.png':'/dislike.png'}alt="like" onClick={()=>{updateReactRating(2,review)}}/>
+              <Image data-toggle="tooltip" data-placement="bottom" title="Dislike" className={`${token? "cursor-pointer" : ""}`} width={16} height={16} src={review?.reactRatings?.downvote?'/dislikeTrue.png':'/dislike.png'}alt="like" onClick={()=>{updateReactRating(2,review)}}/>
               </Popover>
               <p className="text-14 text-434343 text-weight-400" style={{marginLeft:'4px',marginRight:'8px'}}>{review?.downVotes}</p>
             <Popover content={content} open={showModel.show==true && showModel.id==review.id && showModel.type=="report"}>
-              <Image data-toggle="tooltip" data-placement="bottom" title="Report" className={`${token? "cursor-pointer" : ""}`} width={13} height={16} src={review.reactRatings.reported?'/reportTrue.png':'/report.png'} alt="like" onClick={()=>{updateReactRating(3,review)}}/>
+              <Image data-toggle="tooltip" data-placement="bottom" title="Report" className={`${token? "cursor-pointer" : ""}`} width={13} height={16} src={review?.reactRatings?.reported?'/reportTrue.png':'/report.png'} alt="like" onClick={()=>{updateReactRating(3,review)}}/>
               </Popover>
               <p className="text-14 text-434343 text-weight-400" style={{marginLeft:'4px'}}>{review?.reports}</p>
             </div>
-            <Image data-toggle="tooltip" data-placement="bottom" title="Share" width={15} height={16} src="/share.svg" alt="like"/>
+            <Image data-toggle="tooltip" data-placement="bottom" title="Share" width={15} height={16} src="/share.svg" alt="like" onClick={()=>copyToClipboard(review.id)} />
           </div>
         </div>
       </div>

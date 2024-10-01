@@ -81,28 +81,31 @@ export class RatingService {
     }
   }
 
-  async getReview( ratingId: number, professorId: number, studentId:number): Promise<any> {
+  async getReview( ratingId: number, studentId:number): Promise<any> {
     try{
       let upVotes = 0;
       let downVotes = 0;
       let reported = 0;
       let ReactRatings = { upvote: false, downvote: false, reported: false };
 
-      let professor = await this.professorRepository.findOne({
-        where: { id: professorId, },
-        relations: ['institute'],
-      });
+      // let professor = await this.professorRepository.findOne({
+      //   where: { id: professorId, },
+      //   relations: ['institute'],
+      // });
 
-       console.log(professor)
+      //  console.log(professor)
 
       let query = this.ratingRepository
       .createQueryBuilder('rating')
       .leftJoinAndSelect('rating.course','course')
+      .leftJoinAndSelect('rating.student', 'student')
+      .leftJoinAndSelect('rating.professor','professor')
+      .leftJoinAndSelect('professor.institute','institute')
       .leftJoinAndSelect('rating.reactRatings','reactRatings')
       .where("rating.id = :ratingId",{ratingId})
 
       if(studentId){
-        query.leftJoinAndSelect('reactRatings.student','student')
+        query.leftJoinAndSelect('reactRatings.student','reactRactingstudent')
       }
        const rating = await query.getMany()
        console.log(rating)
@@ -119,23 +122,28 @@ export class RatingService {
           if (reactRating.reported) reported++;
         })
        }
-       return {
-        id:professor.id,
-        name: professor.first_name+ " " + professor.last_name,
-        department: professor.department_name,
-        institute_name:professor.institute.name,
-        rating_id:rating[0].id,
+       return  rating?.length > 0 ?  {
+        id:rating[0].professor.id,
+        first_name: rating[0].professor.first_name,
+        last_name: rating[0].professor.last_name,
+        department_name: rating[0].professor.department_name,
+        institute_name:rating[0].professor.institute.name,
+        review: [{
+        id:rating[0].id,
         comment:rating[0].comment,
         course_code:rating[0].course.course_code,
+        student_name:rating[0]?.student?.first_name+" "+rating[0]?.student.last_name,
         tags:rating[0].tags,
         for_credit: rating[0].for_credit,
         textbook_use:rating[0].textbook_use,
         attendance: rating[0].mandatory_attendance,
         reactRatings: ReactRatings,
+        created_at:rating[0].created_at,
         upVotes,
         downVotes,
         reports: reported,
-       }
+        }]
+       } :{}
 
     }  catch (error) {
       console.error(error);

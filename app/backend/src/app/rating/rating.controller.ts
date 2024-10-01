@@ -31,11 +31,11 @@ export class RatingController {
 
   @UseGuards(OptionalJwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
-  @Get('review/:professorId/:ratingId')
-  async getReview(@Request() req: any,@Param('professorId') professorId:number,@Param('ratingId') ratingId:number) {
+  @Get('review/:ratingId')
+  async getReview(@Request() req: any,@Param('ratingId') ratingId:number) {
     console.log("inside------")
     const studentId = req.user?.id;
-    return this.ratingService.getReview(ratingId,professorId,studentId)
+    return this.ratingService.getReview(ratingId,studentId)
   }
 
   @UseGuards(JwtAuthGuard)
