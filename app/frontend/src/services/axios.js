@@ -18,7 +18,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       destroyToken();
-      window.location.href = "/login";
+      window.location.href = "/";
       // return NextResponse.redirect(new URL('/login'));
     }
     return Promise.reject(error);

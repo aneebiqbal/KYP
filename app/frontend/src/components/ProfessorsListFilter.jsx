@@ -78,6 +78,13 @@ export default function ProfessorsListFilter(){
     getProfessors(searchParams.get('searchBy'),searchParams.get('search'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ searchParams.get('search')]);
+
+  useEffect(()=>{
+    if(search==""&& !searchParams.get('search')){
+      setProfessors([])
+      setProfessorData([])
+    }
+  },[search,searchParams.get('search')])
   useEffect(() => {
     // getProfessors(type,search,false,1)
     if (isFirstRender.current) {
@@ -87,9 +94,10 @@ export default function ProfessorsListFilter(){
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortOrder]);
+
   return <>
-    <div className="mb-60">
-      <div className="flex flex-nowrap professor-mobile-flex-col ">
+    {/* <div className="mb-60"> */}
+      {/* <div className="flex flex-nowrap professor-mobile-flex-col ">
         <div className="flex items-center ">
        <CustomDropdown  selectedValue={type}
                         onSelect={setType}
@@ -111,8 +119,8 @@ export default function ProfessorsListFilter(){
           className="bg-FFA337 flex items-center justify-center border-radius-12 ml-30 cursor-pointer professer-list-ml-0 height-search-52">
           <Image height={24} width={24} src="/searchIcon.svg" alt="searchIcon" />
         </div>
-      </div>
-    </div>
+      </div> */}
+    {/* </div> */}
     <div className="flex justify-between mb-32 professor-mobile-flex-col">
       <div className="flex items-center">
         <p className="text-24 text-1F1F1F text-weight-600">Search Results</p>

@@ -191,9 +191,11 @@ export const BaseApi = {
   },
   getReview: async(data) =>{
     try {
-      return await BaseApiService.getReview(`${data.id}`)
+      const {id} =data
+      console.log("data--------",id)
+      return await BaseApiService.getReview(`${Number(id)}`)
         .then((response)=>{
-          return response;
+          return response; 
         })
     } catch (e) {
       console.log('error from getReview', e);
