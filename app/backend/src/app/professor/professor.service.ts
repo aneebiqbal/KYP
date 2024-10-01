@@ -51,7 +51,7 @@ export class ProfessorService {
     sortOrder: 'ASC' | 'DESC' = 'ASC',
     studentId?:number,
     page = 1,
-    limit = 1
+    limit = 5
   ): Promise<PaginatedResult<professor>> {
     const query = this.professorRepository
       .createQueryBuilder('professor')
@@ -388,7 +388,7 @@ export class ProfessorService {
     .where('professorCourses.professor_id = :professorId', { professorId })
     .andWhere('rating.professor_id = :professorId', { professorId })
  
- if (courseCode) {
+ if (courseCode && courseCode !== 'All') {
    query.andWhere('course.course_code = :courseCode', { courseCode });
  }
 
@@ -525,6 +525,11 @@ if(StudentId){
         })
         })
       }
+
+      courses.push({
+        label: "All",
+        value: courses.length
+      })
       const ratings = professor.ratings;
       const ProfessortotalRatings = ratings.length;
       const overallRating =

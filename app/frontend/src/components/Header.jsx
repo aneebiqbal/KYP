@@ -27,7 +27,7 @@ export default function Header() {
   const [token, setToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [type, setType] = useState('name');
+  const [type, setType] = useState(searchParams.get('searchBy')||'name');
   const [search, setSearch] = useState(searchParams.get('search')|| '');
   const [searchCheck, setSearchCheck] = useState('');
   const [recommendation,setRecommendation]=useState([])
@@ -35,17 +35,17 @@ export default function Header() {
   !searchText ? [] : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
 
   const debouncedGetRecommendations = useCallback(
-    debounce(async (text) => {
-      await getRecommendations(text);
-    }, 500), []
+    debounce(async (text,type) => {
+      await getRecommendations(text,type);
+    }, 500), [] 
   );
 
   const mockVal = (str, repeat = 1) => ({
     value: str.repeat(repeat),
   });
 
-  const getRecommendations = async (text) => {
-    console.log("inside-------",text)
+  const getRecommendations = async (text,type) => {
+    console.log("inside-------",type)
       if(text){
         try{
          let response =  await BaseApi.getRecommendations({searchBy:type,search:text})
@@ -159,7 +159,7 @@ export default function Header() {
           pathname!="/" &&
           <div style={{display:"flex", alignItems:'center',justifyContent:"center", height:"60px"}}>
             <CustomDropdown
-                selectedValue={type}
+                selectedValue={searchParams.get('searchBy')||type}
                 onSelect={setType}
                 placeholder="Select"
                 height={50}
@@ -178,6 +178,9 @@ export default function Header() {
                   defaultValue={searchParams.get('search')|| ''}
                   onSelect={function(value){
                     if(value){
+                      if(searchCheck !== ''){
+                        setSearchCheck('')
+                      }
                       let selectedOption = recommendation.filter((recomend)=>recomend.name == value)
                       router.push(`/professor/${selectedOption[0].id}`)
                     }
@@ -194,7 +197,8 @@ export default function Header() {
                       if(searchCheck !== ''){
                         setSearchCheck('')
                       }
-                    debouncedGetRecommendations(text)
+                      console.log("type: ",type)
+                    debouncedGetRecommendations(text,type)
 
                      }
                    }

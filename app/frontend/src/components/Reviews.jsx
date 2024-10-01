@@ -5,10 +5,17 @@ import {getToken} from '../services/JwtService';
 import { Popover } from "antd";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import PopUp from '../components/PopUp'
 
 export default function Reviews({reviews,professorId,updateRatings}) {
   let token = getToken();
   let router = useRouter();
+  const [popup, setPopup] = useState({
+    show: false,
+    type: '',
+    message: '',
+    timeout: 0,
+  });
   const[showModel,setShowModel] = useState({show:false,id:0,type:""});
 
   const content = (
@@ -28,7 +35,7 @@ export default function Reviews({reviews,professorId,updateRatings}) {
     </div>
   );
   const convertDate = (date)=>{
-    // return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric',}).format(new Date(date))
+    return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric',}).format(new Date(date))
   }
   const updateReactRating = async (check,review)=>{
     if (token) {
@@ -91,6 +98,12 @@ export default function Reviews({reviews,professorId,updateRatings}) {
     console.log("----inside-----")
     navigator.clipboard.writeText(`${window.location.origin}/professor/review/${id}`).then(
       () => {
+        setPopup({
+          show: true,
+          type: 'success',
+          message: 'Link Copied to Clipboard',
+          timeout: 3000,
+        });
         console.log('Copied!');
       },
       (err) => {
@@ -101,6 +114,8 @@ export default function Reviews({reviews,professorId,updateRatings}) {
 
 
   return<>
+  <PopUp props={popup}/>
+
     {reviews?.map((review,index) => (
       <div key={'review'+index} className="flex mb-20">
         <div className="flex column items-center reviews">

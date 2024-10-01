@@ -8,6 +8,8 @@ import PopUp from '../PopUp';
 import { getToken, getUserInfo ,setUserInfo} from '../../services/JwtService';
 import aws from 'aws-sdk'
 import { useRouter } from 'next/navigation';
+import { AuthApi } from '../../app/(auth)/AuthApi';
+import { MdArrowDropDown } from "react-icons/md";
 
 export default function Profile({userInfo,setUserProfileInfo}) {
   let token = getToken();
@@ -33,6 +35,13 @@ export default function Profile({userInfo,setUserProfileInfo}) {
       .required('Required'),
   });
   const [preview, setPreview] = useState(userInfo.image_url);
+
+  const [loading,setLoading] = useState(false);
+  const [institute,setInstitute] = useState([]);
+  const [selectedInstitute,setSelectedInstitute] = useState({});
+  const [DropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
   '/student.png'
   // const [image, setImage] = useState(userInfo.image_url?userInfo.image_url:"/user/userImage.png");
   const [image, setImage] = useState(userInfo.image_url?userInfo.image_url:'/student.png');
@@ -45,39 +54,13 @@ export default function Profile({userInfo,setUserProfileInfo}) {
   const fileInputRef = useRef(null);
   const handleSubmit = async (values) => {
     try{
-      // const formData = new FormData();
-      // formData.append('image', image);
-      // formData.append('first_name', values.firstName);
-      // formData.append('last_name', values.lastName);
-      // formData.append('email', values.email);
-      // formData.append('institute_name', values.university);
-      // formData.append('id', userInfo.id);
       setSaveProfileLoader(true)
       await BaseApi.updateProfile({first_name:values.firstName,last_name:values.lastName,email:values.email,institute_name:values.university,image_url:image}
-      //   , {
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //   },
-      // }
       ).then(() => {
-  //       let userInfoCookie = getCookie('user-info');
-  // if (userInfoCookie) {
-  //   let user = JSON.parse(decodeURIComponent(userInfoCookie));
-  //   user.image_url = image;
-  //   console.log("institute: ",values.university)
-  //   user.institute=values.university;
-  //   const updatedUserInfo = JSON.stringify(user);
-  //   setCookie('user-info', encodeURIComponent(updatedUserInfo), 30);
-  //   userInfoCookie = getCookie('user-info');
-  //   user = JSON.parse(decodeURIComponent(userInfoCookie));
   setUserProfileInfo({first_name:values.firstName,last_name:values.lastName,email:values.email,institute:{name:values.university},image_url:image})
   setUserInfo(JSON.stringify({first_name:values.firstName,last_name:values.lastName,email:values.email,institute:{name:values.university},image_url:image}))
   setSaveProfileLoader(false)
   setPopup({show:true,type:'success',message:'Saved Successfully',timeout:3000});
-  // } else {
-  //   console.log('User info cookie not found.');
-  // }
-  //       setPopup({ show: true, type: 'success', message: 'Profile Updated Successfully', timeout: 3000 });
       });
     }catch (e){
       setSaveProfileLoader(false)
@@ -112,31 +95,9 @@ export default function Profile({userInfo,setUserProfileInfo}) {
 
   };
 
-  // function getCookie(name) {
-  //   const value = `; ${document.cookie}`;
-  //   const parts = value.split(`; ${name}=`);
-  //   if (parts.length === 2) return parts.pop().split(';').shift();
-  // }
-
-  // function setCookie(name, value, days) {
-  //   let expires = "";
-  //   if (days) {
-  //     const date = new Date();
-  //     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-  //     expires = `; expires=${date.toUTCString()}`;
-  //   }
-  //   document.cookie = `${name}=${value || ""}${expires}; path=/`;
-  // }
     const handleImageUpload = async (event) => {
       setImageLoader(true)
       const file = event.target.files[0];
-      // setFile(fileuploaded)
-      // console.log("file: ",file)
-      // if (file) {
-      //    const src = await convertFileToSrc(file);
-      //    console.log("file src : ",src);
-      //    setImage(src)
-      // }
       const s3 =  new AWS.S3({
         accessKeyId:"AKIA6ODU2336OH4TKAZM",
         secretAccessKey:"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",
@@ -156,66 +117,41 @@ export default function Profile({userInfo,setUserProfileInfo}) {
     setImage(data.Location)
     setImageLoader(false)
   }
-    // try{
-    //   await BaseApi.updateProfilePic({image_url:image}
-    //   ).then(() => {
-    //     setPopup({ show: true, type: 'success', message: 'Profile Pic Updated Successfully', timeout: 3000 });
-    //   });
-    // }catch (e){
-    //   setPopup({show:true,type:'error',message:error.message,timeout:3000});
-    // }
 
+  const getAllInstitute = async () =>{
+    try{
+      setLoading(true);
+      let institute = await AuthApi.getInstitute();
+      console.log("institute ",institute);
+      let instituteOption = institute?.data?.institute?.map((univerty,index)=>{
+       return {
+          value:index,
+          label:univerty.name,
+        }
+      })
 
-
-    // async function convertFileToSrc(file) {
-    //   if (!file || !file.type.match('image/*')) {
-    //     throw new Error('Please select a valid image file.');
-    //   }
-
-    //   const reader = new FileReader();
-
-    //   return new Promise((resolve, reject) => {
-    //     reader.onload = () => resolve(reader.result);
-    //     reader.onerror = () => reject('Error reading file.');  
-
-    //     reader.readAsDataURL(file);
-    //   });
-    // }
+      console.log("institute option: ",instituteOption);
+      setInstitute(instituteOption)
+      setLoading(false);
+    } catch (e){
+      setLoading(false);
+      console.log("error: ",e)
+      setPopup({show:true,type:'error',message:error.message,timeout:3000});
+    }
+  }
+  console.log("institute ---- : ",institute)
 
     useEffect(()=>{
       if(!token){
         router.push('/')
       }
+      getAllInstitute();
     },[])
 
 
   return<>
     <div className='mt-30'>
-      {/* <p className="text-weight-600 text-24 text-1F1F1F mb-32  ">Account settings</p> */}
       <div className="flex mb-60 professor-profile-mobile-center">
-        {/* <div className="border-color-D9D9D9 border-radius-8 pa-40 mr-80 img-input-field-width-mr-0 full-width-mobile-responsive" style={{ width: '368px',height:'450px' }}>
-          {
-            imageLoader
-            ?
-            <div style={{width:'100%',height:'100%',display: 'flex',alignItems: 'center',justifyContent: 'center'}} height={380} width={380}>
-            <span className="loader"></span>
-            </div>
-            :
-            <div>
-            <div className="mb-20 position-relative">
-            <Image style={{width:'100%'}} height={280} width={280} src={image} alt={'userInfo?.image_url'} />
-            <input  ref={fileInputRef} style={{visibility:'hidden', left:'0',bottom:'0',width:'0',height:'0'}} className="position-absolute" type="file" accept="image/*" onChange={handleImageUpload} />
-            <div onClick={()=>{fileInputRef.current.click();}} className="position-absolute flex items-center justify-center cursor-pointer " style={{bottom:'0',left:'0',width:'100%',height:'48px',background:'rgba(0, 0, 0, 0.5)'}}>
-              <Image width={24} height={24} src="/uploadIcon.svg" alt="uploadIcon"/>
-              <p className="ml-12 text-ffffff text-14 text-weight-500" >Upload Photo</p>
-            </div>
-          </div>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          <p className="text-center text-weight-400 text-14 text-434343 px-20">Image size should be under 1MB and image
-            ration needs to be 1:1</p>
-          </div>
-          }
-        </div> */}
         <div className="mobile-mt-28 flex-1">
       <p className="text-weight-600 text-24 text-1F1F1F mb-32">Account settings</p>
           <Formik
@@ -223,7 +159,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
             validationSchema={validationUserInfo}
             onSubmit={handleSubmit}
           >
-            {({ errors, touched }) => (
+            {({ errors, touched, setFieldValue }) => (
               <Form className="flex column justify-between ">
                 <div  className="row full-width ">
                   <div className="mb-20 col-12 mobile-padding-right-0 ">
@@ -259,13 +195,68 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                     </Field>
                     <ErrorMessage className="error-message" name="email" component="div" />
                   </div>
-                  <div className="col-12 mb-32 mobile-padding-right-0 ">
+                  <div className="col-12 mb-32 mobile-padding-right-0 " ref={dropdownRef}>
                     <label className="text-141414 text-weight-400 text-14 mb-2">University</label>
-                    <Field style={{ height: '46px' }} type="text" name="university"
+                    {/* <Field style={{ height: '46px' }} type="text" name="university"
                            className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-8"
                            placeholder="Enter University"
                     >
-                    </Field>
+                    </Field> */}
+                    <div
+                      onClick={() => setDropdownOpen(!DropdownOpen)
+                      }
+                      style={{
+                        height: '46px',
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                      className={`px-20 border-radius-4 bg-transparent text-394560 border-color-D9D9D9 full-width-responsive ${institute.length>0 ? 'cursor-pointer' : ''}`}
+                    >
+                      <div style={{display:"flex", justifyContent:"space-between",width: "100%"}} className="text-14">
+                          <div className="text-14">
+                            {institute.find((option) => option === selectedInstitute)?.label||
+                              'Select University'}
+                          </div>
+                          <div style={{display:"flex",justifyContent:"center", alignItems:"center"}} >
+                            <MdArrowDropDown  size={20} />
+                          </div>
+                      </div>
+                    </div>
+                    {DropdownOpen && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      marginTop: '4px',
+                      width: '45%',
+                      borderRadius: '12px',
+                      border: '1px solid #D9D9D9',
+                      backgroundColor: '#ffffff',
+                      zIndex: 10,
+                      maxHeight: '200px',
+                      overflow:"auto",
+                    }}
+                    className="px-10 text-14 border-color-D9D9D9"
+                  >
+                    {institute.map((option) => (
+                      <div
+                        key={option.value}
+                        onClick={() => {
+                          setFieldValue('university', option.label);
+                          setSelectedInstitute(option);
+                          setDropdownOpen(false);
+                        }}
+                        style={{
+                          cursor: 'pointer',
+                        }}
+                        className="px-10 py-12"
+                      >
+                        {option.label}
+                      </div>
+                    ))}
+                  </div>
+                )}
                     <ErrorMessage className="error-message" name="university" component="div" />
                   </div>
                     </div>

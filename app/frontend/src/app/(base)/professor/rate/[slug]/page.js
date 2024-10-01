@@ -239,12 +239,20 @@ export default function page(string) {
 
 
   const grade = [
-    { value: '0', label: 'A' },
-    { value: '1', label: 'B' },
-    { value: '2', label: 'C' },
-    { value: '3', label: 'D' },
-    { value: '4', label: 'E' },
-    { value: '5', label: 'F' },
+    
+    { value: '0', label: 'A+' },
+    { value: '1', label: 'A' },
+    { value: '2', label: 'A-' },
+    { value: '3', label: 'B+' },
+    { value: '4', label: 'B' },
+    { value: '5', label: 'B-' },
+    { value: '6', label: 'C+' },
+    { value: '7', label: 'C' },
+    { value: '8', label: 'C-' },
+    { value: '9', label: 'D+' },
+    { value: '10', label: 'D' },
+    { value: '11', label: 'D-' },
+    { value: '12', label: 'F' },
   ];
 
   const maxChars = 500;
@@ -376,11 +384,11 @@ export default function page(string) {
         <section>
           <div className="px-120 py-60 tablet-px-90 tablet-px-50 mobile-px-20">
             <p className="text-14 text-weight-400 text-8C8C8C mb-40">
-              Professors / {professor?.first_name} {professor?.last_name}  /{' '}
+              Professors / <span className='cursor-pointer ' onClick={()=>{router.push(`/professor/${slug}`)}}>{professor?.first_name} {professor?.last_name} </span> /{' '}
               <span className="text-1F1F1F">Write a review</span>
             </p>
             <h1 className="text-1F1F1F text-weight-600 text-24 mb-8">
-              Rate {professor?.first_name} {professor?.last_name}
+              Rate <span className='cursor-pointer ' onClick={()=>{router.push(`/professor/${slug}`)}}> {professor?.first_name} {professor?.last_name}</span>
             </h1>
             <p className="text-14 text-weight-400 text-434343 mb-32">
               Professor in the{' '}
@@ -430,6 +438,7 @@ export default function page(string) {
                   backgroundColor: '#ffffff',
                   zIndex: 10,
                   maxHeight: '200px',
+                  overflow:'auto'
                 }}
                 className="px-10 border-color-D9D9D9"
               >
@@ -730,7 +739,8 @@ export default function page(string) {
                         border: '1px solid #D9D9D9',
                         backgroundColor: '#ffffff',
                         zIndex: 10,
-                        maxHeight: '300px',
+                        maxHeight: '250px',
+                        overflow:'auto'
                       }}
                       className="px-10 border-color-D9D9D9"
                     >

@@ -21,13 +21,15 @@ export default function Page() {
   const [buttonText, setButtonText] = useState('Sign Up now');
 
   const debouncedGetRecommendations = useCallback(
-    debounce(async (text) => {
-      await getRecommendations(text);
-    }, 1000), []
+    debounce(async (text,type) => {
+      await getRecommendations(text,type);
+    }, 1000), [] 
   );
 
-  const getRecommendations = async (text) => {
-      console.log("----inside-----")
+  console.log("type: ",type)
+  
+  const getRecommendations = async (text,type) => {
+      console.log("----inside-----",type)
       if(text){
         try{
          let response =  await BaseApi.getRecommendations({searchBy:type,search:text})
@@ -46,7 +48,7 @@ export default function Page() {
     label: (
       <div style={{display:"flex"}}>
         <div className='circle-recomendation'>
-          {ratings}
+          {ratings.toFixed(1)}
         </div>
 
       <div style={{ display: 'flex', flexDirection: 'column',margin:" 3px 10px 2px 20px"  }}>
@@ -130,7 +132,8 @@ export default function Page() {
                       setSearchCheck('')
                     }
                     // getRecommendations(event.target.value)
-                    debouncedGetRecommendations(event.target.value)
+                    console.log("inside----- type: ",type)
+                    debouncedGetRecommendations(event.target.value,type)
                     // debouncedGetRecommendations(getRecommendations(event.target.value),2000)
                     // setTimeout(()=>getRecommendations(event.target.value),2000);
                     }} className="px-20 search-input-field" placeholder={type === 'name'?'Search professor with name':'Search for professors by university.'}

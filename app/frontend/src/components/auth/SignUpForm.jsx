@@ -179,8 +179,8 @@ export default function SignUpForm(props) {
               />
               <ErrorMessage className="error-message" name="lastName" component="div" />
             </div>
-            <div className="col-md-6 col-12 pl-15 mb-32">
-              <label className="text-141414 text-weight-400 text-14 mb-2">School</label>
+            <div className="col-md-6 col-12 pl-15 mb-32" ref={dropdownRef}>
+              <label className="text-141414 text-weight-400 text-14 mb-2">University</label>
                 <div
                   onClick={() => setDropdownOpen(!DropdownOpen)
                   }
@@ -191,12 +191,17 @@ export default function SignUpForm(props) {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                   }}
-                  className="px-20 border-radius-4 bg-transparent text-394560 border-color-D9D9D9 full-width-responsive"
+                  className={`px-20 border-radius-4 bg-transparent text-394560 border-color-D9D9D9 full-width-responsive ${institute.length>0 ? 'cursor-pointer' : ''}`}
                 >
-                  <p className="text-14">
-                    {institute.find((option) => option === selectedInstitute)?.label||
-                      'Select School'}
-                  </p>
+                  <div style={{display:"flex", justifyContent:"space-between",width: "250px"}} className="text-14">
+                      <div className="text-14">
+                        {institute.find((option) => option === selectedInstitute)?.label||
+                          'Select University'}
+                      </div>
+                      <div style={{display:"flex",justifyContent:"center", alignItems:"center"}} >
+                        <MdArrowDropDown  size={20} />
+                      </div>
+                  </div>
                 </div>
                 {DropdownOpen && (
               <div
@@ -233,14 +238,9 @@ export default function SignUpForm(props) {
             )}
               <ErrorMessage name="school" component="div" />
             </div>
-            <div className="col-md-6 col-12 pl-15 mb-32">
+            <div className="col-md-6 col-12 pl-15 mb-32" ref={departmentdropdownRef} >
               <label className="text-141414 text-weight-400 text-14 mb-2">Field of study</label>
-              {/* <Field type="text" name="field"
-                     style={{ height: '46px' }}
-                     className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-4"
-              /> */}
-              {/* <label className="text-141414 text-weight-400 text-14 mb-2">School</label> */}
-                <div
+               <div
                   onClick={() => {
                     // setDepartmentDropdownOpen(!departmentDropdownOpen)
                     if(department.length<0){
@@ -260,12 +260,13 @@ export default function SignUpForm(props) {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                   }}
-                  className="px-20 border-radius-4 bg-transparent text-394560 border-color-D9D9D9 full-width-responsive"
+                  className={`px-20 border-radius-4 bg-transparent text-394560 border-color-D9D9D9 full-width-responsive  ${department.length>0 ? 'cursor-pointer' : ''}`}
                 >
-                  <div style={{display:"flex"}} className="text-14">
-                   {department?.find((option) => option === selectedDepartment)?.label||
+                  <div style={{display:"flex", justifyContent:"space-between",width: "250px"}} className="text-14">
+                     <div> {department?.find((option) => option === selectedDepartment)?.label||
                       'Select Field of study'}
-                      <div style={{display:"flex",justifyContent:"center", alignItems:"center", marginLeft:"70px"}} >
+                      </div>
+                      <div style={{display:"flex",justifyContent:"center", alignItems:"center"}} >
                       {
                         departmentLoader ? <span className='fieldloader' ></span> : <MdArrowDropDown  size={20} />
                       }
@@ -305,7 +306,7 @@ export default function SignUpForm(props) {
                 ))}
               </div>
             )}
-            { checkInstituteSelected && <div className='text-warning text-12' style={{height:'0'}}>First, select a school.</div>}
+            { checkInstituteSelected && <div className='text-warning text-12' style={{height:'0'}}>First, select a University.</div>}
               <ErrorMessage name="field" component="div" />
               {/* <ErrorMessage name="field" component="div" /> */}
             </div>
