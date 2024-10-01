@@ -161,6 +161,9 @@ p {
 .mt-30 {
   margin-top: 30px;
 }
+.mt-40 {
+  margin-top: 40px;
+}
 .ml-30 {
   margin-left: 30px;
 }
@@ -344,6 +347,9 @@ p {
 }
 .bg-F4F4F4{
   background-color: #f4f4f4;
+}
+.bg-red {
+  background-color: red;
 }
 .bg-D6C5FD {
   background-color: #D6C5FD;
