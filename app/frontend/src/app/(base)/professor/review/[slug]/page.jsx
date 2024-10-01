@@ -42,6 +42,7 @@ export default function page(){
         })
     }catch(e){
       console.log(e)
+      router.push("/")
       setLoading(false)
     }
   }
