@@ -7,7 +7,8 @@ import { BaseApi } from '../app/(base)/BaseApi';
 import CustomDropdown from './user/CustomDropdown.';
 
 export default function ProfessorsListFilter(){
-  const [loading,setLoading] = useState(false);
+  const [loading,setLoading] = useState(true);
+  const [showmoreLoader,setShowMoreLoader] = useState(false);
   const [professors, setProfessors] = useState([]);
   const searchParams = useSearchParams();
   const [type, setType] = useState('name');
@@ -45,9 +46,10 @@ export default function ProfessorsListFilter(){
     console.log(updatedProfessors);
     setProfessors(updatedProfessors);
   }
-  const getProfessors = async (searchBy=type,text=search,concatCheck = false, page=1)=>{
+  const getProfessors = async (searchBy=type,text=search,concatCheck = false, page=1,showMore=false)=>{
+    // if(text){
       try{
-        setLoading(true)
+       showMore? setShowMoreLoader(true): setLoading(true)
         await BaseApi.getProfessors({sortField:sort,sortOrder:sortOrder?'ASC':'DESC',searchBy:searchBy,search:text,page:page})
           .then((response)=>{
             if(concatCheck){
@@ -58,21 +60,31 @@ export default function ProfessorsListFilter(){
               setProfessors(response.data)
             }
             setProfessorData(response)
-        setLoading(false)
+            showMore? setShowMoreLoader(false):  setLoading(false)
           })
       }catch(e){
         setProfessors([])
         setProfessorData([])
-        setLoading(false)
+        showMore? setShowMoreLoader(false):  setLoading(false)
       }
+    // } else {
+    //   showMore? setShowMoreLoader(false):  setLoading(false)
+    // }
   }
   console.log("sortOrder: ",sortOrder)
   useEffect(() => {
     setSearch(searchParams.get('search')|| '')
-    setType(searchParams.get('searchBy') || 'name')
+    setType(searchParams.get('searchBy') || '0')
     getProfessors(searchParams.get('searchBy'),searchParams.get('search'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ searchParams.get('search')]);
+
+  useEffect(()=>{
+    if(search==""&& !searchParams.get('search')){
+      setProfessors([])
+      setProfessorData([])
+    }
+  },[search,searchParams.get('search')])
   useEffect(() => {
     // getProfessors(type,search,false,1)
     if (isFirstRender.current) {
@@ -82,17 +94,24 @@ export default function ProfessorsListFilter(){
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sortOrder]);
+
   return <>
-    <div className="mb-60">
-      <div className="flex flex-nowrap professor-mobile-flex-col ">
+    {/* <div className="mb-60"> */}
+      {/* <div className="flex flex-nowrap professor-mobile-flex-col ">
         <div className="flex items-center ">
        <CustomDropdown  selectedValue={type}
                         onSelect={setType}
                         placeholder="Select"/>
 
-        <input value={search} onChange={(event)=>{setSearch(event.target.value)}} style={{ height: '72px', width: '420px', borderTopRightRadius: '12px', borderBottomRightRadius: '12px' }}
+        <input value={search} onChange={(event)=>{ setSearch(event.target.value)}} style={{ height: '72px', width: '420px', borderTopRightRadius: '12px', borderBottomRightRadius: '12px' }}
                className="px-20 border-color-D9D9D9 mobile-px-10 search-input-field border-right search-input-full-width"
-               placeholder={type === 'name' ? 'Search professor with name' : 'Search for professors by university.'} />
+               placeholder={type === 'name' ? 'Search professor with name' : 'Search for professors by university.'}
+               onKeyDown={(event)=>{
+                if (event.key === 'Enter') {
+                  getProfessors(type,search,false,1)
+                }
+              }}
+               />
         </div>
         <div
           onClick={()=>{getProfessors(type,search,false,1)}}
@@ -100,8 +119,8 @@ export default function ProfessorsListFilter(){
           className="bg-FFA337 flex items-center justify-center border-radius-12 ml-30 cursor-pointer professer-list-ml-0 height-search-52">
           <Image height={24} width={24} src="/searchIcon.svg" alt="searchIcon" />
         </div>
-      </div>
-    </div>
+      </div> */}
+    {/* </div> */}
     <div className="flex justify-between mb-32 professor-mobile-flex-col">
       <div className="flex items-center">
         <p className="text-24 text-1F1F1F text-weight-600">Search Results</p>
@@ -174,7 +193,8 @@ export default function ProfessorsListFilter(){
         <div>
           <ProfessorsList professors={professors} updateProfessors={updateProfessors} />
           {Number(professorData.page) < professorData.lastPage &&(<div className="flex items-center justify-center mt-4">
-            <p className="text-weight-600 text-763FF9 text-24 cursor-pointer" onClick={()=>{getProfessors(searchParams.get('searchBy'),searchParams.get('search'),true,Number(professorData.page)+1)}}>See more</p>
+            <div className="text-weight-600 text-763FF9 text-24 cursor-pointer" onClick={()=>{getProfessors(type||searchParams.get('searchBy'),search||searchParams.get('search'),true,Number(professorData.page)+1,true)}}>
+              { showmoreLoader ?<div className="seeMoreLoader"></div> :  <div>See more</div>} </div>
           </div>)}
         </div>
 

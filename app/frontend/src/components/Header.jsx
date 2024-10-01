@@ -2,16 +2,94 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { getToken, getUserInfo } from '../services/JwtService';
 import { AuthApi } from '../app/(auth)/AuthApi';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation'
+import { useEffect, useState} from 'react';
+import CustomDropdown from '../components/user/CustomDropdown.';
+import { AutoComplete } from 'antd';
+import { BaseApi } from  '../app/(base)/BaseApi';
+import { debounce } from 'lodash';
+import { useCallback } from 'react';
+import { DownOutlined } from "@ant-design/icons";
+import { Input } from 'antd';
+import { LuSearch } from "react-icons/lu";
+
+
+
 
 export default function Header() {
+  const searchParams = useSearchParams();
+  const pathname = usePathname()
   const router = useRouter();
   const [token, setToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [type, setType] = useState('name');
+  const [search, setSearch] = useState(searchParams.get('search')|| '');
+  const [searchCheck, setSearchCheck] = useState('');
+  const [recommendation,setRecommendation]=useState([])
+  const getPanelValue = (searchText) =>
+  !searchText ? [] : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
+
+  const debouncedGetRecommendations = useCallback(
+    debounce(async (text) => {
+      await getRecommendations(text);
+    }, 500), [] 
+  );
+
+  const mockVal = (str, repeat = 1) => ({
+    value: str.repeat(repeat),
+  });
+
+  const getRecommendations = async (text) => {
+    console.log("inside-------",text)
+      if(text){
+        try{
+         let response =  await BaseApi.getRecommendations({searchBy:type,search:text})
+             console.log("response on recommendation: ",response)
+             setRecommendation(response.data)
+        }catch(e){
+          console.log("error on recommendation: ",e)
+          setRecommendation([])
+        }
+      } 
+  }
+
+  console.log("search:",search)
+
+  const renderItem = (name, department, institute,id) => ({
+    value: name,
+    label: (
+      <div>
+        {name} - {institute} - {department}
+      </div>
+    ),
+  });
+  
+  const options = recommendation
+    ? recommendation.map((recommend) =>
+        renderItem(recommend.name, recommend.department_name, recommend.institute_name,recommend.id)
+      )
+    : [];
+
+
+  const searchProfessor= (clear=false)=>{
+
+    if(search === ''){
+        setSearchCheck('Search field can not be empty')
+    } else{
+      setSearchCheck('')
+      // setSearch('')
+      if(clear){
+        router.push('/professors-list');
+      }else{
+      router.push('/professors-list?searchBy='+type+'&search='+search);
+    }
+    }
+  }
 
   useEffect(() => {
     const token = getToken();
@@ -21,6 +99,14 @@ export default function Header() {
       setUserInfo(JSON.parse(userInfoData));
     }
   }, []);
+
+  useEffect(()=>{
+    console.log("Pathname-----",pathname)
+    if(pathname.includes("search=")){
+      console.log("search---------",pathname.split("search=").index[1])
+    }
+
+  },[pathname])
 
   const logout = () => {
     if (userInfo && userInfo.email) {
@@ -68,7 +154,66 @@ export default function Header() {
         <Link href="/">
           <Image height={35} width={70} src="/KYP.png" alt="KYPIcon" />
         </Link>
-        <div>
+        <div style={{display:"flex"}}>
+        {
+          pathname!="/" &&
+          <div style={{display:"flex", alignItems:'center',justifyContent:"center", height:"60px"}}>
+            <CustomDropdown
+                selectedValue={type}
+                onSelect={setType}
+                placeholder="Select"
+                height={50}
+                borderRightNull={true}
+              />
+              {/* <div style={{borderTop:"1px solid #D9D9D9", borderBottom:"1px solid #D9D9D9",display:"flex",alignItems:"center",width:"30px",height:"50px", paddingLeft:"10px"}}>
+              <LuSearch size={20} />
+              </div> */}
+              <div style={{display:"flex", flexDirection:"column",position: "relative", minHeight: "50px"}}>
+
+              {/* <span style={{position: "absolute", top: "30px"}} className="text-12">search</span> */}
+
+                <AutoComplete
+                  autoFocus={true}
+                  popupClassName=""
+                  defaultValue={searchParams.get('search')|| ''}
+                  onSelect={function(value){
+                    if(value){
+                      let selectedOption = recommendation.filter((recomend)=>recomend.name == value)
+                      router.push(`/professor/${selectedOption[0].id}`)
+                    }
+                  }}
+                  style={{
+                    width: "446px",
+                    height:"50px",
+                  }}
+                  className={searchCheck !== '' &&  "emptysearch" } 
+                  options={options}
+                    onSearch={(text) => {
+                      getPanelValue(text); 
+                      setSearch(text);
+                      if(searchCheck !== ''){
+                        setSearchCheck('')
+                      }
+                    debouncedGetRecommendations(text)
+
+                     }
+                   }
+                   placeholder={type === 'name'?'Search professor with name':'Search for professors by university.'}
+                    onKeyDown={(event)=>{
+                      console.log("envent occurred")
+                      if (event.key === 'Enter') {
+                        searchProfessor()
+                      }
+                    }}
+                    allowClear={true}
+                    onClear={()=>searchProfessor(true)}
+                >
+              </AutoComplete >
+              {/* {searchCheck !== '' &&(<span style={{color:"brown", position: "absolute", top: "48px"}} className="text-12">{searchCheck}</span>)} */}
+            </div>
+        </div>
+        }
+        <div style={{marginLeft:"30px"}}>
           {token && userInfo ? (
             <div className="profile-btn">
               <div className="bg-763FF9 border-radius-100 flex items-center justify-center cursor-pointer" onClick={toggleSidebar} style={{ width: '47px', height: '47px' }}>
@@ -90,7 +235,6 @@ export default function Header() {
                         </div>
                       </div>
                       <div className="separator-x my-12"></div>
-
                       <div className="px-12">
                         <Link href={`/user/${userInfo.id}?active=0`} className="text-decoration-none" onClick={() => {closeDropDown('.profile-div');}}>
                           <div className="flex items-center mb-16 cursor-pointer">
@@ -220,7 +364,8 @@ export default function Header() {
         </div>)
       }
 
-      {sidebarOpen && <div className="overlay" onClick={closeSidebar}></div>}
+      {/* {sidebarOpen && <div className="overlay" onClick={closeSidebar}></div>} */}
+      </div>
     </nav>
   );
 }

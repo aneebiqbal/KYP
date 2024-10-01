@@ -16,6 +16,24 @@ export const AuthApi = {
       throw e ;
     }
   },
+  getInstitute : async () => {
+    try {
+       let response = await AuthApiService.getInstitute()
+       return response;
+    } catch (e) {
+      console.log('error', e);
+      throw e ;
+    }
+  },
+  getDepartment : async (data) => {
+    try {
+       let response = await AuthApiService.getDepartment(data)
+       return response;
+    } catch (e) {
+      console.log('error', e);
+      throw e ;
+    }
+  },
   signup: async(signUpData) => {
     try {
       return await AuthApiService.signup(signUpData)
@@ -36,15 +54,15 @@ export const AuthApi = {
       throw e.response.data;
     }
   },
-  resetPassword: async(resetPasswordKey,resetPasswordData) => {
+  resetPassword: async(data) => {
     try {
-      return await AuthApiService.resetPassword(resetPasswordKey,resetPasswordData);
+      return await AuthApiService.resetPassword(data);
     } catch (e) {
       console.log('error', e);
-      throw e.response.data;
+      throw e.response.data;  
     }
   },
-  logout: async() => {
+  logout: async() => { 
     try {
       destroyToken();
       destroyUserInfo();

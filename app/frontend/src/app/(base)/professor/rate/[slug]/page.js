@@ -18,9 +18,8 @@ import OpenAI from 'openai';
 
 
 export default function page(string) {
-
   const client = new OpenAI({
-    apiKey: "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", // This is the default and can be omitted
+    apiKey: process.env.REACT_APP_GPT_SECRET_KEY || "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",
     dangerouslyAllowBrowser: true
   });
   async function checkAusiveWord(text) {
@@ -50,13 +49,21 @@ export default function page(string) {
         return false;
       }
     } catch(e){
-      console.log("error: ",e)
-      return false;
+      console.log("error----------: ",e)
+      if (e.status==429) {
+        setPopup({
+          show: true,
+          type: 'error',
+          message: 'Something went wrong. Please try later.',
+          timeout: 5000,
+        });
+      }
+      return true;
     }
-
   }
   let token = getToken();
   const router = useRouter();
+  const [warning,setWarning]=useState("");
   const [popup, setPopup] = useState({
     show: false,
     type: '',
@@ -65,32 +72,9 @@ export default function page(string) {
   });
   const {slug} = useParams();
   const userInfo = useState(JSON.parse(getUserInfo()));
-  console.log("userInfo: ",userInfo[0].id);
+  // console.log("userInfo: ",userInfo[0].id);
   const filter = new Filter();
   filter.addWords(...abusiveWords)
-  // const validationSchema = yup.object().shape({
-  //   course: yup.string().required('Course is required'),
-  //   courseDifficulty: yup.string().required('Course Difficulty is required'),
-  //   clarity: yup.string().required('Clarity is required'),
-  //   collaboration: yup.string().required('Collaboration is required'),
-  //   knowledgeable: yup.string().required('Knowledgeable is required'),
-  //   helpful: yup.string().required('Helpful is required'),
-  //   textbookUse: yup.string().required('TextBook Use is required'),
-  //   examDifficulty: yup.string().required('Exam Difficulty is required'),
-  //   loveTeachingStyle: yup.string().required('Love Teaching Style is required'),
-  //   takeAgain: yup
-  //     .string()
-  //     .required('Would you take this professor again? is required'),
-  //   forCredit: yup
-  //     .string()
-  //     .required('Was this class taken for credit? is required'),
-  //   attendanceMandatory: yup
-  //     .string()
-  //     .required('Was attendance mandatory? is required'),
-  //   gradeReceived: yup.string().required('Grade Received is required'),
-  //   review: yup.string().required('Review is required'),
-  // });
-
   const validationSchema = Yup.object({
     ratings: Yup.array()
     .of(
@@ -105,11 +89,25 @@ export default function page(string) {
       })
     )
     .required('Ratings are required'),
+    difficulty: Yup.array()
+    .of(
+      Yup.object({
+        label: Yup.string(),
+        value: Yup.number()
+          .min(1, function (param) {
+            const index = param.path.split('[')[1].split(']')[0];
+            const label = difficulty[index].label || 'Rating';
+            return `${label} is required`;
+          })
+      })
+    )
+    .required('Ratings are required'),
       review: Yup.string()
     // .test('no-offensive-language', 'Please refrain from using offensive language.', (value) => {
     //   return !filter.isProfane(value); // Assuming `filter.isProfane` is a function that checks profanity
     // })
     .required('Review is required'),
+    overallRating:Yup.number().min(1,'Overall Rating is required'),
     selectedTags: Yup.array()
     .min(1, 'Please select at least one tag.')
     .max(3, 'You can select up to 3 tags only.'),
@@ -127,37 +125,6 @@ export default function page(string) {
     .required('Grade must be selected'),
   });
 
-
-  const filterOffensiveText = async (text) => {
-    console.log("inside----")
-    try{
-    //   const key ="4f6a6840127f4c4d9e1bade8bac21654";
-    //   const endpoint = "https://kyptextfilter.cognitiveservices.azure.com/";
-
-    //   console.log("endpoint : ",endpoint);
-    //   console.log("key: ",key);
-
-      // const credential = new AzureKeyCredential(key);
-      // const client = ContentSafetyClient(endpoint, credential);
-
-      // const analyzeTextOption = { text: text };
-      // const analyzeTextParameters = { body: analyzeTextOption };
-      // const result = await client.path("/text:analyze").post(analyzeTextParameters);
-      console.log("result: ",result)
-
-      if (isUnexpected(result)) {
-        console.log("result----------",result)
-        setPopup({
-          show: true,
-          type: 'warning',
-          message: 'Please refrain from using offensive language.',
-          timeout: 3000,
-        });
-    }
-    } catch (error){
-      console.log("error: ",error)
-    }
-  }
   const [isOnline, setIsOnline] = useState(false);
   const [course, setCourse] = useState('');
   const [submitLoader,setSubmitLoader] =useState(false);
@@ -165,7 +132,7 @@ export default function page(string) {
   const [selectedTags,setSelectedTags] = useState([])
   const [ratings, setRatings] = useState([
     {
-      label: 'Course Difficulty',
+      label: 'Love Teaching Style',
       value: 0,
     },
     {
@@ -173,33 +140,33 @@ export default function page(string) {
       value: 0,
     },
     {
-      label: 'Collaboration',
-      value: 0,
-    },
-    {
       label: 'Knowledgeable',
       value: 0,
     },
     {
-      label: 'Helpful',
+      label: 'Collaboration',
       value: 0,
     },
+  ]);
+
+  const [difficulty, setDifficulty] = useState([
     {
-      label: 'TextBook Use',
+      label: 'Course Difficulty',
       value: 0,
     },
     {
       label: 'Exam Difficulty',
       value: 0,
     },
-    {
-      label: 'Love Teaching Style',
-      value: 0,
-    },
   ]);
+
   const [questions, setQuestions] = useState([
     {
       label: 'Would you take this professor again?*',
+      value: 0,
+    },
+    {
+      label: 'TextBook Use',
       value: 0,
     },
     {
@@ -217,6 +184,7 @@ export default function page(string) {
   const [DropdownOpenGrade, setDropdownOpenGrade] = useState(false);
   const dropdownRef = useRef(null);
   const dropdownRefGrade = useRef(null);
+  const [overallRating,setOverallRating]=useState(0)
   const [options,setOption] = useState([]);
   const [Loading,setLoading]=useState(true);
   // const [tags,setTags]=useState([])
@@ -285,6 +253,7 @@ export default function page(string) {
     "Engaging",
     "Challenging",
     "detailed explanations",
+    "Tough Grader",
   ];
 
   const tagExists = (checkTag) =>{
@@ -333,17 +302,17 @@ export default function page(string) {
         studentId: studentId,
         professorId:professorID,
         courseId:course.id,
-        course_difficulty:ratings[0].value,
+        overallRating:overallRating,
+        course_difficulty:difficulty[0].value,
         clarity:ratings[1].value,
-        collaboration:ratings[2].value,
-        knowledgeable:ratings[3].value,
-        helpful:ratings[4].value,
-        textbook_use:ratings[5].value,
-        exam_difficulty:ratings[6].value,
-        love_teaching_style:ratings[7].value,
+        collaboration:ratings[3].value,
+        knowledgeable:ratings[2].value,
+        textbook_use:questions[1].value=="on"?true:false,
+        exam_difficulty:ratings[1].value,
+        love_teaching_style:ratings[0].value,
         take_again:questions[0].value=="on"?true:false,
-        mandatory_attendance:questions[2].value=="on"?true:false,
-        for_credit:questions[1].value=="on"?true:false,
+        mandatory_attendance:questions[3].value=="on"?true:false,
+        for_credit:questions[2].value=="on"?true:false,
         grade_received:gradeReceived?.label,
         comment:review,
         tags:selectedTags});
@@ -383,7 +352,7 @@ export default function page(string) {
      <div style={{display:"flex",alignItems:"center",justifyContent:"center",marginTop:"30%", margin:"30%"}}><span className="loader"></span> </div>
      :
      <Formik
-     initialValues={{ ratings, review: '', selectedTags: [], course: null, gradeReceived: null }}
+     initialValues={{ ratings, review: '', selectedTags: [], course: null, gradeReceived: null ,overallRating:0,difficulty}}
      validationSchema={validationSchema}
     //  validate={(values) => {
     //   // Pass the ratings as context
@@ -450,37 +419,6 @@ export default function page(string) {
                     alt="searchIcon"
                   />
                 </div>
-                {/* {DropdownOpen && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      marginTop:"4px",
-                      width: '200px',
-                      borderRadius: '12px',
-                      border: '1px solid #D9D9D9',
-                      backgroundColor: '#ffffff',
-                      zIndex: 10,
-                      maxHeight: '200px',
-                    }}
-                    className="px-10 border-color-D9D9D9"
-                  >
-                    {options.map((option) => (
-                      <div
-                        key={option.value}
-                        onClick={() => {
-                          setCourse(option);
-                          setDropdownOpen(false);
-                        }}
-                        style={{
-                          cursor: 'pointer',
-                        }}
-                        className="px-10 py-12"
-                      >
-                        {option.label}
-                      </div>
-                    ))}
-                  </div>
-                )} */}
                 {DropdownOpen && (
               <div
                 style={{
@@ -575,6 +513,46 @@ export default function page(string) {
               ))}
             </div> */}
             <div className="full-width border-color-D9D9D9 border-radius-8 pa-24 mb-24">
+            <div
+                key={'overall'}
+                style={{height:"50px"}}
+                className={`full-width flex justify-between items-center professor-mobile-results-selection mobile-mb-20`}
+              >
+                <p style={{height:"50px"}} className="text-weight-600 text-20 text-1F1F1F mobile-mb-8">
+                  Overall Rating
+                </p>
+                <div style={{height:"50px"}} >
+                <div className="flex items-center">
+                  {[1, 2, 3, 4, 5].map((number, count) => (
+                    <div
+                      onClick={() => {
+                        setFieldValue(`overallRating`, number);
+                        setOverallRating(number);
+                          // let tempRating = [...ratings];
+                          // tempRating[index].value = number;
+                          // setRatings(tempRating);
+                      }}
+                      key={'-overallrate-' + count}
+                      className={`flex items-center cursor-pointer justify-center border-radius-4  ${
+                        count < 4 ? 'mr-6' : ''
+                      }`}
+                      style={{ width: '42px', height: '42px' }}
+                    >
+                      <Image width={30} height={30} src={overallRating>=number ? '/Star.png' : '/unstar.png'} alt="" />
+                  {/* <StarRating rating={overallRating >= number?100:0} /> {number} */}
+                   </div>
+                  ))}
+                </div>
+                <ErrorMessage
+                  name={"overallRating"}
+                  component="div"
+                  className="error-message"
+                  style={{ color: 'red' }}
+                />
+                </div>
+              </div>
+            </div>
+            <div className="full-width border-color-D9D9D9 border-radius-8 pa-24 mb-24">
             {values.ratings.map((item, index) => (
               <div
                 key={'ratings-rates-' + index}
@@ -612,6 +590,53 @@ export default function page(string) {
                 </div>
                 <ErrorMessage
                   name={`ratings[${index}].value`}
+                  component="div"
+                  className="error-message"
+                  style={{ color: 'red' }}
+                />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="full-width border-color-D9D9D9 border-radius-8 pa-24 mb-24">
+            {values.difficulty.map((item, index) => (
+              <div
+                key={'difficulty-ratings-rates-' + index}
+                style={{height:"50px"}}
+                className={`full-width flex justify-between items-center professor-mobile-results-selection mobile-mb-20 ${
+                  index < values.difficulty.length - 1 ? 'mb-36' : ''
+                }`}
+              >
+                <p style={{height:"50px"}} className="text-weight-600 text-20 text-1F1F1F mobile-mb-8">
+                  {item.label}
+                </p>
+                <div style={{height:"50px"}} >
+                <div className="flex items-center">
+                  {[1, 2, 3, 4, 5].map((number, count) => (
+                    <div
+                      onClick={() => {
+                        setFieldValue(`difficulty[${index}].value`, number);
+                          let tempRating = [...difficulty];
+                          tempRating[index].value = number;
+                          setDifficulty(tempRating);
+                      }}
+                      key={index + '-rate-' + count}
+                      className={`flex items-center cursor-pointer justify-center border-radius-4 ${
+                        count < 4 ? 'mr-6' : ''
+                      } ${
+                        item.value >= number
+                          ? 'bg-763FF9 text-ffffff'
+                          : 'bg-F0F0F0 text-8C8C8C'
+                      }`}
+                      style={{ width: '42px', height: '42px' }}
+                    >
+                      {number}
+                    </div>
+                  ))}
+                </div>
+                <ErrorMessage
+                  name={`difficulty[${index}].value`}
                   component="div"
                   className="error-message"
                   style={{ color: 'red' }}
@@ -786,6 +811,9 @@ export default function page(string) {
                           newTags = newTags.filter((t) => t !== tag);
                         } else if (newTags.length < 3) {
                           newTags.push(tag);
+                        } else if (newTags.length >= 3) {
+                          setWarning("You may select up to three tags.")
+                          setTimeout(()=>setWarning(""),3000)
                         }
                         setFieldValue('selectedTags', newTags);
                         setSelectedTags(newTags)
@@ -797,6 +825,7 @@ export default function page(string) {
                 </div>
               </div>
             </div>
+            {warning != "" && <lead className='text-warning fst-italic'> {warning}</lead>}
             <ErrorMessage
               name="selectedTags"
               component="div"

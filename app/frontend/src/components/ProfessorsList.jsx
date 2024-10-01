@@ -31,8 +31,9 @@ export default function ProfessorsList({professors,updateProfessors}) {
   {professors.map((professor,index) => (
     <div key={'professors-list-'+index} className="full-width" >
       <div className="border-color-D9D9D9 full-width border-radius-12 py-20 px-28 flex mb-20">
-        <div>
-          <Image className="border-radius-100 professor-img cursor-pointer" height={74} width={74} src={professor?.image_url?professor?.image_url :'/student.png'} alt={professor.image_url} onClick={()=>getDetails(professor)} />
+        <div className={`cursor-pointer circle  circle${index%4}`}  onClick={()=>getDetails(professor)}>
+         {professor.name.split(" ")[0].charAt(0).toUpperCase()}{professor.name.split(" ")[1].charAt(0).toUpperCase()}
+          {/* <Image className="border-radius-100 professor-img cursor-pointer" height={74} width={74} src={professor?.image_url?professor?.image_url :'/student.png'} alt={professor.image_url} onClick={()=>getDetails(professor)} /> */}
         </div>
         <div className="flex justify-between professor-mobile-flex-col full-width ">
         <div className="px-20 flex-1">
@@ -60,7 +61,7 @@ export default function ProfessorsList({professors,updateProfessors}) {
         </div>
         <div className='larger-mobile-px-20'>
           <div className="flex professor-review-center" style={{height:'fit-content'}}>
-            <p className="text-36 text-FE9900 text-weight-800 professor-rating-24">{(professor.overall_rating).toFixed(2)}</p>
+            <p className="text-36 text-FE9900 text-weight-800 professor-rating-24">{(professor.overall_rating).toFixed(1)}</p>
             <p className="text-14 text-weight-600 text-1F1F1F mt-2 ml-12">{professor.total_ratings} <span
               className="line-break"><br /></span> Reviews</p>
           </div>

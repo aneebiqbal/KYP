@@ -191,9 +191,9 @@ export default function Profile({userInfo,setUserProfileInfo}) {
 
   return<>
     <div className='mt-30'>
-      <p className="text-weight-600 text-24 text-1F1F1F mb-32  ">Account settings</p>
+      {/* <p className="text-weight-600 text-24 text-1F1F1F mb-32  ">Account settings</p> */}
       <div className="flex mb-60 professor-profile-mobile-center">
-        <div className="border-color-D9D9D9 border-radius-8 pa-40 mr-80 img-input-field-width-mr-0 full-width-mobile-responsive" style={{ width: '368px',height:'450px' }}>
+        {/* <div className="border-color-D9D9D9 border-radius-8 pa-40 mr-80 img-input-field-width-mr-0 full-width-mobile-responsive" style={{ width: '368px',height:'450px' }}>
           {
             imageLoader
             ?
@@ -215,15 +215,16 @@ export default function Profile({userInfo,setUserProfileInfo}) {
             ration needs to be 1:1</p>
           </div>
           }
-        </div>
+        </div> */}
         <div className="mobile-mt-28 flex-1">
+      <p className="text-weight-600 text-24 text-1F1F1F mb-32">Account settings</p>
           <Formik
             initialValues={{ firstName:userInfo?.first_name, lastName: userInfo?.last_name, email: userInfo?.email,university:userInfo?.institute?.name }}
             validationSchema={validationUserInfo}
             onSubmit={handleSubmit}
           >
             {({ errors, touched }) => (
-              <Form className="flex column justify-between full-height">
+              <Form className="flex column justify-between ">
                 <div  className="row full-width ">
                   <div className=" mb-20 col-12 mobile-padding-right-0 ">
                     <label className="text-141414 text-weight-400 text-14 mb-2">Full Name</label>
@@ -299,20 +300,27 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                     </button>
                     :
                     <button
-                      style={{ height: '44px', width: '180px' }}
-                      className="px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 full-width-responsive"
-                      type="submit">Save changes
-                    </button>
+                    style={{ height: '44px', width: '180px' }}
+                    className="px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 full-width-responsive"
+                    type="submit">Save changes
+                  </button>
+                    // <button
+                    //   style={{ height: '44px', width: '180px' }}
+                    //   className="px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 full-width-responsive"
+                    //   type="submit">Save changes
+                    // </button>
                    }
                 </div>
               </Form>
             )}
           </Formik>
         </div>
-      </div>
-      <div className="separator-x mb-60"></div>
-      <p className="text-weight-600 text-24 text-1F1F1F mb-32">Change Password</p>
-      <Formik
+
+
+        <div style={{marginLeft:"120px"}}>
+        <p className="text-weight-600 text-24 text-1F1F1F mb-32">Change Password</p>
+
+        <Formik
         initialValues={{ currentPassword: '', newPassword: '',confirmPassword:'' }}
         validationSchema={validationPasswords}
         onSubmit={handleChangePassword}
@@ -380,6 +388,81 @@ export default function Profile({userInfo,setUserProfileInfo}) {
           </Form>
         )}
       </Formik>
+
+        </div>
+
+
+      </div>
+      <div className="separator-x mb-60"></div>
+      {/* <p className="text-weight-600 text-24 text-1F1F1F mb-32">Change Password</p> */}
+      {/* <Formik
+        initialValues={{ currentPassword: '', newPassword: '',confirmPassword:'' }}
+        validationSchema={validationPasswords}
+        onSubmit={handleChangePassword}
+      >
+        {({ errors, touched }) => (
+          <Form className=" flex column justify-between full-width-responsive " style={{width:'600px'}}>
+            <div>
+              <div className="full-width mb-20">
+                <label className="text-141414 text-weight-400 text-14 mb-2">Current Password</label>
+                <Field type="password" name="currentPassword"
+                       style={{ height: '46px' }}
+                       className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-8"
+                />
+                <ErrorMessage name="currentPassword" component="div" />
+              </div>
+              <div className="full-width mb-20">
+                <label className="text-141414 text-weight-400 text-14 mb-2">New Password</label>
+                <Field style={{ height: '46px' }} type="password" name="newPassword"
+                       className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-8"
+                >
+                </Field>
+                <ErrorMessage name="newPassword" component="div" />
+              </div>
+              <div className="full-width mb-20">
+                <label className="text-141414 text-weight-400 text-14 mb-2">Confirm Password</label>
+                <Field style={{ height: '46px' }} type="password" name="confirmPassword"
+                       className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-8"
+                >
+                </Field>
+                <ErrorMessage name="confirmPassword" component="div" />
+              </div>
+            </div>
+            <div className="">
+              {
+                savePasswordLoader
+                  ?
+                    <button
+                      style={{
+                        height: '44px',
+                        width: '180px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: '#763FF9',
+                        color: '#ffffff',
+                        borderRadius: '4px',
+                        fontWeight: 500,
+                        fontSize: '16px',
+                        border: 'none',
+                        cursor: "not-allowed",
+                      }}
+                      disabled={true}
+                    >
+                      <span className="submitloader"></span>
+                      {/* <span className="ms-2">Saving Changes</span> *}
+                    </button>
+                  :
+              <button
+                style={{ height: '44px', width: '180px' }}
+                className="px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 full-width-responsive"
+                type="submit">Change Password
+              </button>
+            }
+            </div>
+          </Form>
+        )}
+      </Formik> */}
     </div>
     <PopUp props={popup}/>
   </>

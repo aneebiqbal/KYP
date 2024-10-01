@@ -1,12 +1,14 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   HttpCode,
   HttpStatus,
   BadRequestException,
   UsePipes,
   ValidationPipe,
+  Param
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup.dto';
@@ -33,6 +35,19 @@ export class AuthController {
       );
       return { message: 'Signed up with email', student, token };
     }
+  }
+
+  @Get('get_all_institute')
+  @HttpCode(HttpStatus.OK)
+  async getAllInstitute() {
+    return this.authService.GetAllInstitute();
+  }
+
+  @Get('department/:institute')
+  @HttpCode(HttpStatus.OK)
+  async getDepartment(@Param('institute') institute: string) {
+      console.log("Inside ------- institute:", institute);
+      return this.authService.getDepartments(institute);
   }
 
   @Post('Signin')
@@ -65,6 +80,7 @@ export class AuthController {
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    // console.log('insside-------',resetPasswordDto)
     if (!resetPasswordDto.newPassword) {
       throw new BadRequestException('Password is required');
     }

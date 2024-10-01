@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 
-const CustomDropdown = ({  selectedValue, onSelect, placeholder }) => {
+const CustomDropdown = ({  selectedValue, onSelect, placeholder,height=72,borderRightNull=false}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -29,15 +29,15 @@ const CustomDropdown = ({  selectedValue, onSelect, placeholder }) => {
       <div
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         style={{
-          height: '72px',
+          height: `${height}px`,
           borderTopLeftRadius: '12px',
           borderBottomLeftRadius: '12px',
           width: '125px',
           backgroundColor: '#ffffff',
           cursor: 'pointer',
           display: 'flex',
-          alignItems: 'center'
-
+          alignItems: 'center',
+          borderRight: (borderRightNull && "none"),
         }}
         className="px-20 border-color-D9D9D9  mobile-px-10 mobile-width-dropdown"
       >

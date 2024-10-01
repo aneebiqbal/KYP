@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   UseGuards,
   Request,
@@ -8,11 +9,13 @@ import {
   HttpCode,
   HttpStatus,
   ValidationPipe,
+  Param,
 } from '@nestjs/common';
 import { RatingService } from './rating.service';
 import { JwtAuthGuard } from '../utils/auth.guard';
 import { ReactRatingDto } from './dto/react-rating.dto';
 import { rateProfessorDto } from './dto/rate-professor.dto';
+import { OptionalJwtAuthGuard } from '../utils/OptionalJwtAuth.guard';
 
 @Controller('rating')
 export class RatingController {
@@ -26,6 +29,15 @@ export class RatingController {
     return this.ratingService.reactToRating(studentId, reactRatingDto);
   }
 
+  @UseGuards(OptionalJwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @Get('review/:ratingId')
+  async getReview(@Request() req: any,@Param('ratingId') ratingId:number) {
+    console.log("inside------")
+    const studentId = req.user?.id;
+    return this.ratingService.getReview(ratingId,studentId)
+  }
+
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
@@ -35,6 +47,7 @@ export class RatingController {
     const studentId = req.user?.id;
     // const StudentIdNumber = Number(studentId);
     console.log("student id: ",typeof(studentId))
+    console.log("rate professor: ",rateProfessorDto)
     return this.ratingService.rateProfessor(studentId, rateProfessorDto)
   }
 }
