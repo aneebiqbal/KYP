@@ -47,7 +47,7 @@ export default function ProfessorsListFilter(){
     setProfessors(updatedProfessors);
   }
   const getProfessors = async (searchBy=type,text=search,concatCheck = false, page=1,showMore=false)=>{
-    if(text){
+    // if(text){
       try{
        showMore? setShowMoreLoader(true): setLoading(true)
         await BaseApi.getProfessors({sortField:sort,sortOrder:sortOrder?'ASC':'DESC',searchBy:searchBy,search:text,page:page})
@@ -67,9 +67,9 @@ export default function ProfessorsListFilter(){
         setProfessorData([])
         showMore? setShowMoreLoader(false):  setLoading(false)
       }
-    } else {
-      showMore? setShowMoreLoader(false):  setLoading(false)
-    }
+    // } else {
+    //   showMore? setShowMoreLoader(false):  setLoading(false)
+    // }
   }
   console.log("sortOrder: ",sortOrder)
   useEffect(() => {

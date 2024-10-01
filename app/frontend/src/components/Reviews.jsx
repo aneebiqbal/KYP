@@ -89,7 +89,7 @@ export default function Reviews({reviews,professorId,updateRatings}) {
 
   const copyToClipboard = (id) => {
     console.log("----inside-----")
-    navigator.clipboard.writeText(`http://localhost:3000/professor/review/${id}`).then(
+    navigator.clipboard.writeText(`${window.location.origin}/professor/review/${id}`).then(
       () => {
         console.log('Copied!');
       },
@@ -142,7 +142,7 @@ export default function Reviews({reviews,professorId,updateRatings}) {
               </Popover>
               <p className="text-14 text-434343 text-weight-400" style={{marginLeft:'4px'}}>{review?.reports}</p>
             </div>
-            <Image data-toggle="tooltip" data-placement="bottom" title="Share" width={15} height={16} src="/share.svg" alt="like" onClick={()=>copyToClipboard(review.id)} />
+            <Image className="cursor-pointer" data-toggle="tooltip" data-placement="bottom" title="Share" width={15} height={16} src="/share.svg" alt="like" onClick={()=>copyToClipboard(review.id)} />
           </div>
         </div>
       </div>
