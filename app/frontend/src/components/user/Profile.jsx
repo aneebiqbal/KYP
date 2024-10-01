@@ -226,7 +226,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
             {({ errors, touched }) => (
               <Form className="flex column justify-between ">
                 <div  className="row full-width ">
-                  <div className=" mb-20 col-12 mobile-padding-right-0 ">
+                  <div className="mb-20 col-12 mobile-padding-right-0 ">
                     <label className="text-141414 text-weight-400 text-14 mb-2">Full Name</label>
                     <div className="row ">
                       <div className="col-md-12 col-lg-6  mobile-padding-right-0  ">
@@ -235,9 +235,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                                className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-8 first-name-mb-12"
                                placeholder="Enter First Name"
                         />
-                        <div style={{height:'24px'}}>
                           <ErrorMessage className="error-message" name="firstName" component="div" />
-                        </div>
                       </div>
                       <div className="col-md-12 col-lg-6 mt-md-2 mt-lg-0 mobile-padding-right-0 ">
                         <Field type="text" name="lastName"
@@ -245,7 +243,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                                className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-8"
                                placeholder="Enter Last Name"
                         />
-                        <ErrorMessage name="lastName" component="div" />
+                        <ErrorMessage className="error-message" name="lastName" component="div" />
                       </div>
                     </div>
 

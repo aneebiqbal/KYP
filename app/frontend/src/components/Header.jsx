@@ -37,7 +37,7 @@ export default function Header() {
   const debouncedGetRecommendations = useCallback(
     debounce(async (text) => {
       await getRecommendations(text);
-    }, 500), [] 
+    }, 500), []
   );
 
   const mockVal = (str, repeat = 1) => ({
@@ -55,7 +55,7 @@ export default function Header() {
           console.log("error on recommendation: ",e)
           setRecommendation([])
         }
-      } 
+      }
   }
 
   console.log("search:",search)
@@ -68,7 +68,7 @@ export default function Header() {
       </div>
     ),
   });
-  
+
   const options = recommendation
     ? recommendation.map((recommend) =>
         renderItem(recommend.name, recommend.department_name, recommend.institute_name,recommend.id)
@@ -154,7 +154,7 @@ export default function Header() {
         <Link href="/">
           <Image height={35} width={70} src="/KYP.png" alt="KYPIcon" />
         </Link>
-        <div style={{display:"flex"}}>
+        <div className="flex justify-between items-center">
         {
           pathname!="/" &&
           <div style={{display:"flex", alignItems:'center',justifyContent:"center", height:"60px"}}>
@@ -186,10 +186,10 @@ export default function Header() {
                     width: "446px",
                     height:"50px",
                   }}
-                  className={searchCheck !== '' &&  "emptysearch" } 
+                  className={searchCheck !== '' &&  "emptysearch" }
                   options={options}
                     onSearch={(text) => {
-                      getPanelValue(text); 
+                      getPanelValue(text);
                       setSearch(text);
                       if(searchCheck !== ''){
                         setSearchCheck('')
@@ -213,7 +213,7 @@ export default function Header() {
             </div>
         </div>
         }
-        <div style={{marginLeft:"30px"}}>
+        <div className="ml-30">
           {token && userInfo ? (
             <div className="profile-btn">
               <div className="bg-763FF9 border-radius-100 flex items-center justify-center cursor-pointer" onClick={toggleSidebar} style={{ width: '47px', height: '47px' }}>

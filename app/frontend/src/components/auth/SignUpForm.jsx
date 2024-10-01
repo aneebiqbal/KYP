@@ -305,7 +305,7 @@ export default function SignUpForm(props) {
                 ))}
               </div>
             )}
-            { checkInstituteSelected && <div className='text-warning fst-italic'>First, select a school.</div>}
+            { checkInstituteSelected && <div className='text-warning text-12' style={{height:'0'}}>First, select a school.</div>}
               <ErrorMessage name="field" component="div" />
               {/* <ErrorMessage name="field" component="div" /> */}
             </div>

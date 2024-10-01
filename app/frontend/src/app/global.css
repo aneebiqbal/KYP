@@ -647,7 +647,7 @@ p {
   display: none;
 }
 .error-message{
-  height: 4px;
+  height: 0;
   font-size: 12px;
   color: red;
 }
