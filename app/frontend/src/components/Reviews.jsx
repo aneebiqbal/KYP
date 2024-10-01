@@ -132,15 +132,15 @@ export default function Reviews({reviews,professorId,updateRatings}) {
             <Popover content={content} open={showModel.show==true && showModel.id==review.id && showModel.type=="upvote"}>
               <Image data-toggle="tooltip" data-placement="bottom" title="Like" className={`${token? "cursor-pointer" : ""}`} width={16} height={16} src={review?.reactRatings?.upvote?'/likeTrue.png':'/like.png'} alt="like" onClick={()=>{updateReactRating(1,review)}}/>
               </Popover>
-              <p className="text-14 text-434343 text-weight-400 " style={{marginLeft:'4px',marginRight:'8px'}}>{review?.upVotes}</p>
+              <p className="text-14 text-434343 text-weight-400 " style={{marginLeft:'4px',marginRight:'8px',width:'18px'}}>{review?.upVotes}</p>
             <Popover content={content} open={showModel.show==true && showModel.id==review.id && showModel.type=="downvote"}>
               <Image data-toggle="tooltip" data-placement="bottom" title="Dislike" className={`${token? "cursor-pointer" : ""}`} width={16} height={16} src={review?.reactRatings?.downvote?'/dislikeTrue.png':'/dislike.png'}alt="like" onClick={()=>{updateReactRating(2,review)}}/>
               </Popover>
-              <p className="text-14 text-434343 text-weight-400" style={{marginLeft:'4px',marginRight:'8px'}}>{review?.downVotes}</p>
+              <p className="text-14 text-434343 text-weight-400" style={{marginLeft:'4px',marginRight:'8px',width:'18px'}}>{review?.downVotes}</p>
             <Popover content={content} open={showModel.show==true && showModel.id==review.id && showModel.type=="report"}>
               <Image data-toggle="tooltip" data-placement="bottom" title="Report" className={`${token? "cursor-pointer" : ""}`} width={13} height={16} src={review?.reactRatings?.reported?'/reportTrue.png':'/report.png'} alt="like" onClick={()=>{updateReactRating(3,review)}}/>
               </Popover>
-              <p className="text-14 text-434343 text-weight-400" style={{marginLeft:'4px'}}>{review?.reports}</p>
+              <p className="text-14 text-434343 text-weight-400" style={{marginLeft:'4px',width:'18px'}}>{review?.reports}</p>
             </div>
             <Image className="cursor-pointer" data-toggle="tooltip" data-placement="bottom" title="Share" width={15} height={16} src="/share.svg" alt="like" onClick={()=>copyToClipboard(review.id)} />
           </div>

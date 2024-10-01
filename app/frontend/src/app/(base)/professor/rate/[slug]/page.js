@@ -825,7 +825,7 @@ export default function page(string) {
                 </div>
               </div>
             </div>
-            {warning != "" && <lead className='text-warning fst-italic'> {warning}</lead>}
+            {warning != "" && <lead className='text-warning text-12'> {warning}</lead>}
             <ErrorMessage
               name="selectedTags"
               component="div"
