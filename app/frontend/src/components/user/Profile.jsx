@@ -259,7 +259,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                     </Field>
                     <ErrorMessage className="error-message" name="email" component="div" />
                   </div>
-                  <div className="col-12 mb-20 mobile-padding-right-0 ">
+                  <div className="col-12 mb-32 mobile-padding-right-0 ">
                     <label className="text-141414 text-weight-400 text-14 mb-2">University</label>
                     <Field style={{ height: '46px' }} type="text" name="university"
                            className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-8"
@@ -299,7 +299,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                     :
                     <button
                     style={{ height: '44px', width: '180px' }}
-                    className="px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 full-width-responsive"
+                    className="mt-10 px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 full-width-responsive"
                     type="submit">Save changes
                   </button>
                     // <button
@@ -342,7 +342,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                 </Field>
                 <ErrorMessage className="error-message" name="newPassword" component="div" />
               </div>
-              <div className="full-width mb-20">
+              <div className="full-width mb-32">
                 <label className="text-141414 text-weight-400 text-14 mb-2">Confirm Password</label>
                 <Field style={{ height: '46px' }} type="password" name="confirmPassword"
                        className="px-10 full-width bg-transparent text-14 text-394560 border-color-D9D9D9 border-radius-8"
@@ -378,7 +378,7 @@ export default function Profile({userInfo,setUserProfileInfo}) {
                   :
               <button
                 style={{ height: '44px', width: '180px' }}
-                className="px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 full-width-responsive"
+                className="mt-10 px-20 bg-763FF9 border-none border-radius-4 text-ffffff text-weight-500 text-16 full-width-responsive"
                 type="submit">Change Password
               </button>
             }
