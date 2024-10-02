@@ -1,0 +1,25 @@
+service: kyp-backend  # Replace with your desired service name
+
+provider:
+  name: aws
+  runtime: nodejs18.x    # Specify your Node.js version
+  region: us-east-1       # Specify your AWS region
+
+functions:
+  app:
+    handler: dist/main.handler  # Point to your compiled handler
+    events:
+      - http:
+          path: api/{proxy+}      # Route all requests under /api/
+          method: any              # Allow any HTTP method
+
+package:
+  individually: true
+
+plugins:
+  - serverless-webpack
+
+custom:
+  webpack:
+    webpackConfig: './webpack.config.js'  # Path to your webpack config
+    includeModules: true
